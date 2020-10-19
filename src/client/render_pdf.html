@@ -198,67 +198,43 @@
 
         const promise_data_urls = new Promise((resolve) =>
         {
-            if (window.location.host === "anot8.org")
+            const running_locally = window.location.host !== "anot8.org"
+            /*
+             * TODO
+             * use check against local storage for overriding vault config.
+             * If found, use that config, otherwise look to server for config.
+             * If no config found then, for now, error.
+             */
+            fetch(`/config/${naming_authority}/${vault_id}.json`)
+            .then(resp => resp.json())
+            .then(config =>
             {
-                /*
-                 * Use to check against local storage for overriding vault config.
-                 * If found, use that config, otherwise look to anot8 central config.
-                 * If no config found then, for now, error.
-                 */
-                 fetch(`/config/${naming_authority}/${vault_id}.json`)
-                .then(resp => resp.json())
-                .then(anot8_org_config =>
+                if (running_locally)
                 {
+                    const relative_file_path = config.id_to_relative_file_name[file_id]
+
+                    url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
+                    url_to_file_annotations = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}.annotations`
+                    url_to_write_file_annotations = `/annotations/${vault_id}?relative_file_path=${relative_file_path}.annotations`
+                }
+                else
+                {
+                    const anot8_org_config = config  // to make it clear this is canonical mappings
                     const publish_root_path = anot8_org_config.publish_root_path
                     const relative_file_path = anot8_org_config.id_to_relative_file_name[file_id]
 
                     url_to_file = `${publish_root_path}${relative_file_path}`
                     url_to_file_annotations = `${publish_root_path}${relative_file_path}.annotations`
                     url_to_write_file_annotations = ``
+                }
 
-                    resolve({
-                        url_to_file,
-                        url_to_file_annotations,
-                        url_to_write_file_annotations,
-                    })
+                resolve({
+                    url_to_file,
+                    url_to_file_annotations,
+                    url_to_write_file_annotations,
                 })
-            }
-            else
-            {
-                // Running locally
+            })
 
-                function set_local_data_urls (relative_file_path)
-                {
-                    url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
-                    url_to_file_annotations = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}.annotations`
-                    url_to_write_file_annotations = `/annotations/${vault_id}?relative_file_path=${relative_file_path}.annotations`
-
-                    resolve({
-                        url_to_file,
-                        url_to_file_annotations,
-                        url_to_write_file_annotations,
-                    })
-                }
-
-                if (valid_file_resource_path())
-                {
-                    fetch(`/config/${naming_authority}/${vault_id}.json`)
-                    .then(resp => resp.json())
-                    .then(anot8_org_config =>
-                    {
-                        const relative_file_path = anot8_org_config.id_to_relative_file_name[file_id]
-                        set_local_data_urls(relative_file_path)
-                    })
-                }
-                else
-                {
-                    // Due to a redirect on the server, this code path is not used
-
-                    const parsed_search = parse_location_search()
-                    const fallback_query_param_relative_file_path = parsed_search.relative_file_path
-                    set_local_data_urls(fallback_query_param_relative_file_path)
-                }
-            }
         })
 
 
@@ -302,9 +278,9 @@
             changed_annotations_data_listeners.forEach(listener => listener(saved))
         }
 
-        function label_el_clicked (label)
+        function label_el_clicked (label_obj)
         {
-            label_el_click_listeners.forEach(listener => listener({ id: label.id, text: label.text }))
+            label_el_click_listeners.forEach(listener => listener({ text: label_obj.text }))
         }
 
         const changed_annotation_label_counts = []
@@ -330,7 +306,7 @@
             {
                 annotation.labels.forEach(label =>
                 {
-                    label_counts[label.id] = (label_counts[label.id] || 0) + 1
+                    label_counts[label] = (label_counts[label] || 0) + 1
                 })
             })
 
@@ -584,7 +560,7 @@
             const annotation_list_el = document.createElement("div")
 
             const unsaved_warning = (dirty ? `<span style="background-color: yellow;">⚠</span> ` : "")
-            const labels_html = labels.map(l => `<div>${l.text}</div>`).join("")
+            const labels_html = labels.map(l => `<div>${l}</div>`).join("")
             const display_html = unsaved_warning + `${text} <br><br>
             <div style="float: left;">
                 <span style="color: #777; font-size: 10px;">Comment: ${comment}</span>
@@ -965,25 +941,25 @@
     </script>
 
     <script>
-        function toggle_label_presence_in_list (list_of_labels, label)
+        function toggle_label_presence_in_list (list_of_label_strs, new_label_obj)
         {
-            const filtered_labels = list_of_labels.filter(({ id }) => id !== new_label.id)
+            const filtered_labels = list_of_label_strs.filter(l => l !== new_label_obj.text)
 
-            if (filtered_labels.length !== labels.length) list_of_labels = filtered_labels
-            else list_of_labels.push(new_label)
+            if (filtered_labels.length !== list_of_label_strs.length) list_of_label_strs = filtered_labels
+            else list_of_label_strs.push(new_label_obj.text)
 
-            return list_of_labels
+            return list_of_label_strs
         }
 
         function setup_listener_to_label_annotations () {
 
-            label_el_click_listeners.push((new_label) => {
+            label_el_click_listeners.push(new_label_obj => {
                 const highlighted_annotation_ids = get_highlighted_annotation_ids()
                 if (highlighted_annotation_ids.length === 1)
                 {
                     const annotation_id = highlighted_annotation_ids[0]
                     const annotation = file_meta_data.annotations.find(annotation => annotation.id === annotation_id)
-                    annotation.labels = toggle_label_presence_in_list(annotation.labels, new_label)
+                    annotation.labels = toggle_label_presence_in_list(annotation.labels, new_label_obj)
                     annotation.dirty = true
 
                     annotation_data_changed()
@@ -1138,23 +1114,20 @@
 
             const label_search_listeners = []
 
-            const priority_label_ids_json = JSON.parse(localStorage.getItem("priority_label_ids") || "[]")
-            const priority_label_ids = new Set(priority_label_ids_json)
+            const priority_labels_json = JSON.parse(localStorage.getItem("priority_labels") || "[]")
+            const priority_labels = new Set(priority_labels_json)
 
             const hide_label_roots = [
                 "Specimen/Synthetic Specimen/Virus/Type/"
             ]
 
-            Object.keys(common_labels)
-                .map(label_id =>
+            common_labels
+                .map(label_str =>
                 {
-                    const id = parseInt(label_id, 10)
-
                     return {
-                        id,
-                        text: common_labels[label_id],
-                        lower_case_text: common_labels[label_id].toLowerCase(),
-                        priority: priority_label_ids.has(id),
+                        text: label_str,
+                        lower_case_text: label_str.toLowerCase(),
+                        priority: priority_labels.has(label_str),
                     }
                 })
                 .sort((a, b) =>
@@ -1168,28 +1141,28 @@
                         return a.priority ? -1 : 1
                     }
                 })
-                .forEach(label => {
+                .forEach(label_obj => {
                     const label_el = document.createElement("div")
                     const label_text = hide_label_roots.reduce((accum, to_remove) =>
                     {
                         return accum.replace(to_remove, "")
-                    }, label.text)
+                    }, label_obj.text)
                     label_el.innerText = label_text
-                    label_el.className = "label" + (label.priority ? " priority" : "")
+                    label_el.className = "label" + (label_obj.priority ? " priority" : "")
                     labels_list_el.appendChild(label_el)
 
                     label_search_listeners.push(label_search_text => {
                         label_el.style.removeProperty("display")
 
-                        if (label_search_text && !label.lower_case_text.includes(label_search_text))
+                        if (label_search_text && !label_obj.lower_case_text.includes(label_search_text))
                         {
                             label_el.style.setProperty("display", "none")
                         }
                     })
 
-                    changed_annotation_label_counts.push(({ label_counts, new_label_counts }) =>
+                    function update_label_usage_status_on_global_change_in_label_count ({ label_counts, new_label_counts })
                     {
-                        const used_label = (!!new_label_counts[label.id])
+                        const used_label = (!!new_label_counts[label_obj.text])
                         if (used_label)
                         {
                             label_el.classList.add("used_label")
@@ -1198,9 +1171,11 @@
                         {
                             label_el.classList.remove("used_label")
                         }
-                    })
+                    }
 
-                    label_el.addEventListener("click", () => label_el_clicked(label))
+                    changed_annotation_label_counts.push(update_label_usage_status_on_global_change_in_label_count)
+
+                    label_el.addEventListener("click", () => label_el_clicked(label_obj))
                 })
 
             const labels_search_el = document.getElementById("labels_search")

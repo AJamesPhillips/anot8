@@ -259,10 +259,9 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
 
         file_id = get_id_for_data_file_relative_file_path(vault_config, relative_file_path)
 
-        if file_id:
-            url = perma_path(naming_authority=naming_authority_id, vault_id=vault_id, file_id=file_id)
-            url += get_query_params()
-            return redirect(url, code=302)
+        url = perma_path(naming_authority=naming_authority_id, vault_id=vault_id, file_id=file_id)
+        url += get_query_params()
+        return redirect(url, code=302)
 
     with open(dir_path + "/../client/render_pdf.html", "r") as f:
         html = f.read()

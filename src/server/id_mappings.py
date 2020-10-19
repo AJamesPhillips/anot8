@@ -42,6 +42,9 @@ def get_id_for_data_file_relative_file_path (vault_config, data_file_relative_fi
             id_value = id_v
             break
 
+    if not id_value:
+        id_value = upsert_file_perma_id_mapping(vault_config, data_file_relative_file_path + ".annotations")
+
     return id_value
 
 
@@ -141,10 +144,12 @@ def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
     if data_file_relative_file_path in mappings["id_to_relative_file_name"].values():
         return
 
-    next_id = mappings["next_id"]
+    new_id = mappings["next_id"]
     mappings["next_id"] += 1
-    mappings["id_to_relative_file_name"][next_id] = data_file_relative_file_path
+    mappings["id_to_relative_file_name"][new_id] = data_file_relative_file_path
 
     id_mappings_file_name = get_id_map_file_path(vault_config)
     with open(id_mappings_file_name, "w") as f:
         json.dump(mappings, f, indent=0, ensure_ascii=False)
+
+    return new_id
