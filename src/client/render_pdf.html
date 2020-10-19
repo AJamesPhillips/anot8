@@ -190,7 +190,7 @@
         const vault_id = parsed_path.vault_id
         const file_id = parsed_path.file_id
 
-        const valid_file_resource_path = naming_authority !== -1 && vault_id !== -1 && file_id !== -1
+        const valid_file_resource_path = () => naming_authority !== -1 && vault_id !== -1 && file_id !== -1
 
         let url_to_file = undefined
         let url_to_file_annotations = undefined
@@ -225,6 +225,8 @@
             }
             else
             {
+                // Running locally
+
                 function set_local_data_urls (relative_file_path)
                 {
                     url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
@@ -238,7 +240,7 @@
                     })
                 }
 
-                if (valid_file_resource_path)
+                if (valid_file_resource_path())
                 {
                     fetch(`/config/${naming_authority}/${vault_id}.json`)
                     .then(resp => resp.json())
@@ -250,6 +252,8 @@
                 }
                 else
                 {
+                    // Due to a redirect on the server, this code path is not used
+
                     const parsed_search = parse_location_search()
                     const fallback_query_param_relative_file_path = parsed_search.relative_file_path
                     set_local_data_urls(fallback_query_param_relative_file_path)
@@ -1006,7 +1010,7 @@
             // show raw link
             const link_to_pdf_el = document.getElementById("link_to_pdf_file")
             link_to_pdf_el.innerHTML = `<a href="${url_to_file}">Showing PDF from: ${url_to_file}</a>`
-            if (valid_file_resource_path)
+            if (valid_file_resource_path())
             {
                 const anot8_url = `https://anot8.org/r/${naming_authority}.${vault_id}/${file_id}`
                 link_to_pdf_el.innerHTML += `<br/>\n <a href="${anot8_url}">PermaLink: ${anot8_url}</a>`

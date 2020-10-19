@@ -25,7 +25,8 @@ def get_id_map (vault_config):
     return mappings
 
 
-def get_id_for_data_file_relative_file_path (mappings, data_file_relative_file_path):
+def get_id_for_data_file_relative_file_path (vault_config, data_file_relative_file_path):
+    mappings = get_id_map(vault_config)
     id_value = None
 
     for (id_v, file_path) in mappings["id_to_relative_file_name"].items():
@@ -36,18 +37,25 @@ def get_id_for_data_file_relative_file_path (mappings, data_file_relative_file_p
     return id_value
 
 
+def get_data_file_relative_file_path_for_id (vault_config, file_id):
+    mappings = get_id_map(vault_config)
+    file_id = str(file_id)
+    data_file_relative_file_path = mappings["id_to_relative_file_name"].get(file_id, None)
+
+    return data_file_relative_file_path
+
+
+def perma_path (**kwargs):
+    return "/r/{naming_authority}.{vault_id}/{file_id}".format(**kwargs)
+
+
 def local_url (vault_config, data_file_relative_file_path):
     naming_authority = get_naming_authority() or -1
 
-    mappings = get_id_map(vault_config)
     vault_id = vault_config["vault_id"]
-    file_id = get_id_for_data_file_relative_file_path(mappings, data_file_relative_file_path) or -1
+    file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path) or -1
 
-    url = "/r/{naming_authority}.{vault_id}/{file_id}".format(
-        naming_authority=naming_authority,
-        vault_id=vault_id,
-        file_id=file_id,
-    )
+    url = perma_path(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
 
     if file_id == -1:
         url += "?relative_file_path={relative_file_path}".format(relative_file_path=data_file_relative_file_path)
@@ -66,18 +74,13 @@ def perma_url (vault_config, data_file_relative_file_path):
     if not has_annotations_file(root_path, data_file_relative_file_path):
         return False
 
-    mappings = get_id_map(vault_config)
     vault_id = vault_config["vault_id"]
-    file_id = get_id_for_data_file_relative_file_path(mappings, data_file_relative_file_path)
+    file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
 
     if not file_id:
         return False
 
-    return "https://anot8.org/r/{naming_authority}.{vault_id}/{file_id}".format(
-        naming_authority=naming_authority,
-        vault_id=vault_id,
-        file_id=file_id,
-    )
+    return "https://anot8.org" + perma_path(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
 
 
 def upsert_perma_id_mappings ():
@@ -161,16 +164,3 @@ def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
     id_mappings_file_name = config_dir_path + vault_config["vault_name"] + ".id_mappings"
     with open(id_mappings_file_name, "w") as f:
         json.dump(mappings, f, indent=0, ensure_ascii=False)
-
-
-def get_data_file_relative_file_path_for_id (vault_config, file_id):
-    mappings = get_id_map(vault_config)
-    file_id = str(file_id)
-    data_file_relative_file_path = None
-
-    for (id_v, file_path) in mappings["id_to_relative_file_name"].items():
-        if id_v == file_id:
-            data_file_relative_file_path = file_path
-            break
-
-    return data_file_relative_file_path

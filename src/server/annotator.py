@@ -10,10 +10,12 @@ import jinja2
 from vault_config import get_vault_configs, get_vault_config_by_id
 from id_mappings import (
     get_naming_authority,
+    get_id_for_data_file_relative_file_path,
+    get_data_file_relative_file_path_for_id,
+    perma_path,
     local_url,
     perma_url,
     upsert_file_perma_id_mapping,
-    get_data_file_relative_file_path_for_id,
 )
 from anot8_org_config import upsert_perma_id_mappings_and_anot8_config, update_anot8_config
 from common import supported_relative_file_path, anot8_org_config_dir_path
@@ -249,31 +251,36 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
         # fall back to `relative_file_path` query parameter
         relative_file_path = request.args.get("relative_file_path", "")
         if not relative_file_path:
-            return "Unknown file id {} in vault {}".format(file_id, vault_id), 404
+            return "Unknown file id {}, relative_file_path {} in vault {}".format(file_id, relative_file_path, vault_id), 404
 
         supported = supported_relative_file_path(vault_config, relative_file_path)
         if not supported["supported"]:
             return "Unknown relative_file_path {}".format(jinja2.escape(relative_file_path)), 404
 
-    render_pdf_on_resolver_page = True
-    if render_pdf_on_resolver_page:
-        with open(dir_path + "/../client/render_pdf.html", "r") as f:
-            html = f.read()
+        file_id = get_id_for_data_file_relative_file_path(vault_config, relative_file_path)
 
-        return html
+        if file_id:
+            url = perma_path(naming_authority=naming_authority_id, vault_id=vault_id, file_id=file_id)
+            url += get_query_params()
+            return redirect(url, code=302)
 
-    # url = "/render/{vault_id}?".format(vault_id=vault_id)
+    with open(dir_path + "/../client/render_pdf.html", "r") as f:
+        html = f.read()
 
-    # other_query_params = dict(request.args)
-    # other_query_params["relative_file_path"] = data_file_relative_file_path
+    return html
 
-    # param_parts = []
-    # for (k, v) in other_query_params.items():
-    #     param_parts.append("{k}={v}".format(k=k, v=v))
 
-    # url += "&".join(param_parts)
+def get_query_params ():
+    other_query_params = dict(request.args)
 
-    # return redirect(url, code=302)
+    param_parts = []
+    for (k, v) in other_query_params.items():
+        param_parts.append("{k}={v}".format(k=k, v=v))
+
+    url = "?" if other_query_params else ""
+    url += "&".join(param_parts)
+
+    return url
 
 
 # Note this is the ./anot8_org_config not the ./config
