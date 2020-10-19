@@ -2,13 +2,13 @@
 import json
 import os
 
-from id_mappings import upsert_perma_id_mappings, get_id_map
+from id_mappings import upsert_file_perma_ids_mapping_for_all_vaults, get_id_map
 from vault_config import get_vault_configs
 from common import anot8_org_config_dir_path, print_warning
 
 
 def upsert_perma_id_mappings_and_anot8_config ():
-    upsert_perma_id_mappings()
+    upsert_file_perma_ids_mapping_for_all_vaults()
     update_anot8_configs()
 
 

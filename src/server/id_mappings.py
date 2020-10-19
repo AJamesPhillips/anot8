@@ -3,7 +3,7 @@ import os
 
 from common import config_dir_path, anot8_org_config_dir_path, print_warning
 from vault_config import get_vault_configs
-from annotations import has_annotations_file
+from annotations import has_annotations_file, get_annotation_relative_file_paths_in_vault
 
 
 def get_naming_authority ():
@@ -16,8 +16,16 @@ def get_naming_authority ():
         return f.read().strip()
 
 
-def get_id_map (vault_config):
+def get_id_map_file_path (vault_config):
     id_mappings_file_name = config_dir_path + vault_config["vault_name"] + ".id_mappings"
+    return id_mappings_file_name
+
+
+def get_id_map (vault_config):
+    id_mappings_file_name = get_id_map_file_path(vault_config)
+
+    if not os.path.isfile(id_mappings_file_name):
+        return None
 
     with open(id_mappings_file_name, "r") as f:
         mappings = json.load(f)
@@ -83,69 +91,46 @@ def perma_url (vault_config, data_file_relative_file_path):
     return "https://anot8.org" + perma_path(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
 
 
-def upsert_perma_id_mappings ():
+def upsert_file_perma_ids_mapping_for_all_vaults ():
     vault_configs = get_vault_configs()
 
     for vault_config in vault_configs.values():
-        id_mappings_file_name = config_dir_path + vault_config["vault_name"] + ".id_mappings"
-        if not os.path.isfile(id_mappings_file_name):
-            with open(id_mappings_file_name, "w") as f:
-                mapping_file_contents = dict(
-                    id_to_relative_file_name=dict(),
-                    # relative_file_name_to_id=dict(),
-                    schema_version=1,
-                )
-                json.dump(mapping_file_contents, f, indent=0, ensure_ascii=False)
-
-        else:
-            mappings = get_id_map(vault_config)
-            check_mappings(vault_config, mappings)
+        upsert_file_perma_ids_mapping(vault_config)
 
 
-def check_mappings (vault_config, mappings):
-    # check files are unique and exist
-    existing_file_paths = set()
-    duplicate_file_paths = set()
-    missing_files = set()
+def upsert_file_perma_ids_mapping (vault_config):
+    mappings = get_id_map(vault_config)
 
-    root_path = vault_config["root_path"]
+    if not mappings:
+        mappings = dict(
+            next_id=1,
+            id_to_relative_file_name=dict(),
+            schema_version=1,
+        )
 
-    for data_file_relative_file_path in mappings["id_to_relative_file_name"].values():
-        if data_file_relative_file_path in existing_file_paths:
-            print("Duplicate file_path: " + data_file_relative_file_path)
-            duplicate_file_paths.add(data_file_relative_file_path)
-        existing_file_paths.add(data_file_relative_file_path)
+    id_to_relative_file_name = mappings["id_to_relative_file_name"]
+    next_id = mappings["next_id"]
 
-        if not os.path.isfile(root_path + data_file_relative_file_path):
-            missing_files.add(data_file_relative_file_path)
-            print("Missing file: " + data_file_relative_file_path)
+    relative_file_names_already_mapped = set(id_to_relative_file_name.values())
 
-        if not os.path.isfile(root_path + data_file_relative_file_path + ".annotations"):
-            missing_files.add(data_file_relative_file_path + ".annotations")
-            print("Missing file: " + data_file_relative_file_path + ".annotations")
+    file_paths = get_annotation_relative_file_paths_in_vault(vault_config)
+    for annotations_relative_file_path in file_paths:
+        data_file_relative_file_path = annotations_relative_file_path.replace(".annotations", "")
 
-    if duplicate_file_paths:
-        msg = "{} duplicate file_paths in id_mappings".format(len(duplicate_file_paths))
-        print_warning(msg)
-        raise Exception(msg)
+        if data_file_relative_file_path in relative_file_names_already_mapped:
+            continue
 
-    if missing_files:
-        msg = "{} missing files in id_mappings".format(len(missing_files))
-        print_warning(msg)
+        id_to_relative_file_name[next_id] = data_file_relative_file_path
+        next_id += 1
 
-#     relative_file_name_to_id = get_file_name_to_id_map(id_to_relative_file_name)
-#     if mappings["relative_file_name_to_id"] != relative_file_name_to_id:
-#         msg = "Mappings file was corrupted, restoring"
-#         print_warning(msg)
-#         mappings["relative_file_name_to_id"] = relative_file_name_to_id
-
-
-# def get_file_name_to_id_map (id_to_relative_file_name):
-#     relative_file_name_to_id = dict()
-#     for (id_value, path) in id_to_relative_file_name.items():
-#         relative_file_name_to_id[path] = id_value
-
-#     return relative_file_name_to_id
+    id_mappings_file_name = get_id_map_file_path(vault_config)
+    with open(id_mappings_file_name, "w") as f:
+        mapping_file_contents = dict(
+            next_id=next_id,
+            id_to_relative_file_name=id_to_relative_file_name,
+            schema_version=1,
+        )
+        json.dump(mapping_file_contents, f, indent=0, ensure_ascii=False)
 
 
 def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
@@ -156,11 +141,10 @@ def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
     if data_file_relative_file_path in mappings["id_to_relative_file_name"].values():
         return
 
-    ids = list(map(int, mappings["id_to_relative_file_name"].keys()))
-    next_id = (max(ids) if ids else 0) + 1
+    next_id = mappings["next_id"]
+    mappings["next_id"] += 1
     mappings["id_to_relative_file_name"][next_id] = data_file_relative_file_path
-    # mappings["relative_file_name_to_id"] = get_file_name_to_id_map(mappings["id_to_relative_file_name"])
 
-    id_mappings_file_name = config_dir_path + vault_config["vault_name"] + ".id_mappings"
+    id_mappings_file_name = get_id_map_file_path(vault_config)
     with open(id_mappings_file_name, "w") as f:
         json.dump(mappings, f, indent=0, ensure_ascii=False)
