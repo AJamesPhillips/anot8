@@ -153,7 +153,7 @@ def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
     if data_file_relative_file_path in mappings["id_to_relative_file_name"].values():
         return
 
-    ids = map(int, mappings["id_to_relative_file_name"].keys())
+    ids = list(map(int, mappings["id_to_relative_file_name"].keys()))
     next_id = (max(ids) if ids else 0) + 1
     mappings["id_to_relative_file_name"][next_id] = data_file_relative_file_path
     # mappings["relative_file_name_to_id"] = get_file_name_to_id_map(mappings["id_to_relative_file_name"])

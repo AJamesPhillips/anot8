@@ -260,20 +260,18 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
 
         return html
 
+    # url = "/render/{vault_id}?".format(vault_id=vault_id)
 
+    # other_query_params = dict(request.args)
+    # other_query_params["relative_file_path"] = data_file_relative_file_path
 
-    url = "/render/{vault_id}?".format(vault_id=vault_id)
+    # param_parts = []
+    # for (k, v) in other_query_params.items():
+    #     param_parts.append("{k}={v}".format(k=k, v=v))
 
-    other_query_params = dict(request.args)
-    other_query_params["relative_file_path"] = data_file_relative_file_path
+    # url += "&".join(param_parts)
 
-    param_parts = []
-    for (k, v) in other_query_params.items():
-        param_parts.append("{k}={v}".format(k=k, v=v))
-
-    url += "&".join(param_parts)
-
-    return redirect(url, code=302)
+    # return redirect(url, code=302)
 
 
 # Note this is the ./anot8_org_config not the ./config

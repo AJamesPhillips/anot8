@@ -27,8 +27,11 @@ def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_p
             "schema_version": current_schema_version,
         }
 
+    if "version" in meta_data:
+        meta_data["schema_version"] = meta_data["version"]
+
     if meta_data["schema_version"] != current_schema_version:
-        meta_data = upgrade_meta_data(meta_data)
+        meta_data = upgrade_meta_data(meta_data, current_schema_version)
 
     # meta_data = ensure_consistent_labels(
     #     meta_data=meta_data,
@@ -61,8 +64,20 @@ def sha1_hash_file(file_descriptor):
     return sha1.hexdigest()
 
 
-def upgrade_meta_data(meta_data):
+def upgrade_meta_data(meta_data, current_schema_version):
     if "relative_file_path" in meta_data:
         del meta_data["relative_file_path"]
+
+    if "version" in meta_data:
+        del meta_data["version"]
+
+    for annotation in meta_data["annotations"]:
+        if "deleted" in annotation:
+            continue
+
+        for (i, label) in enumerate(annotation["labels"]):
+            annotation["labels"][i] = label["text"]
+
+    meta_data["schema_version"] = current_schema_version
 
     return meta_data
