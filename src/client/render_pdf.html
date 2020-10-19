@@ -358,7 +358,7 @@
         function annotation_exist (annotation_id)
         {
             // Quick hack to stop removing (from url query parameters) annotation ids to
-            // highlight until the annotations them selves have been loaded
+            // highlight until the annotations themselves have been loaded
             if (!file_meta_data_loaded) return true
 
             // const els = document.getElementsByClassName(`annotation_${annotation_id}`)
@@ -475,7 +475,7 @@
                 search.push(`${key}=${/* encodeURIComponent */(vars[key])}`)
             })
 
-            const search_string = search.length ? "?" : "" + search.join("&")
+            const search_string = (search.length ? "?" : "") + search.join("&")
 
             var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname + search_string
             if (history.pushState)
