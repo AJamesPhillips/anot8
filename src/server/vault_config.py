@@ -104,6 +104,7 @@ def check_types (obj, attribute):
 
 def standardise_paths (vault_config):
     vault_config["root_path"] = standardise_path(vault_config["root_path"])
+    vault_config["publish_root_path"] = standardise_path(vault_config["publish_root_path"])
 
     for (i, directory) in enumerate(vault_config["directories"]):
         vault_config["directories"][i] = standardise_path(directory)
