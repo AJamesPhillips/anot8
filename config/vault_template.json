@@ -1,0 +1,13 @@
+{
+    "vault_id": 1,
+    "root_path": "./src/../",
+    "publish_root_path": "https://raw.githubusercontent.com/AJamesPhillips/Annotator/",
+    "directories": [
+        "example_pdfs/visible_directory"
+    ],
+    "labels": [
+        "label one",
+        "another label"
+    ],
+    "schema_version": 1
+}
