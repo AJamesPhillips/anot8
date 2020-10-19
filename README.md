@@ -9,7 +9,7 @@
 * * highlighted annotations
 * Can serve PDFs from local file system by relative file paths e.g. http://localhost:5003/render/vault_name?url=file://../../data/PDFs/134919.pdf&highlighted_annotation_ids=1,2
 * TODO:
-* * serve PDFs from websites e.g. http://localhost:5003/render/vault_name/?url=https://raw.githubusercontent.com/AJamesPhillips/SARS-CoV-2-testing-kit-validation-data/master/data/FDA-EUA/PDFs/134919.pdf&highlighted_annotation_ids=1,2
+* * serve PDFs from websites e.g. http://localhost:5003/r/1772.2/-1?relative_file_path=FDA-EUA/PDFs/134919.pdf&highlighted_annotation_ids=1,2
 
 
 ## Installation
@@ -67,7 +67,7 @@ When annotating specific pieces of data it's helpful to priorities certain label
 
 ## Feature examples for central resolving server
 
-You can visit anot8.org/resolver and follow the instructions to allow it to find your local server.  It will store the information in that browsers local storage.  To get links to work for anyone you'll need to open a new issue here: https://github.com/AJamesPhillips/anot8.org/issues/new?title=Request%20for%20perma%20link%20name%20id to get a naming id and have it added to the anot8.org resolver.
+You can visit anot8.org/resolver and follow the instructions to allow it to find your local server.  It will store the information in that browsers local storage.  To get links to work for anyone you'll need to open a new issue here: https://github.com/CenterOfCI/anot8.org/issues/new?title=Request%20for%20perma%20link%20name%20id to get a naming id and have it added to the anot8.org resolver.
 
 Once set up the following features should also work:
 
@@ -83,9 +83,9 @@ Replace "vault_template" with your annotations vault name
 
 ### View PDFs from remote server
 
-anot8.org/r/?file=example.pdf&vault=https://raw.githubusercontent.com/AJamesPhillips/Annotator/config/vault_template
+anot8.org/r/?file=example.pdf&vault=https://raw.githubusercontent.com/CenterOfCI/Annotator/config/vault_template
 
-anot8.org resolver could be setup with `localstorage` state which maps vault of: "vault_template" to "https://raw.githubusercontent.com/AJamesPhillips/Annotator/config/vault_template".  So then this will also work:
+anot8.org resolver could be setup with `localstorage` state which maps vault of: "vault_template" to "https://raw.githubusercontent.com/CenterOfCI/Annotator/config/vault_template".  So then this will also work:
 
 anot8.org/r/?file=example.pdf&vault=vault_template
 
@@ -97,9 +97,9 @@ We could do something similar to doi.org and act as a central registry.  Then I 
 
 anot8.org/r/1772.1/2?h=1
 
-It knows that 1772 naming authority: AJP
-"AJP" knows .1 refers to the vault named "vault_template"
-Asks "AJP" what item 2 refers to, AJP responds and says get: "https://raw.githubusercontent.com/AJamesPhillips/Annotator/example_pdfs/visible_directory/example_2.pdf"
+It knows that 1772 naming authority: CCI
+"CCI" knows .1 refers to the vault named "vault_template"
+Asks "CCI" what item 2 refers to, CCI responds and says get: "https://raw.githubusercontent.com/CenterOfCI/Annotator/example_pdfs/visible_directory/example_2.pdf"
 
 So the render_pdf.html code loads that file.
 It also loads that file + ".annotations" and highlights the annotation with id == 1
@@ -109,9 +109,9 @@ ID mappings
 
 | ID               | From | To             |
 | ---------------- | ---- | -------------- |
-| Naming authority | 1772 | AJP            |
+| Naming authority | 1772 | CCI            |
 | Vault            | 1    | vault_template |
-| Item             | 2    | https://raw.githubusercontent.com/AJamesPhillips/ Annotator/example_pdfs/visible_directory/example_2.pdf |
+| Item             | 2    | https://raw.githubusercontent.com/CenterOfCI/ Annotator/example_pdfs/visible_directory/example_2.pdf |
 
 Local annotator script generates and updates mapping dictionary.
 
@@ -120,7 +120,7 @@ Example of mapping dictionary:
     resolve_vault = {
         "1772": {
             "1": {
-                "root_path": "https://raw.githubusercontent.com/AJamesPhillips/Annotator/",
+                "root_path": "https://raw.githubusercontent.com/CenterOfCI/Annotator/",
                 "schema_version": 1
             }
         }
@@ -158,7 +158,7 @@ Example of mapping dictionary:
         return request_urls
     }
 
-The resolver knows its root_path is: "https://raw.githubusercontent.com/AJamesPhillips/Annotator/" so prepends that.
+The resolver knows its root_path is: "https://raw.githubusercontent.com/CenterOfCI/Annotator/" so prepends that.
 
 #### localhost
 
@@ -186,11 +186,11 @@ Can manually edit it though.
 
 anot8.org/r/1772.vault_template/example_pdfs/visible_directory/example.pdf?h=1
 
-It knows that 1772  ===  naming authority: AJP
-"AJP" knows item 1 refers to the vault named "vault_template"
-Asks "AJP" where the vault config is, AJP responds and says: "https://raw.githubusercontent.com/AJamesPhillips/Annotator/config/vault_template.json"
-This contains the root path: "https://raw.githubusercontent.com/AJamesPhillips/Annotator/"
-So it knows that item "example_pdfs/visible_directory/example.pdf" can be found at: "https://raw.githubusercontent.com/AJamesPhillips/Annotator/example_pdfs/visible_directory/example.pdf"
+It knows that 1772  ===  naming authority: CCI
+"CCI" knows item 1 refers to the vault named "vault_template"
+Asks "CCI" where the vault config is, CCI responds and says: "https://raw.githubusercontent.com/CenterOfCI/Annotator/config/vault_template.json"
+This contains the root path: "https://raw.githubusercontent.com/CenterOfCI/Annotator/"
+So it knows that item "example_pdfs/visible_directory/example.pdf" can be found at: "https://raw.githubusercontent.com/CenterOfCI/Annotator/example_pdfs/visible_directory/example.pdf"
 
 So the render_pdf.html code loads that file.
 It also loads that file + ".annotations" and highlights the annotation with id == 1
