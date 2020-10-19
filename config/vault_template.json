@@ -1,7 +1,7 @@
 {
     "vault_id": 1,
     "root_path": "./src/../",
-    "publish_root_path": "https://raw.githubusercontent.com/CenterOfCI/anot8/main",
+    "publish_root_path": "https://raw.githubusercontent.com/CenterOfCI/anot8/master",
     "directories": [
         "example_pdfs/visible_directory"
     ],

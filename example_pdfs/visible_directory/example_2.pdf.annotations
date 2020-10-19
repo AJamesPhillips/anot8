@@ -7,10 +7,7 @@
 "height": "27px",
 "id": 0,
 "labels": [
-{
-"id": 1,
-"text": "txt"
-}
+"label one"
 ],
 "left": "393px",
 "page_number": 1,
