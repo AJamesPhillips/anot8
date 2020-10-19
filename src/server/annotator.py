@@ -17,13 +17,15 @@ from id_mappings import (
 )
 from anot8_org_config import upsert_perma_id_mappings_and_anot8_config, update_anot8_config
 from common import supported_relative_file_path, anot8_org_config_dir_path
-from annotations import upsert_meta_data_annotations_file
+from annotations import upsert_meta_data_annotations_file, upgrade_all_annotations
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 app = Flask(__name__)
 
 upsert_perma_id_mappings_and_anot8_config()
+upgrade_all_annotations()
+
 
 @app.after_request
 def add_header(response):

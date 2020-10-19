@@ -3,6 +3,10 @@ import json
 import os
 
 
+from vault_config import get_vault_configs
+from common import print_warning
+
+
 def has_annotations_file (root_path, data_file_relative_file_path):
     return os.path.isfile(root_path + data_file_relative_file_path + ".annotations")
 
@@ -81,3 +85,40 @@ def upgrade_meta_data(meta_data, current_schema_version):
     meta_data["schema_version"] = current_schema_version
 
     return meta_data
+
+
+def upgrade_all_annotations ():
+    for vault_config in get_vault_configs().values():
+        file_paths = get_annotation_relative_file_paths_in_vault(vault_config)
+        for annotations_relative_file_path in file_paths:
+            upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
+
+
+def get_annotation_relative_file_paths_in_vault (vault_config):
+    root_path = vault_config["root_path"]
+    all_directories = vault_config["all_directories"]
+
+    annotation_file_paths = []
+    broken_annotation_file_paths = []
+
+    for directory in all_directories:
+        dir_path = root_path + directory
+        file_names = os.listdir(dir_path)
+        for file_name in file_names:
+
+            is_not_a_file = not os.path.isfile(dir_path + file_name)
+            if is_not_a_file or not file_name.endswith(".annotations"):
+                continue
+
+            # check corresponding file exists
+            data_file_name = file_name.replace(".annotations", "")
+            absolute_data_file_path = dir_path + data_file_name
+            if os.path.isfile(absolute_data_file_path) or os.path.islink(absolute_data_file_path):
+                annotation_file_paths.append(directory + file_name)
+            else:
+                broken_annotation_file_paths.append(dir_path + file_name)
+
+    if broken_annotation_file_paths:
+        print_warning("{} broken annotation file paths: {}".format(len(broken_annotation_file_paths), "\n".join(broken_annotation_file_paths)))
+
+    return annotation_file_paths

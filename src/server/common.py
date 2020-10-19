@@ -43,35 +43,6 @@ def print_warning (msg):
     print("\n!!!!!!!!!!!!!\nWARNING: {msg} \n!!!!!!!!!!!!!\n".format(msg=msg))
 
 
-# def get_annotation_file_paths (vault_config):
-#     root_path = vault_config["root_path"]
-#     all_directories = vault_config["all_directories"]
-
-#     annotation_file_paths = []
-#     broken_annotation_file_paths = []
-
-#     for directory in all_directories:
-#         dir_path = root_path + directory
-#         file_names = os.listdir(dir_path)
-#         for file_name in file_names:
-#             if not os.path.isfile(dir_path + file_name) or not file_name.endswith(".annotations"):
-#                 continue
-
-#             # check corresponding file exists
-#             annotated_file_name = file_name.replace(".annotations", "")
-#             if os.path.isfile(dir_path + annotated_file_name):
-#                 annotation_file_paths.append(dir_path + file_name)
-#             else:
-#                 broken_annotation_file_paths.append(dir_path + file_name)
-
-#     if broken_annotation_file_paths:
-#         print("\n!!!!!!!!!!!!!\nWARNING: {} broken annotation file paths: {} \n!!!!!!!!!!!!!\n".format(len(broken_annotation_file_paths), ",".join(broken_annotation_file_paths)))
-
-#     return annotation_file_paths
-
-
-
-
 
 # def calculate_common_labels (vault_name):
 #     common_labels = dict()
