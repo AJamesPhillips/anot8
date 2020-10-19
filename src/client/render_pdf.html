@@ -196,6 +196,10 @@
         let url_to_file_annotations = undefined
         let url_to_write_file_annotations = undefined
 
+        let file_meta_data = {annotations: []}
+        let file_meta_data_loaded = false
+        let common_labels = []
+
         const promise_data_urls = new Promise((resolve) =>
         {
             const running_locally = window.location.host !== "anot8.org"
@@ -207,11 +211,13 @@
              */
             fetch(`/config/${naming_authority}/${vault_id}.json`)
             .then(resp => resp.json())
-            .then(config =>
+            .then(anot8_org_config =>
             {
+                common_labels = anot8_org_config.labels
+
                 if (running_locally)
                 {
-                    const relative_file_path = config.id_to_relative_file_name[file_id]
+                    const relative_file_path = anot8_org_config.id_to_relative_file_name[file_id]
 
                     url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
                     url_to_file_annotations = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}.annotations`
@@ -219,7 +225,6 @@
                 }
                 else
                 {
-                    const anot8_org_config = config  // to make it clear this is canonical mappings
                     const publish_root_path = anot8_org_config.publish_root_path
                     const relative_file_path = anot8_org_config.id_to_relative_file_name[file_id]
 
@@ -237,10 +242,6 @@
 
         })
 
-
-        let file_meta_data = {annotations: []}
-        let file_meta_data_loaded = false
-        let common_labels = [];  // "<COMMON_LABELS_DATA_JSON>";
 
         const not_deleted = annotation => !annotation.deleted
     </script>

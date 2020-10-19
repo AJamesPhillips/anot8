@@ -22,8 +22,9 @@ def update_anot8_configs ():
 def update_anot8_config (vault_config):
     anot8_org_config_file_name = anot8_org_config_dir_path + str(vault_config["vault_id"]) + ".json"
 
-    publish_root_path = vault_config.get("publish_root_path", "")
+    publish_root_path = vault_config["publish_root_path"]
     id_to_relative_file_name = get_id_map(vault_config)["id_to_relative_file_name"]
+    labels = vault_config["labels"]
 
     if not publish_root_path:
         # print_warning("No publish_root_path attribute for vault_config {vault_id}, {vault_name}".format(**vault_config))
@@ -35,6 +36,7 @@ def update_anot8_config (vault_config):
         config = dict(
             publish_root_path=publish_root_path,
             id_to_relative_file_name=id_to_relative_file_name,
+            labels=labels,
             schema_version=1,
         )
         json.dump(config, f, indent=0, ensure_ascii=False)
