@@ -99,10 +99,3 @@ At the moment this is only possible when running the server locally.
 Remember to:
 
     pip freeze > requirements.txt
-
-### Possible features
-
-#### On get fail recompute allowed_relative_file_paths
-
-If a new folder is added within an existing specified directory, or a PDF is added to an existing directory, neither it and its PDFs or the new PDFs will be served until the "populate_data" function is run again or the server is restarted.
-

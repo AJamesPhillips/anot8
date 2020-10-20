@@ -1017,7 +1017,11 @@
             {
                 const annotation_count = file_meta_data.annotations.length
 
-                if (!saved)
+                if (!url_to_write_file_annotations)
+                {
+                    auto_save_el.innerHTML = `<span style="background-color: yellow;">⚠</span> Saving not enabled. Must <a href="https://github.com/centerofci/anot8">run locally</a>.`
+                }
+                else if (!saved)
                 {
                     auto_save_el.innerText = "Auto saving..."
                     saving = true
