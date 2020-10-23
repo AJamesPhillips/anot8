@@ -219,6 +219,11 @@
                 {
                     const relative_file_path = anot8_org_config.id_to_relative_file_name[file_id]
 
+                    if (!relative_file_path)
+                    {
+                        console.error(`No relative_file_path for file_id ${file_id} `, anot8_org_config.id_to_relative_file_name)
+                    }
+
                     url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
                     url_to_file_annotations = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}.annotations`
                     url_to_write_file_annotations = `/annotations/${vault_id}?relative_file_path=${relative_file_path}.annotations`

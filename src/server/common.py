@@ -6,7 +6,6 @@ import sys
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config_dir_path = dir_path + "/../../config/"
-anot8_org_config_dir_path = dir_path + "/../../anot8_org_config/"
 
 
 def supported_relative_file_path (vault_config, relative_file_path):

@@ -17,8 +17,8 @@ from id_mappings import (
     perma_url,
     upsert_file_perma_id_mapping,
 )
-from anot8_org_config import upsert_perma_id_mappings_and_anot8_config, update_anot8_config
-from common import supported_relative_file_path, anot8_org_config_dir_path
+from anot8_org_config import upsert_perma_id_mappings_and_anot8_config, update_anot8_config, get_anot8_config_file_path
+from common import supported_relative_file_path
 from annotations import upsert_meta_data_annotations_file, upgrade_all_annotations
 
 
@@ -97,12 +97,12 @@ def vault_config_from_id (func):
 @vault_config_from_id
 def vault_files (vault_id, vault_config):
     root_path = vault_config["root_path"]
-    directories = vault_config["directories"]
+    all_directories = vault_config["all_directories"]
     pdf_file_path_html_links = ""
 
     naming_authority = get_naming_authority() or -1
 
-    for directory in directories:
+    for directory in all_directories:
         pdf_file_path_html_links += "<div>Directory: <span style=\"font-weight: bold;\">" + directory + "</span><br/>\n"
 
         file_names = os.listdir(root_path + directory)
@@ -287,7 +287,8 @@ def get_query_params ():
 # mirror what the static files in s3 will look like
 @app.route("/config/<naming_authority>/<vault_id>.json")
 def serve_vault_config(naming_authority, vault_id):
-    config_file_path = anot8_org_config_dir_path + vault_id + ".json"
-    with open(config_file_path, "r") as f:
+    vault_config = get_vault_config_by_id(vault_id)
+    anot8_org_config_file_path = get_anot8_config_file_path(vault_config)
+    with open(anot8_org_config_file_path, "r") as f:
         return f.read()
 
