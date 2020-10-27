@@ -231,14 +231,15 @@
             .then(anot8_org_config =>
             {
                 common_labels = anot8_org_config.labels
+                const id_to_relative_file_name = anot8_org_config.DO_NOT_EDIT_auto_generated_fields.id_to_relative_file_name
 
                 if (running_locally)
                 {
-                    const relative_file_path = anot8_org_config.id_to_relative_file_name[file_id]
+                    const relative_file_path = id_to_relative_file_name[file_id]
 
                     if (!relative_file_path)
                     {
-                        console.error(`No relative_file_path for file_id ${file_id} `, anot8_org_config.id_to_relative_file_name)
+                        console.error(`No relative_file_path for file_id ${file_id} `, id_to_relative_file_name)
                     }
 
                     url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
@@ -248,7 +249,7 @@
                 else
                 {
                     const publish_root_path = anot8_org_config.publish_root_path
-                    const relative_file_path = anot8_org_config.id_to_relative_file_name[file_id]
+                    const relative_file_path = id_to_relative_file_name[file_id]
 
                     url_to_file = `${publish_root_path}${relative_file_path}`
                     url_to_file_annotations = `${publish_root_path}${relative_file_path}.annotations`
