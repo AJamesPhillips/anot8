@@ -18,7 +18,7 @@ def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_p
     current_schema_version = 5
 
     if has_annotations_file(root_path, data_file_relative_file_path):
-        with open(root_path + annotations_relative_file_path, "r") as f:
+        with open(root_path + annotations_relative_file_path, "r", encoding="utf8") as f:
             meta_data = json.load(f)
     else:
         with open(root_path + data_file_relative_file_path, "rb") as f:
@@ -46,10 +46,15 @@ def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_p
     if meta_data["comments"]:
         print("Commments!! ", meta_data["comments"])
 
-    with open(root_path + annotations_relative_file_path, "w") as f:
-        json.dump(meta_data, f, indent=0, ensure_ascii=False)
+    annotations_file_path = root_path + annotations_relative_file_path
+    write_annotations_file(annotations_file_path, meta_data)
 
     return meta_data
+
+
+def write_annotations_file (annotations_file_path, data):
+    with open(annotations_file_path, "w", encoding="utf8") as f:
+        json.dump(data, f, indent=0, ensure_ascii=False)
 
 
 # Adapted from: https://stackoverflow.com/a/22058673/539490

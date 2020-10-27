@@ -153,6 +153,4 @@ def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
     with open(id_mappings_file_name, "w") as f:
         json.dump(mappings, f, indent=0, ensure_ascii=False)
 
-
-
     return new_id

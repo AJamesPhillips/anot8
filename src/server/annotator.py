@@ -19,7 +19,7 @@ from id_mappings import (
 )
 from anot8_org_config import upsert_perma_id_mappings_and_anot8_config, update_anot8_config, get_anot8_config_file_path
 from common import supported_relative_file_path
-from annotations import upsert_meta_data_annotations_file, upgrade_all_annotations
+from annotations import upsert_meta_data_annotations_file, upgrade_all_annotations, write_annotations_file
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -228,8 +228,8 @@ def update_annotations (vault_config, annotations_relative_file_path):
     meta_data["annotations"] = annotations
 
     # Racy but should be fine for single user
-    with open(root_path + annotations_relative_file_path, "w") as f:
-        json.dump(meta_data, f, indent=0, ensure_ascii=False)
+    annotations_file_path = root_path + annotations_relative_file_path
+    write_annotations_file(annotations_file_path, meta_data)
 
     return json.dumps(annotations, ensure_ascii=False)
 
