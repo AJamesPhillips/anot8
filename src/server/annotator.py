@@ -268,7 +268,7 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
         url += get_query_params()
         return redirect(url, code=302)
 
-    with open(dir_path + "/../client/render_pdf.html", "r") as f:
+    with open(dir_path + "/../client/render_pdf.html", "r", encoding="utf8") as f:
         html = f.read()
 
     return html
@@ -294,6 +294,6 @@ def get_query_params ():
 def serve_vault_config(naming_authority, vault_id):
     vault_config = get_vault_config_by_id(vault_id)
     anot8_org_config_file_path = get_anot8_config_file_path(vault_config)
-    with open(anot8_org_config_file_path, "r") as f:
+    with open(anot8_org_config_file_path, "r", encoding="utf8") as f:
         return f.read()
 

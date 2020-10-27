@@ -64,7 +64,7 @@ def write_anot8_org_vault_config (vault_config):
         "DO_NOT_EDIT_auto_generated_fields": vault_config["DO_NOT_EDIT_auto_generated_fields"]
     }
 
-    with open(anot8_org_config_file_path, "w") as f:
+    with open(anot8_org_config_file_path, "w", encoding="utf8") as f:
         json.dump(anot8_org_vault_config, f, indent=2, ensure_ascii=False)
 
 
