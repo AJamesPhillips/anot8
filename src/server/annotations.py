@@ -3,7 +3,6 @@ import json
 import os
 
 
-from vault_config import get_vault_configs
 from common import print_warning
 
 
@@ -92,8 +91,8 @@ def upgrade_meta_data(meta_data, current_schema_version):
     return meta_data
 
 
-def upgrade_all_annotations ():
-    for vault_config in get_vault_configs().values():
+def upgrade_all_annotations (vault_configs):
+    for vault_config in vault_configs:
         file_paths = get_annotation_relative_file_paths_in_vault(vault_config)
         for annotations_relative_file_path in file_paths:
             upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)

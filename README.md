@@ -20,13 +20,18 @@
 
 ## Configure a new vault
 
-    cp config/vault_template.json config/new_vault_name.json
+    cp config/1.json config/new_vault_id.json
 
-Increase the `vault_id` by 1
+Suggested to increment "new_vault_id" by 1 each time.
+
 
 ### Specifying sources (directories) of PDFs
 
-Edit the `directories` attribute to contain the directories of the files you want to annotate.  These can be absolute paths but we'd recommend using relative file paths.  Relative paths are relative to inside the top level directory so will typically start with `../`.  If you also set the `root_path` attribute then you can set the `directories` paths relative to this `root_path` instead.  This is preferable as when you sync files between different computers, if the directory subtree resides in a different root directory in the file system, then you only need to change the `root_path` config.
+Edit the `root_path` attribute to point to the parent directory for your PDFs to annotate.
+
+Once the annotate server has started you can:
+
+* edit the `directories` attribute to contain the directories of the files you want to annotate.  These are relative file.  They are relative to `root_path`.
 
 Specifying directories allows you to limit by whitelisting what files are available for the annotations server to serve.
 

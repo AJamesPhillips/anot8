@@ -7,7 +7,16 @@ import sys
 from flask import Flask, make_response, request, abort, jsonify, Response, redirect
 import jinja2
 
-from vault_config import get_vault_configs, get_vault_config_by_id
+from annotations import (
+    upsert_meta_data_annotations_file,
+    upgrade_all_annotations,
+    write_annotations_file,
+)
+from vault_config import (
+    upsert_anot8_config_and_perma_id_mappings,
+    get_vault_configs_by_id,
+    get_vault_config_by_id,
+)
 from id_mappings import (
     get_naming_authority,
     get_id_for_data_file_relative_file_path,
@@ -17,16 +26,18 @@ from id_mappings import (
     perma_url,
     upsert_file_perma_id_mapping,
 )
-from anot8_org_config import upsert_perma_id_mappings_and_anot8_config, update_anot8_config, get_anot8_config_file_path
+from anot8_org_config import (
+    upsert_anot8_vault_config,
+    get_anot8_config_file_path,
+)
 from common import supported_relative_file_path
-from annotations import upsert_meta_data_annotations_file, upgrade_all_annotations, write_annotations_file
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 app = Flask(__name__)
 
-upsert_perma_id_mappings_and_anot8_config()
-upgrade_all_annotations()
+upsert_anot8_config_and_perma_id_mappings()
+upgrade_all_annotations(get_vault_configs_by_id().values())
 
 
 @app.after_request
@@ -40,33 +51,33 @@ def add_header(response):
 
 @app.route("/")
 def index ():
-    vault_configs = get_vault_configs()
+    vault_configs_by_id = get_vault_configs_by_id()
 
     html = """<h1>Welcome to your local annotations server</h1>
-    See <a href="/vaults">list of ({}) vaults:</a>""".format(len(vault_configs))
+    See <a href="/vaults">list of ({}) vaults:</a>""".format(len(vault_configs_by_id))
 
-    html += html_list_of_vaults(vault_configs)
+    html += html_list_of_vaults(vault_configs_by_id)
 
     return html
 
 
 @app.route("/vaults")
 def vaults ():
-    vault_configs = get_vault_configs()
+    vault_configs_by_id = get_vault_configs_by_id()
 
-    if not vault_configs:
+    if not vault_configs_by_id:
         return "<h1>No vault configs</h1>"
 
-    vault_html_links = "<h1>{} vault configs</h1>".format(len(vault_configs))
-    vault_html_links += html_list_of_vaults(vault_configs)
+    vault_html_links = "<h1>{} vault configs</h1>".format(len(vault_configs_by_id))
+    vault_html_links += html_list_of_vaults(vault_configs_by_id)
 
     return vault_html_links
 
 
-def html_list_of_vaults (vault_configs):
+def html_list_of_vaults (vault_configs_by_id):
     vault_html_links = "<ul>"
 
-    for vault_config in vault_configs.values():
+    for vault_config in vault_configs_by_id.values():
         vault_html_links += "<li><a href=\"/vault/{vault_id}\">{vault_name}</a></li>".format(**vault_config)
 
     vault_html_links += "</ul>"
@@ -98,9 +109,7 @@ def vault_config_from_id (func):
 def vault_files (vault_id, vault_config):
     root_path = vault_config["root_path"]
     all_directories = vault_config["all_directories"]
-    pdf_file_path_html_links = ""
-
-    naming_authority = get_naming_authority() or -1
+    pdf_file_path_html_links = "" if all_directories else "No directories in vault {}".format(vault_config["vault_name"])
 
     for directory in all_directories:
         pdf_file_path_html_links += "<div>Directory: <span style=\"font-weight: bold;\">" + directory + "</span><br/>\n"
@@ -127,7 +136,7 @@ def vault_files (vault_id, vault_config):
 
 
 def perma_link_html (vault_config, data_file_relative_file_path):
-    if not get_naming_authority():
+    if get_naming_authority(vault_config) == "-1":
         return "&nbsp;&nbsp;&nbsp;No PermaLink yet"
 
     url = perma_url(vault_config, data_file_relative_file_path)
@@ -193,7 +202,7 @@ def serve_pdf_file (vault_config, relative_file_path):
 def serve_pdf_annotations (vault_config, annotations_relative_file_path):
     json_annotations = upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
     upsert_file_perma_id_mapping(vault_config, annotations_relative_file_path)
-    update_anot8_config(vault_config)
+    upsert_anot8_vault_config(vault_config)
 
     return jsonify(json_annotations)
 
@@ -213,7 +222,7 @@ def annotation (vault_id, vault_config):
 def update_annotations (vault_config, annotations_relative_file_path):
     meta_data = upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
     upsert_file_perma_id_mapping(vault_config, annotations_relative_file_path)
-    update_anot8_config(vault_config)
+    upsert_anot8_vault_config(vault_config)
     root_path = vault_config["root_path"]
 
     #populate_data(vault_name)
@@ -237,10 +246,6 @@ def update_annotations (vault_config, annotations_relative_file_path):
 @app.route("/r/<naming_authority_and_vault_id>/<file_id>")
 def perma_render_pdf (naming_authority_and_vault_id, file_id):
     [naming_authority_id, vault_id] = naming_authority_and_vault_id.split(".")
-
-    # naming_authority = get_naming_authority()
-    # if not naming_authority or naming_authority != naming_authority_id:
-    #     return "Cannot support rendering PDFs from different naming authority {} vs {} (you)".format(naming_authority_id, naming_authority), 400
 
     vault_config = get_vault_config_by_id(vault_id)
     if not vault_config:

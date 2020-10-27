@@ -42,6 +42,36 @@ def print_warning (msg):
     print("\n!!!!!!!!!!!!!\nWARNING: {msg} \n!!!!!!!!!!!!!\n".format(msg=msg))
 
 
+def check_for_required_attributes (obj, required_attributes):
+    for required_attribute in required_attributes:
+        required_attribute_name = required_attribute[0]
+
+        if required_attribute_name not in obj:
+            return [False, "Missing required attribute: {}".format(required_attribute_name)]
+
+        result = check_types(obj, required_attribute)
+        if not result[0]:
+            return result
+
+    return [True, None]
+
+
+def check_types (obj, attribute):
+    attribute_name = attribute[0]
+    attribute_type = attribute[1]
+    value = obj[attribute_name]
+
+    if not isinstance(value, attribute_type):
+        return [False, "Attribute: {} of type {} but require {}".format(attribute_name, type(value).__name__, attribute_type.__name__)]
+
+    if attribute_type == list:
+        sub_attribute_type = attribute[2]
+        for sub_value in value:
+            if not isinstance(sub_value, sub_attribute_type):
+                return [False, "Sub attribute of: {} \"{}\" of type {} but require {}".format(attribute_name, sub_value, type(sub_value).__name__, sub_attribute_type.__name__)]
+
+    return [True, None]
+
 
 # def calculate_common_labels (vault_name):
 #     common_labels = dict()
