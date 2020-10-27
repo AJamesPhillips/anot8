@@ -17,7 +17,7 @@ def get_vault_configs_by_id ():
     vault_configs_by_id = dict()
 
     for vault_id in vault_ids:
-        with open(config_dir_path + vault_id + ".json", encoding="utf8") as f:
+        with open(config_dir_path + vault_id + ".json", "r", encoding="utf8") as f:
             vault_config = json.load(f)
 
         result = check_vault_config(vault_config)
