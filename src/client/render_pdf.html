@@ -342,15 +342,29 @@
         {
             const vars = parse_location_search()
 
-            const highlighted_annotation_ids = (vars["highlighted_annotation_ids"]
-                ? vars["highlighted_annotation_ids"].split(",")
-                : [])
-                .map(i => parseInt(i, 10))
-
+            const h1_ids = get_ints(vars["h"])
+            const h2_ids = get_ints(vars["highlighted_annotation_ids"]) // legacy
+            const highlighted_annotation_ids = h1_ids.concat(h2_ids)
             // Check each actually exists
             const filtered_highlighted_annotation_ids = highlighted_annotation_ids.filter(annotation_exist)
 
             return filtered_highlighted_annotation_ids
+        }
+
+
+        function get_ints (url_str)
+        {
+            const str = (url_str || "")
+            let parts = []
+
+            if (str)
+            {
+                parts = str.split(",")
+                    .map(i => parseInt(i, 10))
+                    .filter(i => !Number.isNaN(i))
+            }
+
+            return parts
         }
 
 
@@ -458,14 +472,15 @@
         function update_page_location ({ highlighted_annotation_ids })
         {
             const vars = parse_location_search()
+            delete vars["highlighted_annotation_ids"] // legacy
 
             if (highlighted_annotation_ids.length)
             {
-                vars["highlighted_annotation_ids"] = highlighted_annotation_ids.join(",")
+                vars["h"] = highlighted_annotation_ids.join(",")
             }
             else
             {
-                delete vars["highlighted_annotation_ids"]
+                delete vars["h"]
             }
 
             const search = []
