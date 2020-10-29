@@ -1144,9 +1144,7 @@
             const priority_labels_json = JSON.parse(localStorage.getItem("priority_labels") || "[]")
             const priority_labels = new Set(priority_labels_json)
 
-            const hide_label_roots = [
-                "Specimen/Synthetic Specimen/Virus/Type/"
-            ]
+            const hide_label_roots = JSON.parse(localStorage.getItem("hide_label_roots") || "[]")
 
             common_labels
                 .map(label_str =>

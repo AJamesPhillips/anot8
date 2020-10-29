@@ -76,7 +76,25 @@ http://localhost:5003/r/-1.1/-1?relative_file_path=example_pdfs/visible_director
 
 When annotating specific pieces of data it's helpful to prioritise certain labels to the top of the labels list.  This can be done using:
 
-`localStorage.setItem("priority_labels", JSON.stringify(["label one"]))`
+    localStorage.setItem("priority_labels", JSON.stringify(["label one"]))
+
+### Hiding common label roots
+
+It's also possible to hide common label roots.  For example if you have the following labels:
+
+    "root label"
+    "root label/parent one/parent two/Alpha"
+    "root label/parent one/parent two/Bravo"
+
+And using the following:
+
+    localStorage.setItem("hide_label_roots", JSON.stringify(["root label/parent one/"]))
+
+Then the label list will display:
+
+    "parent two/Alpha"
+    "parent two/Bravo"
+    "root label"
 
 ## Feature examples for central resolving server
 
