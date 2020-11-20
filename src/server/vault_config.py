@@ -1,5 +1,6 @@
 import json
 import os
+import urllib.parse
 
 from common import project_root_dir_path, config_dir_path, check_for_required_attributes
 from anot8_org_config import upsert_anot8_vault_config
@@ -23,6 +24,9 @@ def get_vault_configs_by_id ():
             raise Exception(result[1])
 
         local_vault_id = vault_config_pointer["local_vault_id"]
+        local_vault_id = urllib.parse.quote_plus(local_vault_id)
+        vault_config_pointer["local_vault_id"] = local_vault_id
+
         root_path = standardise_path(vault_config_pointer["root_path"])
         normalised_root_path = root_path if root_path.startswith("/") else (project_root_dir_path + root_path)
 
