@@ -3,7 +3,7 @@ import os
 
 from common import print_warning
 from annotations import has_annotations_file, get_annotation_relative_file_paths_in_vault
-from anot8_org_config import write_anot8_org_vault_config
+from anot8_org_config import write_anot8_vault_config
 
 
 def get_naming_authority (vault_config):
@@ -50,8 +50,8 @@ def perma_path (**kwargs):
 
 
 def local_url (vault_config, data_file_relative_file_path):
-    naming_authority = get_naming_authority(vault_config)
-    vault_id = vault_config["vault_id"]
+    naming_authority = "-1" # get_naming_authority(vault_config)
+    vault_id = vault_config["local_vault_id"]
     file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
 
     url = perma_path(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
@@ -73,7 +73,7 @@ def perma_url (vault_config, data_file_relative_file_path):
     if not has_annotations_file(root_path, data_file_relative_file_path):
         return False
 
-    vault_id = vault_config["vault_id"]
+    vault_id = vault_config["local_vault_id"]
     file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
 
     if file_id == "-1":
@@ -101,7 +101,7 @@ def update_file_perma_ids_mapping (vault_config):
     vault_config["DO_NOT_EDIT_auto_generated_fields"]["id_to_relative_file_name"] = id_to_relative_file_name
     vault_config["DO_NOT_EDIT_auto_generated_fields"]["next_id"] = next_id
 
-    write_anot8_org_vault_config(vault_config)
+    write_anot8_vault_config(vault_config)
 
 
 def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
@@ -119,6 +119,6 @@ def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
     vault_config["DO_NOT_EDIT_auto_generated_fields"]["id_to_relative_file_name"] = id_to_relative_file_name
     vault_config["DO_NOT_EDIT_auto_generated_fields"]["next_id"] = next_id
 
-    write_anot8_org_vault_config(vault_config)
+    write_anot8_vault_config(vault_config)
 
     return new_id

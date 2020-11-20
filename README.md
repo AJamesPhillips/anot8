@@ -20,18 +20,17 @@
 
 ## Configure a new vault
 
-    cp config/1.json config/new_vault_id.json
+    cp config/local_vault_template.json config/new\ vault.json
 
-Suggested to increment "new_vault_id" by 1 each time.
-
+`new vault` can be any name.
 
 ### Specifying sources (directories) of PDFs
 
-Edit the `root_path` attribute to point to the parent directory for your PDFs to annotate.
+Edit the `root_path` attribute to point to the parent directory for your PDFs to annotate.  This can be relative or absolute.
 
-Once the annotate server has started you can:
+Once the annotate server has started it will create a new anot8_vault_config.json file at this new root_path directory.  You can then:
 
-* edit the `directories` attribute to contain the directories of the files you want to annotate.  These are relative file.  They are relative to `root_path`.
+* edit the `directories` attribute to contain the directories of the files you want to annotate.  These are relative to `root_path`.
 
 Specifying directories allows you to limit by whitelisting what files are available for the annotations server to serve.
 

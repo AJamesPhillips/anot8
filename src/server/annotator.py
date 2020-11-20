@@ -28,7 +28,6 @@ from id_mappings import (
 )
 from anot8_org_config import (
     upsert_anot8_vault_config,
-    get_anot8_config_file_path,
 )
 from common import supported_relative_file_path
 
@@ -78,7 +77,7 @@ def html_list_of_vaults (vault_configs_by_id):
     vault_html_links = "<ul>"
 
     for vault_config in vault_configs_by_id.values():
-        vault_html_links += "<li><a href=\"/vault/{vault_id}\">{vault_name}</a></li>".format(**vault_config)
+        vault_html_links += "<li><a href=\"/vault/{local_vault_id}\">{vault_name}</a></li>".format(**vault_config)
 
     vault_html_links += "</ul>"
 
@@ -287,13 +286,27 @@ def get_query_params ():
     return url
 
 
-# Note this is the ./anot8_org_config not the ./config
-# Ideally this would be <naming_authority>.<vault_id> instead of / but we need to
-# mirror what the static files in s3 will look like
-@app.route("/config/<naming_authority>/<vault_id>.json")
-def serve_vault_config(naming_authority, vault_id):
-    vault_config = get_vault_config_by_id(vault_id)
-    anot8_org_config_file_path = get_anot8_config_file_path(vault_config)
-    with open(anot8_org_config_file_path, "r", encoding="utf8") as f:
-        return f.read()
+# Note this is the local version of the anot8_org_na_lookup.json file
+@app.route("/local_na_lookup.json")
+def serve_local_na_lookup():
+    return """{
+        "-1": "/local_vault_lookup.json"
+    }"""
 
+
+@app.route("/local_vault_lookup.json")
+def serve_local_vault_lookup():
+    configs = get_vault_configs_by_id()
+
+    vault_lookup = {}
+    for local_vault_id in configs.keys():
+        vault_lookup[local_vault_id] = "/local_vault_config/{}.json".format(local_vault_id)
+
+    return json.dumps(vault_lookup)
+
+
+@app.route("/local_vault_config/<local_vault_id>.json")
+def serve_local_vault_config(local_vault_id):
+    vault_config = get_vault_config_by_id(local_vault_id)
+
+    return json.dumps(vault_config)

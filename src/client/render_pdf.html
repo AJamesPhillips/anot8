@@ -155,7 +155,6 @@
             const naming_authority_and_vault_ids = parts[parts.length - 2]
             let [naming_authority, vault_id] = naming_authority_and_vault_ids.split(".")
             naming_authority = parseInt(naming_authority)
-            vault_id = parseInt(vault_id)
 
             const file_id = parseInt(parts[parts.length - 1])
 
@@ -203,35 +202,45 @@
         const promise_data_urls = new Promise((resolve) =>
         {
             const running_locally = window.location.host !== "anot8.org"
+
             /*
-             * TODO
-             * use check against local storage for overriding vault config.
-             * If found, use that config, otherwise look to server for config.
-             * If no config found then, for now, error.
+             * check against local storage for overriding vault config.
+             * If found, use that config, otherwise look to central server for config.
              */
-            fetch(`https://raw.githubusercontent.com/centerofci/anot8/master/anot8_na_lookup.json`)
-            .then(resp => resp.json())
-            .then(anot8_org_naming_authority_lookup =>
+            let naming_authority_lookup_url = `https://raw.githubusercontent.com/centerofci/anot8/master/anot8_org_na_lookup.json`
+            if (running_locally && !localStorage.getItem("use_anot8_org_na_server"))
             {
-                const vault_lookup = anot8_org_naming_authority_lookup[naming_authority]
-                if (!vault_lookup)
+                naming_authority_lookup_url = localStorage.getItem("local_na_server_url") || `http://localhost:5003/local_na_lookup.json`
+            }
+
+            fetch(naming_authority_lookup_url)
+            .then(resp => resp.json())
+            .then(naming_authority_lookup =>
+            {
+                const vault_lookup_url = naming_authority_lookup[naming_authority]
+                if (!vault_lookup_url)
                 {
-                    console.error(`No naming_authority ${naming_authority} in anot8_org_naming_authority_lookup`, anot8_org_naming_authority_lookup)
+                    console.error(`No naming_authority ${naming_authority} in naming_authority_lookup`, naming_authority_lookup)
                 }
 
-                const anot8_org_config_path = vault_lookup[vault_id]
-                if (!anot8_org_config_path)
+                return fetch(vault_lookup_url)
+            })
+            .then(resp => resp.json())
+            .then(vault_lookup =>
+            {
+                const config_path = vault_lookup[vault_id]
+                if (!config_path)
                 {
                     console.error(`No vault_id ${vault_id} in vault_lookup`, vault_lookup)
                 }
 
-                return fetch(anot8_org_config_path)
+                return fetch(config_path)
             })
             .then(resp => resp.json())
-            .then(anot8_org_config =>
+            .then(config =>
             {
-                common_labels = anot8_org_config.labels
-                const id_to_relative_file_name = anot8_org_config.DO_NOT_EDIT_auto_generated_fields.id_to_relative_file_name
+                common_labels = config.labels
+                const id_to_relative_file_name = config.DO_NOT_EDIT_auto_generated_fields.id_to_relative_file_name
 
                 if (running_locally)
                 {
@@ -248,7 +257,7 @@
                 }
                 else
                 {
-                    const publish_root_path = anot8_org_config.publish_root_path
+                    const publish_root_path = config.publish_root_path
                     const relative_file_path = id_to_relative_file_name[file_id]
 
                     url_to_file = `${publish_root_path}${relative_file_path}`

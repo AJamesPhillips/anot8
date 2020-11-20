@@ -1,7 +1,7 @@
 import json
 import os
 
-from common import config_dir_path, check_for_required_attributes
+from common import project_root_dir_path, config_dir_path, check_for_required_attributes
 from anot8_org_config import upsert_anot8_vault_config
 from id_mappings import update_file_perma_ids_mapping
 
@@ -12,44 +12,47 @@ def upsert_anot8_config_and_perma_id_mappings ():
 
 
 def get_vault_configs_by_id ():
-    vault_ids = get_vault_ids()
+    vault_config_pointers = get_vault_config_pointers()
 
     vault_configs_by_id = dict()
 
-    for vault_id in vault_ids:
-        with open(config_dir_path + vault_id + ".json", "r", encoding="utf8") as f:
-            vault_config = json.load(f)
-
-        result = check_vault_config(vault_config)
-
+    for vault_config_pointer in vault_config_pointers:
+        result = check_vault_config(vault_config_pointer)
         if not result[0]:
+            print(vault_config_pointer)
             raise Exception(result[1])
 
-        vault_config["root_path"] = standardise_path(vault_config["root_path"])
-        vault_config["vault_id"] = vault_id
+        local_vault_id = vault_config_pointer["local_vault_id"]
+        root_path = standardise_path(vault_config_pointer["root_path"])
+        normalised_root_path = root_path if root_path.startswith("/") else (project_root_dir_path + root_path)
 
-        vault_config = upsert_anot8_vault_config(vault_config)
+        vault_config_pointer["root_path"] = normalised_root_path
+
+        vault_config = upsert_anot8_vault_config(vault_config_pointer)
 
         standardise_paths(vault_config)
         check_directories(vault_config)
         add_all_directories(vault_config)
 
-        vault_configs_by_id[vault_id] = vault_config
+        vault_configs_by_id[local_vault_id] = vault_config
 
     return vault_configs_by_id
 
 
-def get_vault_ids ():
-    vault_ids = os.listdir(config_dir_path)
+def get_vault_config_pointers ():
+    vault_config_pointers = os.listdir(config_dir_path)
 
-    filtered_vault_ids = []
+    filtered_vault_config_pointers = []
 
-    for name in vault_ids:
-        if os.path.isfile(config_dir_path + name) and name.endswith(".json"):
-            vault_name = name.replace(".json", "")
-            filtered_vault_ids.append(vault_name)
+    for name in vault_config_pointers:
+        file_path = config_dir_path + name
+        if os.path.isfile(file_path) and name.endswith(".json"):
+            with open(file_path, "r") as f:
+                vault_config_pointer = json.load(f)
+                vault_config_pointer["vault_name"] = name.replace(".json", "")
+                filtered_vault_config_pointers.append(vault_config_pointer)
 
-    return filtered_vault_ids
+    return filtered_vault_config_pointers
 
 
 def get_vault_config_by_id (vault_id):
@@ -60,7 +63,7 @@ def get_vault_config_by_id (vault_id):
 
 def check_vault_config (vault_config):
     required_attributes = [
-        ["vault_name", str],
+        ["local_vault_id", str],
         ["root_path", str],
     ]
 
