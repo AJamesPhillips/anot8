@@ -24,6 +24,7 @@
 
 `new vault` can be any name.
 
+
 ### Specifying sources (directories) of PDFs
 
 Edit the `root_path` attribute to point to the parent directory for your PDFs to annotate.  This can be relative or absolute.
@@ -33,6 +34,7 @@ Once the annotate server has started it will create a new anot8_vault_config.jso
 * edit the `directories` attribute to contain the directories of the files you want to annotate.  These are relative to `root_path`.
 
 Specifying directories allows you to limit by whitelisting what files are available for the annotations server to serve.
+
 
 ### Specifying labels
 
@@ -46,17 +48,20 @@ Edit the `labels` attribute to be a list of strings.   e.g.
     . venv/bin/activate
     export FLASK_APP=src/server/annotator.py && flask run --port=5003
 
+
 ## Feature examples for local server
 
 ### Show all annotation vaults
 
 http://localhost:5003/vaults
 
+
 ### See PDFs coverd by a particular vault
 
 Replace "1" with your annotations vault id
 
 http://localhost:5003/vault/1
+
 
 ### View and annotating local PDFs
 
@@ -71,11 +76,17 @@ The naming authority id is only needed for anot8.org permalinks.  And file id is
 http://localhost:5003/r/-1.1/-1?relative_file_path=example_pdfs/visible_directory/example_2.pdf
 
 
+#### Local vault id versus anot8 vault id
+
+Additionally when you first set up a vault of PDFs to annotate, the vault will not have yet been assigned an anot8.org vault id.  So you access your vault through the `local_vault_id` you specify in the json files in the /config directory.  For the "local_vault_template" vault the local_vault_id is "demo".  So the example PDFs in this repo can be accessed using: http://localhost:5003/r/-1.demo/1
+
+
 ### Priority labels
 
 When annotating specific pieces of data it's helpful to prioritise certain labels to the top of the labels list.  This can be done using:
 
     localStorage.setItem("priority_labels", JSON.stringify(["label one"]))
+
 
 ### Hiding common label roots
 
@@ -95,6 +106,14 @@ Then the label list will display:
     "parent two/Bravo"
     "root label"
 
+
+### Use anot8.org server when running locally
+
+When running locally, the render_pdf.html file can be forced to use anot8.org server by setting:
+
+    localStorage.setItem("use_anot8_org_naming_authority_server", "1") // set value to "" to stop
+
+
 ## Feature examples for central resolving server
 
 ### Permalinks
@@ -105,9 +124,11 @@ Once set up the following anot8.org URLs should work:
 
 https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0
 
+
 ### Redirect from anot8.org to local
 
 TODO ~~You can visit anot8.org/resolver and follow the instructions to allow it to find your local server.  It will store the information in that browsers local storage.  Redirecting to local will be faster in terms of download speed and will also allow you to annotation your (local) files.~~
+
 
 ### Annotating files
 
@@ -121,6 +142,7 @@ At the moment this is only possible when running the server locally.
 Remember to:
 
     pip freeze > requirements.txt
+
 
 ## Deployment
 
