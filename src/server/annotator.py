@@ -28,7 +28,7 @@ from id_mappings import (
     perma_url,
     upsert_file_perma_id_mapping,
 )
-from anot8_org_config import (
+from anot8_vault_config import (
     upsert_anot8_vault_config,
 )
 from common import supported_relative_file_path

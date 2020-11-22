@@ -3,7 +3,7 @@ import os
 
 from common import print_warning
 from annotations import has_annotations_file, get_annotation_relative_file_paths_in_vault
-from anot8_org_config import write_anot8_vault_config
+from anot8_vault_config import write_anot8_vault_config
 
 
 def get_naming_authority (vault_config):

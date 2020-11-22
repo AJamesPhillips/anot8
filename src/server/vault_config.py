@@ -3,7 +3,7 @@ import os
 import urllib.parse
 
 from common import project_root_dir_path, config_dir_path, check_for_required_attributes
-from anot8_org_config import upsert_anot8_vault_config
+from anot8_vault_config import upsert_anot8_vault_config
 from id_mappings import update_file_perma_ids_mapping
 
 
