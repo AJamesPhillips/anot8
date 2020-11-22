@@ -125,7 +125,8 @@ Remember to:
 ## Deployment
 
 * Upload /src/client/render_pdf.html to anot8.org s3 bucket.
+* Expand `Additional upload options`
 * Under Access control list (ACL) make sure everytime to re-check `Everyone (public access): Read` ...
 * ... followed by `I understand the effects of these changes on this object.`
-* Edit the meta data for `Content-Type` from `text/html` to `text/html; charset=utf8`
+* Edit the meta data for Type: `System defined`, Key: `Content-Type` from `text/html` to `text/html; charset=utf8`
 

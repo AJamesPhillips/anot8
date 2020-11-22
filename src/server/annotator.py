@@ -16,6 +16,8 @@ from vault_config import (
     upsert_anot8_config_and_perma_id_mappings,
     get_vault_configs_by_id,
     get_vault_config_by_id,
+    get_vault_config_naming_authorities,
+    local_similar_perma_links_available,
 )
 from id_mappings import (
     get_naming_authority,
@@ -40,7 +42,7 @@ upgrade_all_annotations(get_vault_configs_by_id().values())
 
 
 @app.after_request
-def add_header(response):
+def add_header (response):
     # if "Cache-Control" not in response.headers:
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
@@ -77,7 +79,15 @@ def html_list_of_vaults (vault_configs_by_id):
     vault_html_links = "<ul>"
 
     for vault_config in vault_configs_by_id.values():
-        vault_html_links += "<li><a href=\"/vault/{local_vault_id}\">{vault_name}</a></li>".format(**vault_config)
+        local_perma_links_available = "(local similar perma linking available)" if local_similar_perma_links_available(vault_config) else ""
+
+        vault_html_links += """<li>
+            <a href=\"/vault/{local_vault_id}\">
+                {local_vault_name} {local_perma_links_available}
+            </a>
+        </li>""".format(
+            local_perma_links_available=local_perma_links_available,
+            **vault_config)
 
     vault_html_links += "</ul>"
 
@@ -87,7 +97,7 @@ def html_list_of_vaults (vault_configs_by_id):
 def vault_config_from_id (func):
 
     @wraps(func)
-    def decorated_function(vault_id):
+    def decorated_function (vault_id):
         vault_config = None
         try:
             vault_config = get_vault_config_by_id(vault_id)
@@ -108,7 +118,7 @@ def vault_config_from_id (func):
 def vault_files (vault_id, vault_config):
     root_path = vault_config["root_path"]
     all_directories = vault_config["all_directories"]
-    pdf_file_path_html_links = "" if all_directories else "No directories in vault {}".format(vault_config["vault_name"])
+    pdf_file_path_html_links = "" if all_directories else "No directories in vault {}".format(vault_config["local_vault_name"])
 
     for directory in all_directories:
         pdf_file_path_html_links += "<div>Directory: <span style=\"font-weight: bold;\">" + directory + "</span><br/>\n"
@@ -224,8 +234,6 @@ def update_annotations (vault_config, annotations_relative_file_path):
     upsert_anot8_vault_config(vault_config)
     root_path = vault_config["root_path"]
 
-    #populate_data(vault_name)
-
     annotations = request.get_json()  # TODO validate this data
 
     # Racy but should be fine for single user
@@ -286,27 +294,35 @@ def get_query_params ():
     return url
 
 
-# Note this is the local version of the anot8_org_na_lookup.json file
-@app.route("/local_na_lookup.json")
-def serve_local_na_lookup():
-    return """{
-        "-1": "/local_vault_lookup.json"
-    }"""
+# Note this is the local version of the anot8_org_naming_authority_lookup.json file
+@app.route("/local_naming_authority_lookup.json")
+def serve_local_naming_authority_lookup ():
+    naming_authorities = get_vault_config_naming_authorities()
+
+    naming_authority_lookup = {}
+    for naming_authority in naming_authorities:
+        naming_authority_lookup[naming_authority] = "/local_vault_lookup.json"
+
+    return json.dumps(naming_authority_lookup)
 
 
 @app.route("/local_vault_lookup.json")
-def serve_local_vault_lookup():
-    configs = get_vault_configs_by_id()
+def serve_local_vault_lookup ():
+    vault_configs_by_id = get_vault_configs_by_id()
+    vault_configs_by_alternative_id = get_vault_configs_by_id(use_alternative_id=True)
+
+    vault_config_ids = list(vault_configs_by_id.keys()) + list(vault_configs_by_alternative_id.keys())
+    # TODO warn if conflict between vault ids
 
     vault_lookup = {}
-    for local_vault_id in configs.keys():
-        vault_lookup[local_vault_id] = "/local_vault_config/{}.json".format(local_vault_id)
+    for vault_id in vault_config_ids:
+        vault_lookup[vault_id] = "/local_vault_config/{}.json".format(vault_id)
 
     return json.dumps(vault_lookup)
 
 
-@app.route("/local_vault_config/<local_vault_id>.json")
-def serve_local_vault_config(local_vault_id):
-    vault_config = get_vault_config_by_id(local_vault_id)
+@app.route("/local_vault_config/<vault_id>.json")
+def serve_local_vault_config (vault_id):
+    vault_config = get_vault_config_by_id(vault_id)
 
     return json.dumps(vault_config)

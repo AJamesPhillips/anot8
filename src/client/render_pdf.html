@@ -207,10 +207,10 @@
              * check against local storage for overriding vault config.
              * If found, use that config, otherwise look to central server for config.
              */
-            let naming_authority_lookup_url = `https://raw.githubusercontent.com/centerofci/anot8/master/anot8_org_na_lookup.json`
+            let naming_authority_lookup_url = `https://raw.githubusercontent.com/centerofci/anot8/master/anot8_org_naming_authority_lookup.json`
             if (running_locally && !localStorage.getItem("use_anot8_org_na_server"))
             {
-                naming_authority_lookup_url = localStorage.getItem("local_na_server_url") || `http://localhost:5003/local_na_lookup.json`
+                naming_authority_lookup_url = localStorage.getItem("local_naming_authority_server_url") || `http://localhost:5003/local_naming_authority_lookup.json`
             }
 
             fetch(naming_authority_lookup_url)

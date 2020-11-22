@@ -12,62 +12,90 @@ def upsert_anot8_config_and_perma_id_mappings ():
         update_file_perma_ids_mapping(vault_config)
 
 
-def get_vault_configs_by_id ():
-    vault_config_pointers = get_vault_config_pointers()
+def get_vault_configs_by_id (use_alternative_id=False):
+    local_vault_configs = get_local_vault_configs()
 
     vault_configs_by_id = dict()
 
-    for vault_config_pointer in vault_config_pointers:
-        result = check_vault_config(vault_config_pointer)
+    for local_vault_config in local_vault_configs:
+        result = check_local_vault_config(local_vault_config)
         if not result[0]:
-            print(vault_config_pointer)
+            print(local_vault_config)
             raise Exception(result[1])
 
-        local_vault_id = vault_config_pointer["local_vault_id"]
+        local_vault_id = local_vault_config["local_vault_id"]
         local_vault_id = urllib.parse.quote_plus(local_vault_id)
-        vault_config_pointer["local_vault_id"] = local_vault_id
+        local_vault_config["local_vault_id"] = local_vault_id
 
-        root_path = standardise_path(vault_config_pointer["root_path"])
+        root_path = standardise_path(local_vault_config["root_path"])
         normalised_root_path = root_path if root_path.startswith("/") else (project_root_dir_path + root_path)
 
-        vault_config_pointer["root_path"] = normalised_root_path
+        local_vault_config["root_path"] = normalised_root_path
 
-        vault_config = upsert_anot8_vault_config(vault_config_pointer)
+        vault_config = upsert_anot8_vault_config(local_vault_config)
 
         standardise_paths(vault_config)
         check_directories(vault_config)
         add_all_directories(vault_config)
 
-        vault_configs_by_id[local_vault_id] = vault_config
+        if use_alternative_id:
+            if local_similar_perma_links_available(vault_config):
+                alternative_local_vault_id = vault_config["alternative_local_vault_id"]
+                vault_configs_by_id[alternative_local_vault_id] = vault_config
+        else:
+            vault_configs_by_id[local_vault_id] = vault_config
 
     return vault_configs_by_id
 
 
-def get_vault_config_pointers ():
-    vault_config_pointers = os.listdir(config_dir_path)
+# TODO: the names `local_similar_perma_links_available` and `alternative_local_vault_id` are not right yet
+def local_similar_perma_links_available (vault_config):
+    return vault_config["naming_authority"] and vault_config["alternative_local_vault_id"]
 
-    filtered_vault_config_pointers = []
 
-    for name in vault_config_pointers:
+def get_local_vault_configs ():
+    local_vault_configs = os.listdir(config_dir_path)
+
+    filtered_local_vault_configs = []
+
+    for name in local_vault_configs:
         file_path = config_dir_path + name
         if os.path.isfile(file_path) and name.endswith(".json"):
             with open(file_path, "r") as f:
-                vault_config_pointer = json.load(f)
-                vault_config_pointer["vault_name"] = name.replace(".json", "")
-                filtered_vault_config_pointers.append(vault_config_pointer)
+                local_vault_config = json.load(f)
+                local_vault_config["local_vault_name"] = name.replace(".json", "")
+                filtered_local_vault_configs.append(local_vault_config)
 
-    return filtered_vault_config_pointers
+    return filtered_local_vault_configs
 
 
 def get_vault_config_by_id (vault_id):
     vault_configs_by_id = get_vault_configs_by_id()
     vault_config = vault_configs_by_id.get(vault_id, None)
+
+    if vault_config is None:
+        vault_configs_by_id = get_vault_configs_by_id(use_alternative_id=True)
+        vault_config = vault_configs_by_id.get(vault_id, None)
+
     return vault_config
 
 
-def check_vault_config (vault_config):
+def get_vault_config_naming_authorities ():
+    vault_configs_by_id = get_vault_configs_by_id()
+    naming_authorities = []
+
+    for vault_config in vault_configs_by_id.values():
+        naming_authority = vault_config["naming_authority"] or "-1"
+        naming_authorities.append(naming_authority)
+
+    unique_naming_authorities = list(set(naming_authorities))
+    return unique_naming_authorities
+
+
+def check_local_vault_config (vault_config):
     required_attributes = [
         ["local_vault_id", str],
+        ["local_vault_name", str],
         ["root_path", str],
     ]
 
