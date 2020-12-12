@@ -157,22 +157,6 @@ def perma_link_html (vault_config, data_file_relative_file_path):
     return "&nbsp;&nbsp;&nbsp;<a href=\"{url}\">{url_short}</a>\n".format(url=url, url_short=url_short)
 
 
-# May retire this page
-# @app.route("/render/<vault_id>")
-# @vault_config_from_id
-# def render_pdf (vault_id, vault_config):
-#     relative_file_path = request.args.get("relative_file_path", None)
-
-#     supported = supported_relative_file_path(vault_config, relative_file_path)
-#     if not supported["supported"]:
-#         return "<h1>Unknown relative_file_path {}</h1>".format(jinja2.escape(relative_file_path)), 404
-
-#     with open(dir_path + "/../client/render_pdf.html", "r") as f:
-#         html = f.read()
-
-#     return html
-
-
 @app.route("/serve_file/<vault_id>")
 @vault_config_from_id
 def serve_file (vault_id, vault_config):
@@ -252,28 +236,34 @@ def update_annotations (vault_config, annotations_relative_file_path):
 
 @app.route("/r/<naming_authority_and_vault_id>/<file_id>")
 def perma_render_pdf (naming_authority_and_vault_id, file_id):
-    [naming_authority_id, vault_id] = naming_authority_and_vault_id.split(".")
+    # anot8.org is a static site (s3 bucket) and does no error handling.
+    # Disabling error handling here allows for developing the render_pdf script
+    # locally in a similiar environment to when it is deployed on static live site.
+    error_handling = False
 
-    vault_config = get_vault_config_by_id(vault_id)
-    if not vault_config:
-        return "Unknown vault id {}".format(vault_id), 404
+    if error_handling:
+        [naming_authority_id, vault_id] = naming_authority_and_vault_id.split(".")
 
-    data_file_relative_file_path = get_data_file_relative_file_path_for_id(vault_config, file_id)
-    if not data_file_relative_file_path:
-        # fall back to `relative_file_path` query parameter
-        relative_file_path = request.args.get("relative_file_path", "")
-        if not relative_file_path:
-            return "Unknown file id '{}' in vault '{}'".format(file_id, vault_id), 404
+        vault_config = get_vault_config_by_id(vault_id)
+        if not vault_config:
+            return "Unknown vault id {}".format(vault_id), 404
 
-        supported = supported_relative_file_path(vault_config, relative_file_path)
-        if not supported["supported"]:
-            return "Unknown relative_file_path '{}'".format(jinja2.escape(relative_file_path)), 404
+        data_file_relative_file_path = get_data_file_relative_file_path_for_id(vault_config, file_id)
+        if not data_file_relative_file_path:
+            # fall back to `relative_file_path` query parameter
+            relative_file_path = request.args.get("relative_file_path", "")
+            if not relative_file_path:
+                return "Unknown file id '{}' in vault '{}'".format(file_id, vault_id), 404
 
-        file_id = get_id_for_data_file_relative_file_path(vault_config, relative_file_path)
+            supported = supported_relative_file_path(vault_config, relative_file_path)
+            if not supported["supported"]:
+                return "Unknown relative_file_path '{}'".format(jinja2.escape(relative_file_path)), 404
 
-        url = perma_path(naming_authority=naming_authority_id, vault_id=vault_id, file_id=file_id)
-        url += get_query_params()
-        return redirect(url, code=302)
+            file_id = get_id_for_data_file_relative_file_path(vault_config, relative_file_path)
+
+            url = perma_path(naming_authority=naming_authority_id, vault_id=vault_id, file_id=file_id)
+            url += get_query_params()
+            return redirect(url, code=302)
 
     with open(dir_path + "/../client/render_pdf.html", "r", encoding="utf8") as f:
         html = f.read()
