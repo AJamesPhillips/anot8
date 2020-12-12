@@ -84,6 +84,9 @@ def get_vault_config_naming_authorities ():
     vault_configs_by_id = get_vault_configs_by_id()
     naming_authorities = []
 
+    # Always allow local access
+    naming_authorities.append("-1")
+
     for vault_config in vault_configs_by_id.values():
         naming_authority = vault_config["naming_authority"] or "-1"
         naming_authorities.append(naming_authority)
