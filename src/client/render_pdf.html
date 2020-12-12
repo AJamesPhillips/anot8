@@ -148,12 +148,8 @@
             const parts = window.location.pathname.split("/")
                 .filter(p => !!p)
 
-            // Valid for /render/1?relative_file_path=example_pdfs/visible_directory/example_2.pdf
-            // const vault_id = parseInt(parts[parts.length - 1])
-            // const error = Number.isNaN(vault_id)
-
             const naming_authority_and_vault_ids = parts[parts.length - 2]
-            let [naming_authority, vault_id] = naming_authority_and_vault_ids.split(".")
+            const [naming_authority, vault_id] = naming_authority_and_vault_ids.split(".")
 
             const file_id = parts[parts.length - 1]
 

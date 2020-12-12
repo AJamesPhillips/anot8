@@ -263,11 +263,11 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
         # fall back to `relative_file_path` query parameter
         relative_file_path = request.args.get("relative_file_path", "")
         if not relative_file_path:
-            return "Unknown file id {}, relative_file_path {} in vault {}".format(file_id, relative_file_path, vault_id), 404
+            return "Unknown file id '{}' in vault '{}'".format(file_id, vault_id), 404
 
         supported = supported_relative_file_path(vault_config, relative_file_path)
         if not supported["supported"]:
-            return "Unknown relative_file_path {}".format(jinja2.escape(relative_file_path)), 404
+            return "Unknown relative_file_path '{}'".format(jinja2.escape(relative_file_path)), 404
 
         file_id = get_id_for_data_file_relative_file_path(vault_config, relative_file_path)
 
