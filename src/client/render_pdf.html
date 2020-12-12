@@ -208,6 +208,8 @@
                 naming_authority_lookup_url = `/local_naming_authority_lookup.json`
             }
 
+            const loading_progress_el = document.getElementById("loading_progress")
+
             fetch(naming_authority_lookup_url)
             .then(resp => resp.json())
             .then(naming_authority_lookup =>
@@ -215,7 +217,10 @@
                 const vault_lookup_url = naming_authority_lookup[naming_authority]
                 if (!vault_lookup_url)
                 {
-                    console.error(`No naming_authority ${naming_authority} in naming_authority_lookup`, naming_authority_lookup)
+                    const msg = `No naming_authority ${naming_authority} in naming_authority_lookup`
+                    console.error(msg, naming_authority_lookup)
+                    loading_progress_el.innerHTML = `Error: naming authority "${naming_authority}" not found`
+                    return
                 }
 
                 return fetch(vault_lookup_url)
@@ -227,6 +232,8 @@
                 if (!config_path)
                 {
                     console.error(`No vault_id ${vault_id} in vault_lookup`, vault_lookup)
+                    loading_progress_el.innerHTML = `Error: vault id "${vault_id}" not found`
+                    return
                 }
 
                 return fetch(config_path)
@@ -244,6 +251,8 @@
                     if (!relative_file_path)
                     {
                         console.error(`No relative_file_path for file_id ${file_id} `, id_to_relative_file_name)
+                        loading_progress_el.innerHTML = `Error: No relative file path for file id "${file_id}"`
+                        return
                     }
 
                     url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
@@ -1271,7 +1280,7 @@
         // Loading progress
 
         let _max_pages = undefined
-        let loading_progress_el = document.getElementById("loading_progress")
+        const loading_progress_el = document.getElementById("loading_progress")
         function update_loading_progress ({ page_number, max_pages })
         {
             page_number = page_number || 0
