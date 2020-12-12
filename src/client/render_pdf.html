@@ -154,9 +154,8 @@
 
             const naming_authority_and_vault_ids = parts[parts.length - 2]
             let [naming_authority, vault_id] = naming_authority_and_vault_ids.split(".")
-            naming_authority = parseInt(naming_authority)
 
-            const file_id = parseInt(parts[parts.length - 1])
+            const file_id = parts[parts.length - 1]
 
             return {
                 naming_authority,
@@ -1026,6 +1025,10 @@
             {
                 const anot8_url = `https://anot8.org/r/${naming_authority}.${vault_id}/${file_id}`
                 link_to_pdf_el.innerHTML += `<br/>\n <a href="${anot8_url}">PermaLink: ${anot8_url}</a>`
+            }
+            else
+            {
+                link_to_pdf_el.innerHTML += `<br/>\n <span style="color: grey; font-size: small;">PermaLink not available (-1 present in part of link)</span>`
             }
         }
 
