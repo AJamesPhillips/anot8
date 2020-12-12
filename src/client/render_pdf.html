@@ -244,17 +244,16 @@
                 common_labels = config.labels
                 const id_to_relative_file_name = config.DO_NOT_EDIT_auto_generated_fields.id_to_relative_file_name
 
+                const relative_file_path = id_to_relative_file_name[file_id]
+                if (!relative_file_path)
+                {
+                    console.error(`No relative_file_path for file_id ${file_id} `, id_to_relative_file_name)
+                    loading_progress_el.innerHTML = `Error: No relative file path found for file id "${file_id}"`
+                    return
+                }
+
                 if (running_locally)
                 {
-                    const relative_file_path = id_to_relative_file_name[file_id]
-
-                    if (!relative_file_path)
-                    {
-                        console.error(`No relative_file_path for file_id ${file_id} `, id_to_relative_file_name)
-                        loading_progress_el.innerHTML = `Error: No relative file path for file id "${file_id}"`
-                        return
-                    }
-
                     url_to_file = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}`
                     url_to_file_annotations = `/serve_file/${vault_id}?relative_file_path=${relative_file_path}.annotations`
                     url_to_write_file_annotations = `/annotations/${vault_id}?relative_file_path=${relative_file_path}.annotations`
@@ -262,7 +261,6 @@
                 else
                 {
                     const publish_root_path = config.publish_root_path
-                    const relative_file_path = id_to_relative_file_name[file_id]
 
                     url_to_file = `${publish_root_path}${relative_file_path}`
                     url_to_file_annotations = `${publish_root_path}${relative_file_path}.annotations`
