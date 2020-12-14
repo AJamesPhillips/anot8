@@ -73,7 +73,10 @@ def perma_url (vault_config, data_file_relative_file_path):
     if not has_annotations_file(root_path, data_file_relative_file_path):
         return False
 
-    vault_id = vault_config["local_vault_id"]
+    vault_id = vault_config["alternative_local_vault_id"]
+    if not vault_id:
+        return False
+
     file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
 
     if file_id == "-1":
