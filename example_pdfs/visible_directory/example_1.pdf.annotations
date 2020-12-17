@@ -3,18 +3,17 @@
 "annotations": [
 {
 "colour": "rgba(200, 200, 255, 0.6)",
-"comment": "Another annotation",
-"height": "28px",
+"comment": "Annotation is useful",
+"height": "27px",
 "id": 0,
 "labels": [
-"another label",
 "label one"
 ],
-"left": "92px",
+"left": "393px",
 "page_number": 1,
-"text": "Some text.",
-"top": "135px",
-"width": "94px"
+"text": "annotate",
+"top": "137px",
+"width": "80px"
 }
 ],
 "comments": [],

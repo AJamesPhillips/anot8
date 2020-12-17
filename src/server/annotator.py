@@ -82,9 +82,8 @@ def html_list_of_vaults (vault_configs_by_id):
         local_perma_links_available = "(local similar perma linking available)" if local_similar_perma_links_available(vault_config) else ""
 
         vault_html_links += """<li>
-            <a href=\"/vault/{local_vault_id}\">
-                {local_vault_name} {local_perma_links_available}
-            </a>
+            <a href=\"/vault/{local_vault_id}\">{local_vault_name}</a>
+            {local_perma_links_available}
         </li>""".format(
             local_perma_links_available=local_perma_links_available,
             **vault_config)

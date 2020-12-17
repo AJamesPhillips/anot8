@@ -7,7 +7,7 @@
 * * PDFs
 * * their annotations
 * * highlighted annotations
-* Can serve PDFs from local file system by relative file paths e.g. http://localhost:5003/r/-1.1/-1?relative_file_path=example_pdfs/visible_directory/example_2.pdf
+* Can serve PDFs from local file system by relative file paths e.g. http://localhost:5003/r/-1.1/-1?relative_file_path=example_pdfs/visible_directory/example_1.pdf
 * * serve PDFs from other websites e.g. https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0 uses a PDF file from the github repo.
 
 
@@ -73,7 +73,7 @@ http://localhost:5003/r/1772.1/1
 
 The naming authority id is only needed for anot8.org permalinks.  And file id is not needed and the relative_file_path can be used instead, for example:
 
-http://localhost:5003/r/-1.1/-1?relative_file_path=example_pdfs/visible_directory/example_2.pdf
+http://localhost:5003/r/-1.1/-1?relative_file_path=example_pdfs/visible_directory/example_1.pdf
 
 
 #### Local vault id versus anot8 vault id
