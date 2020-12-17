@@ -244,7 +244,9 @@
                 common_labels = config.labels
                 const id_to_relative_file_name = config.DO_NOT_EDIT_auto_generated_fields.id_to_relative_file_name
 
-                const relative_file_path = id_to_relative_file_name[file_id]
+                const vars = parse_location_search()
+
+                const relative_file_path = id_to_relative_file_name[file_id] || vars.relative_file_path
                 if (!relative_file_path)
                 {
                     console.error(`No relative_file_path for file_id ${file_id} `, id_to_relative_file_name)
