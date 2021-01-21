@@ -61,7 +61,7 @@ def get_local_vault_configs ():
     for name in local_vault_configs:
         file_path = config_dir_path + name
         if os.path.isfile(file_path) and name.endswith(".json"):
-            with open(file_path, "r") as f:
+            with open(file_path, "r", encoding="utf8") as f:
                 local_vault_config = json.load(f)
                 local_vault_config["local_vault_name"] = name.replace(".json", "")
                 filtered_local_vault_configs.append(local_vault_config)
