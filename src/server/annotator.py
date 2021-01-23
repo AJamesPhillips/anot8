@@ -315,3 +315,19 @@ def serve_local_vault_config (vault_id):
     vault_config = get_vault_config_by_id(vault_id)
 
     return json.dumps(vault_config)
+
+
+@app.route("/pdf.min.js")
+def pdf_min_js ():
+    with open(dir_path + "/../client/pdf.min.js", "r", encoding="utf8") as f:
+        js = f.read()
+
+    return js
+
+
+@app.route("/pdf.worker.min.js")
+def pdf_worker_min_js ():
+    with open(dir_path + "/../client/pdf.worker.min.js", "r", encoding="utf8") as f:
+        js = f.read()
+
+    return js
