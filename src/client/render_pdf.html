@@ -79,7 +79,7 @@
         #labels_list .label.priority {
             border: thin solid orange;
         }
-        #labels_list .label.used_label {
+        #labels_list .highlight_used_labels .label.used_label {
             background-color: lightgreen;
         }
 
@@ -136,8 +136,10 @@
         </div>
         <div id="labels_list">
             <h3>List of labels:</h3>
-            <input type="text" id="labels_search" />
-            <input type="button" id="labels_search_clear" value="x" onclick="el = document.getElementById('labels_search'); el.value = ''; event = new Event('change'); el.dispatchEvent(event);" />
+            <input id="labels_search" type="text" placeholder="Search labels..." />
+            <input id="labels_search_clear" type="button" value="x" />
+            Highlight used labels: <input id="labels_used_toggle" type="checkbox" />
+            <div id="labels_list_container"></div>
         </div>
     </div>
 
@@ -1170,9 +1172,63 @@
         }
 
 
+        // This function should only be called once at start
         function render_labels_side_panel ()
         {
-            const labels_list_el = document.getElementById("labels_list")
+            const labels_list_container_el = document.getElementById("labels_list_container")
+
+            // Set up search clear button
+            const labels_search_clear_el = document.getElementById("labels_search_clear")
+            labels_search_clear_el.addEventListener("click", () =>
+            {
+                const labels_search_el = document.getElementById("labels_search")
+                labels_search_el.value = ""
+                labels_search_el.dispatchEvent(new Event("change"))
+            })
+
+
+            // Set up toggling highlighting used labels
+            const labels_used_toggle_el = document.getElementById("labels_used_toggle")
+            const highlighting_used_labels_state = (localStorage.getItem("highlighting_used_labels") || "1") === "1"
+            if (highlighting_used_labels_state) labels_used_toggle_el.checked = true
+            function update_highlighting_used_labels ()
+            {
+                const checked = labels_used_toggle_el.checked
+                localStorage.setItem("highlighting_used_labels", checked ? "1" : "0")
+
+                if (checked) labels_list_container_el.classList.add("highlight_used_labels")
+                else labels_list_container_el.classList.remove("highlight_used_labels")
+            }
+            update_highlighting_used_labels()
+            labels_used_toggle_el.addEventListener("click", update_highlighting_used_labels)
+
+
+            // update_label_check_status_and_disabled_state
+            function update_label_check_status_and_disabled_state ()
+            {
+                const highlighted_annotation_ids = new Set(get_highlighted_annotation_ids())
+                const label_checkbox_els = Array.from(document.getElementsByClassName("label_checkbox"))
+                const disabled = highlighted_annotation_ids.size !== 1
+
+                const annotations = file_meta_data.annotations.filter(annotation => highlighted_annotation_ids.has(annotation.id))
+                const label_counts = calculate_label_counts(annotations)
+
+                label_checkbox_els.forEach(el =>
+                {
+                    el.disabled = disabled
+                    const count = label_counts[el.dataset.whole_label_text]
+
+                    el.indeterminate = false
+                    if (count === undefined) el.checked = false
+                    else if (count === highlighted_annotation_ids.size) el.checked = true
+                    else el.indeterminate = true
+                })
+            }
+            update_page_location_listeners.push(update_label_check_status_and_disabled_state)
+
+
+            // Render labels
+            labels_list_container_el.innerHTML = ""
 
             const label_search_listeners = []
 
@@ -1203,26 +1259,37 @@
                 })
                 .forEach(label_obj => {
                     const label_el = document.createElement("div")
+                    const whole_label_text = label_obj.text
                     const label_text = hide_label_roots.reduce((accum, to_remove) =>
                     {
                         return accum.replace(to_remove, "")
-                    }, label_obj.text)
+                    }, whole_label_text)
                     label_el.innerText = label_text
                     label_el.className = "label" + (label_obj.priority ? " priority" : "")
-                    labels_list_el.appendChild(label_el)
 
+                    // checkbox
+                    const label_checkbox_el = document.createElement("input")
+                    label_checkbox_el.type = "checkbox"
+                    label_checkbox_el.className = "label_checkbox"
+                    label_checkbox_el.dataset.whole_label_text = whole_label_text
+                    label_el.prepend(label_checkbox_el)
+
+                    labels_list_container_el.appendChild(label_el)
+
+                    // listeners
                     label_search_listeners.push(label_search_text => {
                         label_el.style.removeProperty("display")
 
-                        if (label_search_text && !label_obj.lower_case_text.includes(label_search_text))
+                        if (label_search_text && !label_obj.lower_case_text.includes(label_search_text.toLowerCase()))
                         {
                             label_el.style.setProperty("display", "none")
                         }
                     })
 
+
                     function update_label_usage_status_on_global_change_in_label_count ({ label_counts, new_label_counts })
                     {
-                        const used_label = (!!new_label_counts[label_obj.text])
+                        const used_label = (!!new_label_counts[whole_label_text])
                         if (used_label)
                         {
                             label_el.classList.add("used_label")
@@ -1232,11 +1299,13 @@
                             label_el.classList.remove("used_label")
                         }
                     }
-
                     changed_annotation_label_counts.push(update_label_usage_status_on_global_change_in_label_count)
+
 
                     label_el.addEventListener("click", () => label_el_clicked(label_obj))
                 })
+
+            update_label_check_status_and_disabled_state()
 
             const labels_search_el = document.getElementById("labels_search")
             function handle_search_text_change (e)

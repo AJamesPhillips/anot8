@@ -57,7 +57,7 @@ def write_annotations_file (annotations_file_path, data):
 
 
 # Adapted from: https://stackoverflow.com/a/22058673/539490
-def sha1_hash_file(file_descriptor):
+def sha1_hash_file (file_descriptor):
     # BUF_SIZE is totally arbitrary, change for your app!
     BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
 
@@ -72,7 +72,7 @@ def sha1_hash_file(file_descriptor):
     return sha1.hexdigest()
 
 
-def upgrade_meta_data(meta_data, current_schema_version):
+def upgrade_meta_data (meta_data, current_schema_version):
     if "relative_file_path" in meta_data:
         del meta_data["relative_file_path"]
 

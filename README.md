@@ -90,7 +90,7 @@ When annotating specific pieces of data it's helpful to prioritise certain label
 
 ### Hiding common label roots
 
-It's also possible to hide common label roots.  For example if you have the following labels:
+It's possible to hide common label roots.  For example if you have the following labels:
 
     "root label"
     "root label/parent one/parent two/Alpha"
@@ -109,7 +109,7 @@ Then the label list will display:
 
 ### Use anot8.org server when running locally
 
-When running locally, the render_pdf.html file can be forced to use anot8.org server by setting:
+When running locally, the render_pdf.html file can be forced to use anot8.org server instead of your local server by setting:
 
     localStorage.setItem("use_anot8_org_naming_authority_server", "1") // set value to "" to stop
 
