@@ -594,7 +594,6 @@
         }
 
 
-        let number_of_annotations = file_meta_data.annotations.length
         function refresh_annotations_list ()
         {
             annotations_list_el.innerHTML = ""
@@ -602,14 +601,14 @@
                 .filter(not_deleted)
                 .forEach(add_annotation_list_element)
 
-            const new_number_of_annotations = file_meta_data.annotations.length
-            const increased_annotations = new_number_of_annotations > number_of_annotations
-            number_of_annotations = new_number_of_annotations
+            // Scroll to highlighted annotation_list_el
+            const an_id = get_highlighted_annotation_ids()[0]
+            const class_name = `annotation_list_element annotation_${an_id}`
+            const an_list_el = document.getElementsByClassName(class_name)[0]
 
-            if (increased_annotations)
+            if (an_list_el)
             {
-                // Scroll to bottom of list of annotations
-                annotations_list_el.scrollTop = annotations_list_el.scrollHeight
+                annotations_list_el.scrollTop = an_list_el.offsetTop - 10
             }
 
             update_page_location_and_highlighted_annotations()
