@@ -82,6 +82,12 @@
         #labels_list .highlight_used_labels .label.used_label {
             background-color: lightgreen;
         }
+        .priority_label
+        {
+            float: right;
+            cursor: pointer;
+            user-select: none;
+        }
 
         .page_container
         {
@@ -1232,7 +1238,7 @@
 
             const label_search_listeners = []
 
-            const priority_labels_json = JSON.parse(localStorage.getItem("priority_labels") || "[]")
+            let priority_labels_json = JSON.parse(localStorage.getItem("priority_labels") || "[]")
             const priority_labels = new Set(priority_labels_json)
 
             const hide_label_roots = JSON.parse(localStorage.getItem("hide_label_roots") || "[]")
@@ -1267,12 +1273,36 @@
                     label_el.innerText = label_text
                     label_el.className = "label" + (label_obj.priority ? " priority" : "")
 
+                    // toggle for setting priority
+                    const priority_label_el = document.createElement("span")
+                    priority_label_el.className = "priority_label"
+                    function render_priority_and_save ()
+                    {
+                        priority_label_el.innerHTML = label_obj.priority ? "&starf;" : "&star;"
+
+                        if (label_obj.priority) priority_labels_json.push(whole_label_text)
+                        else priority_labels_json = priority_labels_json.filter(l => l !== whole_label_text)
+
+                        localStorage.setItem("priority_labels", JSON.stringify(priority_labels_json))
+                    }
+                    render_priority_and_save()
+
+                    priority_label_el.addEventListener("click", (e) =>
+                    {
+                        e.stopPropagation()
+                        label_obj.priority = !label_obj.priority
+                        render_priority_and_save()
+                    })
+                    label_el.append(priority_label_el)
+
+
                     // checkbox
                     const label_checkbox_el = document.createElement("input")
                     label_checkbox_el.type = "checkbox"
                     label_checkbox_el.className = "label_checkbox"
                     label_checkbox_el.dataset.whole_label_text = whole_label_text
                     label_el.prepend(label_checkbox_el)
+
 
                     labels_list_container_el.appendChild(label_el)
 
