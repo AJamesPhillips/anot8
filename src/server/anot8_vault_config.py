@@ -49,8 +49,8 @@ def upsert_anot8_vault_config (local_vault_config):
         raise Exception(result[1] + " in " + anot8_vault_config_file_path)
 
     vault_config = {
+        **anot8_vault_config,
         **local_vault_config,
-        **anot8_vault_config
     }
 
     return vault_config
