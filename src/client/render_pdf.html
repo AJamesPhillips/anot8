@@ -7,7 +7,7 @@
 
         if (auto_redirect_to_different_server)
         {
-            window.location = auto_redirect_to_different_server
+            window.location = auto_redirect_to_different_server + window.location.pathname + window.location.search
         }
     </script>
 
