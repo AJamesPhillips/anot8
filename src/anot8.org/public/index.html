@@ -14,10 +14,61 @@
         For more info see <a href="https://github.com/CenterOfCI/anot8">the repository on GitHub</a> containing the annotator code.
     </div>
 
+    <br />
     <div>
         <h4>Example</h4>
         <a href="https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0">https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0</a>
     </div>
+
+    <br />
+    <h4>Auto redirect</h4>
+    <div id="auto_redirect_options">
+
+    </div>
+
+<script>
+    const auto_redirect_options_el = document.getElementById("auto_redirect_options")
+
+    function render_auto_redirect_options_el ()
+    {
+        const auto_redirect_to_different_server = localStorage.getItem("auto_redirect_to_different_server")
+
+        if (auto_redirect_to_different_server)
+        {
+            auto_redirect_options_el.innerText = "Auto redirect set to: " + auto_redirect_to_different_server
+
+            const button_clear_auto_redirect = document.createElement("input")
+            button_clear_auto_redirect.type = "button"
+            button_clear_auto_redirect.value = "Clear auto redirect"
+            button_clear_auto_redirect.onclick = () => {
+                localStorage.setItem("auto_redirect_to_different_server", "")
+                render_auto_redirect_options_el()
+            }
+            auto_redirect_options_el.appendChild(button_clear_auto_redirect)
+        }
+        else
+        {
+            auto_redirect_options_el.innerText = "Set auto redirect to: "
+
+            const input_auto_redirect = document.createElement("input")
+            input_auto_redirect.type = "text"
+            input_auto_redirect.value = "http://localhost:5003"
+            auto_redirect_options_el.appendChild(input_auto_redirect)
+
+            const button_set_auto_redirect = document.createElement("input")
+            button_set_auto_redirect.type = "button"
+            button_set_auto_redirect.value = "Set auto redirect"
+            button_set_auto_redirect.onclick = () => {
+                localStorage.setItem("auto_redirect_to_different_server", input_auto_redirect.value)
+                render_auto_redirect_options_el()
+            }
+            auto_redirect_options_el.appendChild(button_set_auto_redirect)
+        }
+    }
+
+    render_auto_redirect_options_el()
+
+</script>
 
 </body>
 </html>

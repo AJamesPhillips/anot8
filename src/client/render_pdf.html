@@ -1,6 +1,16 @@
 <!-- Used for anot8.org and localhost server /r render page -->
 <html>
 <head>
+    <script>
+        // Automatic redirect to different server
+        const auto_redirect_to_different_server = localStorage.getItem("auto_redirect_to_different_server")
+
+        if (auto_redirect_to_different_server)
+        {
+            window.location = auto_redirect_to_different_server
+        }
+    </script>
+
     <!-- From https://cdnjs.com/libraries/pdf.js/2.6.347 -->
     <script src="/pdf.min.js"></script>
     <script src="/pdf.worker.min.js"></script>
@@ -214,9 +224,14 @@
              * If found, use that config, otherwise look to central server for config.
              */
             let naming_authority_lookup_url = `https://raw.githubusercontent.com/centerofci/anot8/master/anot8_org_naming_authority_lookup.json`
-            if (running_locally && !localStorage.getItem("use_anot8_org_naming_authority_server"))
+            const override_naming_authority_server_url = localStorage.getItem("override_naming_authority_server_url")
+            if (running_locally && !override_naming_authority_server_url)
             {
-                naming_authority_lookup_url = `/local_naming_authority_lookup.json`
+                naming_authority_lookup_url = "/local_naming_authority_lookup.json"
+            }
+            else if (override_naming_authority_server_url)
+            {
+                naming_authority_lookup_url = override_naming_authority_server_url
             }
 
             const loading_progress_el = document.getElementById("loading_progress")

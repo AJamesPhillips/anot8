@@ -109,9 +109,11 @@ Then the label list will display:
 
 ### Use anot8.org server when running locally
 
-When running locally, the render_pdf.html file can be forced to use anot8.org server instead of your local server by setting:
+The render_pdf.html file can use the anot8.org maing authority server (i.e. how to translate a file_id into a url of a file) instead of your local server by setting:
 
-    localStorage.setItem("use_anot8_org_naming_authority_server", "1") // set value to "" to stop
+    localStorage.setItem("override_naming_authority_server_url", "https://raw.githubusercontent.com/centerofci/anot8/master/anot8_org_naming_authority_lookup.json") // set value to "" to stop
+
+This will work when running locally or against a remote server.
 
 
 ## Feature examples for central resolving server
