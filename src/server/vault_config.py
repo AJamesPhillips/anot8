@@ -24,7 +24,7 @@ def get_vault_configs_by_id (use_alternative_id=False):
             raise Exception(result[1])
 
         local_vault_id = local_vault_config["local_vault_id"]
-        local_vault_id = urllib.parse.quote_plus(local_vault_id)
+        local_vault_id = urllib.parse.quote_plus(local_vault_id).replace("/", "__")
         local_vault_config["local_vault_id"] = local_vault_id
 
         root_path = standardise_path(local_vault_config["root_path"])
