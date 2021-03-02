@@ -9,6 +9,7 @@ config_dir_path = dir_path + "/../../config/"
 project_root_dir_path = dir_path + "/../../"
 
 
+
 def supported_relative_file_path (vault_config, relative_file_path):
     supported_file_type = False
     if relative_file_path and relative_file_path.endswith(".pdf"):
@@ -39,8 +40,10 @@ def supported_relative_file_path (vault_config, relative_file_path):
     )
 
 
+
 def print_warning (msg):
     print("\n!!!!!!!!!!!!!\nWARNING: {msg} \n!!!!!!!!!!!!!\n".format(msg=msg))
+
 
 
 def check_for_required_attributes (obj, required_attributes):
@@ -55,6 +58,7 @@ def check_for_required_attributes (obj, required_attributes):
             return result
 
     return [True, None]
+
 
 
 def check_types (obj, attribute):
@@ -72,3 +76,16 @@ def check_types (obj, attribute):
                 return [False, "Sub attribute of: {} \"{}\" of type {} but require {}".format(attribute_name, sub_value, type(sub_value).__name__, sub_attribute_type.__name__)]
 
     return [True, None]
+
+
+
+def standardise_path (path):
+    path = path.strip()
+
+    if not path:
+        return ""
+
+    if not path.endswith("/"):
+        path += "/"
+
+    return path

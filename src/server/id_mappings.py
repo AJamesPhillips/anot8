@@ -1,25 +1,26 @@
 import json
 import os
 
-from common import print_warning
 from annotations import has_annotations_file, get_annotation_relative_file_paths_in_vault
 from anot8_vault_config import write_anot8_vault_config
+
 
 
 def get_naming_authority (vault_config):
     return vault_config["naming_authority"] or "-1"
 
 
-def get_id_to_relative_file_name_map (vault_config):
-    id_to_relative_file_name = vault_config["DO_NOT_EDIT_auto_generated_fields"]["id_to_relative_file_name"]
 
-    return id_to_relative_file_name
+def get_id_to_relative_file_name_map (vault_config):
+    return vault_config["DO_NOT_EDIT_auto_generated_fields"]["id_to_relative_file_name"]
+
 
 
 def get_next_id (vault_config):
     next_id = vault_config["DO_NOT_EDIT_auto_generated_fields"]["next_id"]
 
     return next_id
+
 
 
 def get_id_for_data_file_relative_file_path (vault_config, data_file_relative_file_path):
@@ -35,6 +36,7 @@ def get_id_for_data_file_relative_file_path (vault_config, data_file_relative_fi
         id_value = upsert_file_perma_id_mapping(vault_config, data_file_relative_file_path + ".annotations")
 
     return id_value or "-1"
+
 
 
 def get_data_file_relative_file_path_for_id (vault_config, file_id):
@@ -78,7 +80,6 @@ def perma_url (vault_config, data_file_relative_file_path):
         return False
 
     file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
-
     if file_id == "-1":
         return False
 
@@ -105,6 +106,7 @@ def update_file_perma_ids_mapping (vault_config):
     vault_config["DO_NOT_EDIT_auto_generated_fields"]["next_id"] = next_id
 
     write_anot8_vault_config(vault_config)
+
 
 
 def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):

@@ -11,6 +11,11 @@
 * * serve PDFs from other websites e.g. https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0 uses a PDF file from the github repo.
 
 
+## Change log
+
+See the [change log](./CHANGE_LOG.md) for breaking changes.
+
+
 ## Installation
 
     python3 -m venv venv

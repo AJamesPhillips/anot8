@@ -17,7 +17,7 @@ from vault_config import (
     get_vault_configs_by_id,
     get_vault_config_by_id,
     get_vault_config_naming_authorities,
-    local_similar_perma_links_available,
+    perma_links_available,
 )
 from id_mappings import (
     get_naming_authority,
@@ -41,6 +41,7 @@ upsert_anot8_config_and_perma_id_mappings()
 upgrade_all_annotations(get_vault_configs_by_id().values())
 
 
+
 @app.after_request
 def add_header (response):
     # if "Cache-Control" not in response.headers:
@@ -48,6 +49,7 @@ def add_header (response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
 
 
 @app.route("/")
@@ -60,6 +62,7 @@ def index ():
     html += html_list_of_vaults(vault_configs_by_id)
 
     return html
+
 
 
 @app.route("/vaults")
@@ -75,22 +78,21 @@ def vaults ():
     return vault_html_links
 
 
+
 def html_list_of_vaults (vault_configs_by_id):
     vault_html_links = "<ul>"
 
     for vault_config in vault_configs_by_id.values():
-        local_perma_links_available = "(local similar perma linking available)" if local_similar_perma_links_available(vault_config) else ""
+        perma_links_txt = "(perma linking available)" if perma_links_available(vault_config) else ""
 
         vault_html_links += """<li>
-            <a href=\"/vault/{local_vault_id}\">{local_vault_name}</a>
-            {local_perma_links_available}
-        </li>""".format(
-            local_perma_links_available=local_perma_links_available,
-            **vault_config)
+            <a href=\"/vault/{local_vault_id}\">{local_vault_id}</a> {perma_links_txt}
+        </li>""".format(perma_links_txt=perma_links_txt, **vault_config)
 
     vault_html_links += "</ul>"
 
     return vault_html_links
+
 
 
 def vault_config_from_id (func):
@@ -112,12 +114,13 @@ def vault_config_from_id (func):
     return decorated_function
 
 
+
 @app.route("/vault/<vault_id>")
 @vault_config_from_id
 def vault_files (vault_id, vault_config):
     root_path = vault_config["root_path"]
     all_directories = vault_config["all_directories"]
-    pdf_file_path_html_links = "" if all_directories else "No directories in vault {}".format(vault_config["local_vault_name"])
+    pdf_file_path_html_links = "" if all_directories else "No directories in vault {}".format(vault_config["local_vault_id"])
 
     for directory in all_directories:
         pdf_file_path_html_links += "<div>Directory: <span style=\"font-weight: bold;\">" + directory + "</span><br/>\n"
@@ -141,6 +144,7 @@ def vault_files (vault_id, vault_config):
         pdf_file_path_html_links += "</div>\n"
 
     return pdf_file_path_html_links
+
 
 
 def perma_link_html (vault_config, data_file_relative_file_path):
@@ -174,6 +178,7 @@ def serve_file (vault_id, vault_config):
         return serve_pdf_annotations(vault_config, relative_file_path)
 
 
+
 def serve_pdf_file (vault_config, relative_file_path):
     root_path = vault_config["root_path"]
 
@@ -191,12 +196,14 @@ def serve_pdf_file (vault_config, relative_file_path):
     return response
 
 
+
 def serve_pdf_annotations (vault_config, annotations_relative_file_path):
     json_annotations = upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
     upsert_file_perma_id_mapping(vault_config, annotations_relative_file_path)
     upsert_anot8_vault_config(vault_config)
 
     return jsonify(json_annotations)
+
 
 
 @app.route("/annotations/<vault_id>", methods = ["POST"])
@@ -209,6 +216,7 @@ def annotation (vault_id, vault_config):
         return "<h1>Unknown relative_file_path {}</h1>".format(jinja2.escape(relative_file_path)), 404
 
     return update_annotations(vault_config, relative_file_path)
+
 
 
 def update_annotations (vault_config, annotations_relative_file_path):
@@ -231,6 +239,7 @@ def update_annotations (vault_config, annotations_relative_file_path):
     write_annotations_file(annotations_file_path, meta_data)
 
     return json.dumps(annotations, ensure_ascii=False)
+
 
 
 @app.route("/r/<naming_authority_and_vault_id>/<file_id>")
@@ -270,6 +279,7 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
     return html
 
 
+
 def get_query_params ():
     other_query_params = dict(request.args)
 
@@ -283,6 +293,7 @@ def get_query_params ():
     return url
 
 
+
 # Note this is the local version of the anot8_org_naming_authority_lookup.json file
 @app.route("/local_naming_authority_lookup.json")
 def serve_local_naming_authority_lookup ():
@@ -293,6 +304,7 @@ def serve_local_naming_authority_lookup ():
         naming_authority_lookup[naming_authority] = "/local_vault_lookup.json"
 
     return json.dumps(naming_authority_lookup)
+
 
 
 @app.route("/local_vault_lookup.json")
@@ -310,11 +322,13 @@ def serve_local_vault_lookup ():
     return json.dumps(vault_lookup)
 
 
+
 @app.route("/local_vault_config/<vault_id>.json")
 def serve_local_vault_config (vault_id):
     vault_config = get_vault_config_by_id(vault_id)
 
     return json.dumps(vault_config)
+
 
 
 @app.route("/pdf.min.js")
@@ -323,6 +337,7 @@ def pdf_min_js ():
         js = f.read()
 
     return js
+
 
 
 @app.route("/pdf.worker.min.js")
