@@ -27,9 +27,9 @@ def upsert_anot8_vault_config (vault_config_pointer):
             # Default config
             #
             "naming_authority": "",
-            # Set alternative_local_vault_id to the id for anot8 to enable these links to
+            # Set authorised_vault_id to the id for anot8 to enable these links to
             # work locally and the same for all users of the vault
-            "alternative_local_vault_id": "",
+            "authorised_vault_id": "",
             "publish_root_path": "",
             "directories": [],
             "labels": [],
@@ -44,6 +44,7 @@ def upsert_anot8_vault_config (vault_config_pointer):
 
     with open(anot8_vault_config_file_path, "r", encoding="utf8") as f:
         anot8_vault_config = json.load(f)
+        anot8_vault_config = upgrade_anot8_vault_config(anot8_vault_config)
 
     result = check_anot8_vault_config(anot8_vault_config)
     if not result[0]:
@@ -64,7 +65,7 @@ def write_anot8_vault_config (vault_config):
 
     anot8_vault_config = {
         "naming_authority": vault_config["naming_authority"],
-        "alternative_local_vault_id": vault_config["alternative_local_vault_id"],
+        "authorised_vault_id": vault_config["authorised_vault_id"],
         "publish_root_path": vault_config["publish_root_path"],
         "directories": vault_config["directories"],
         "labels": vault_config["labels"],
@@ -75,10 +76,23 @@ def write_anot8_vault_config (vault_config):
         json.dump(anot8_vault_config, f, indent=2, ensure_ascii=False)
 
 
+
+def upgrade_anot8_vault_config (anot8_vault_config):
+    schema_version = anot8_vault_config["DO_NOT_EDIT_auto_generated_fields"]["schema_version"]
+    if schema_version == 1:
+        anot8_vault_config["authorised_vault_id"] = anot8_vault_config["alternative_local_vault_id"]
+        del anot8_vault_config["alternative_local_vault_id"]
+
+        anot8_vault_config["DO_NOT_EDIT_auto_generated_fields"]["schema_version"] = 2
+
+    return anot8_vault_config
+
+
+
 def check_anot8_vault_config (anot8_vault_config):
     required_attributes = [
         ["naming_authority", str],
-        ["alternative_local_vault_id", str],
+        ["authorised_vault_id", str],
         ["publish_root_path", str],
         ["directories", list, str],
         ["labels", list, str],

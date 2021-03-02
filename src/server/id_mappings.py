@@ -47,43 +47,47 @@ def get_data_file_relative_file_path_for_id (vault_config, file_id):
     return data_file_relative_file_path
 
 
-def perma_path (**kwargs):
+
+def get_pathname (**kwargs):
     return "/r/{naming_authority}.{vault_id}/{file_id}".format(**kwargs)
 
 
-def local_url (vault_config, data_file_relative_file_path):
+
+def get_local_url (vault_config, data_file_relative_file_path):
     naming_authority = "-1" # get_naming_authority(vault_config)
     vault_id = vault_config["local_vault_id"]
     file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
 
-    url = perma_path(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
+    pathname = get_pathname(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
 
     if file_id == "-1":
-        url += "?relative_file_path={relative_file_path}".format(relative_file_path=data_file_relative_file_path)
+        pathname += "?relative_file_path={relative_file_path}".format(relative_file_path=data_file_relative_file_path)
 
-    return url
+    return pathname
 
 
-def perma_url (vault_config, data_file_relative_file_path):
+
+def get_perma_url (vault_config, data_file_relative_file_path):
     naming_authority = get_naming_authority(vault_config)
 
-    if not naming_authority:
-        print_warning("No naming_authority set")
-        return False
+    if naming_authority == "-1":
+        return [False, "naming_authority not yet set in vault config"]
 
     root_path = vault_config["root_path"]
     if not has_annotations_file(root_path, data_file_relative_file_path):
-        return False
+        return [False, "no annotations file"]
 
-    vault_id = vault_config["alternative_local_vault_id"]
-    if not vault_id:
-        return False
+    authorised_vault_id = vault_config["authorised_vault_id"]
+    if not authorised_vault_id:
+        return [False, "authorised_vault_id not yet set in vault config"]
 
     file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
     if file_id == "-1":
-        return False
+        raise Exception("Can not find file id for relative file path: \"{data_file_relative_file_path}\"")
 
-    return "https://anot8.org" + perma_path(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
+    perma_url = "https://anot8.org" + get_pathname(naming_authority=naming_authority, vault_id=authorised_vault_id, file_id=file_id)
+    return [True, perma_url]
+
 
 
 def update_file_perma_ids_mapping (vault_config):

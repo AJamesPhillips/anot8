@@ -20,12 +20,11 @@ from vault_config import (
     perma_links_available,
 )
 from id_mappings import (
-    get_naming_authority,
     get_id_for_data_file_relative_file_path,
     get_data_file_relative_file_path_for_id,
-    perma_path,
-    local_url,
-    perma_url,
+    get_pathname,
+    get_local_url,
+    get_perma_url,
     upsert_file_perma_id_mapping,
 )
 from anot8_vault_config import (
@@ -134,7 +133,7 @@ def vault_files (vault_id, vault_config):
 
             data_file_relative_file_path = directory + file_name
 
-            url = local_url(vault_config, data_file_relative_file_path)
+            url = get_local_url(vault_config, data_file_relative_file_path)
             pdf_file_path_html_links += "<a href=\"{url}\">{file_name}</a>".format(url=url, file_name=file_name)
 
             pdf_file_path_html_links += perma_link_html(vault_config, data_file_relative_file_path)
@@ -148,16 +147,14 @@ def vault_files (vault_id, vault_config):
 
 
 def perma_link_html (vault_config, data_file_relative_file_path):
-    if get_naming_authority(vault_config) == "-1":
-        return "&nbsp;&nbsp;&nbsp;No PermaLink yet"
+    url = get_perma_url(vault_config, data_file_relative_file_path)
+    if not url[0]:
+        return "&nbsp;&nbsp;&nbsp;No PermaLink yet ({})".format(url[1])
 
-    url = perma_url(vault_config, data_file_relative_file_path)
-    if not url:
-        return "&nbsp;&nbsp;&nbsp;No PermaLink yet"
+    url_short = url[1].replace("https://", "")
 
-    url_short = url.replace("https://", "")
+    return "&nbsp;&nbsp;&nbsp;<a href=\"{url}\">{url_short}</a>\n".format(url=url[1], url_short=url_short)
 
-    return "&nbsp;&nbsp;&nbsp;<a href=\"{url}\">{url_short}</a>\n".format(url=url, url_short=url_short)
 
 
 @app.route("/serve_file/<vault_id>")
@@ -269,7 +266,7 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
 
             file_id = get_id_for_data_file_relative_file_path(vault_config, relative_file_path)
 
-            url = perma_path(naming_authority=naming_authority_id, vault_id=vault_id, file_id=file_id)
+            url = get_pathname(naming_authority=naming_authority_id, vault_id=vault_id, file_id=file_id)
             url += get_query_params()
             return redirect(url, code=302)
 
@@ -309,10 +306,10 @@ def serve_local_naming_authority_lookup ():
 
 @app.route("/local_vault_lookup.json")
 def serve_local_vault_lookup ():
-    vault_configs_by_id = get_vault_configs_by_id()
-    vault_configs_by_alternative_id = get_vault_configs_by_id(use_alternative_id=True)
+    vault_configs_by_local_id = get_vault_configs_by_id()
+    vault_configs_by_authorised_id = get_vault_configs_by_id(use_authorised_vault_id=True)
 
-    vault_config_ids = list(vault_configs_by_id.keys()) + list(vault_configs_by_alternative_id.keys())
+    vault_config_ids = list(vault_configs_by_local_id.keys()) + list(vault_configs_by_authorised_id.keys())
     # TODO warn if conflict between vault ids
 
     vault_lookup = {}
