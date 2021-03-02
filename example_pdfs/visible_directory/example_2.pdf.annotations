@@ -18,5 +18,6 @@
 }
 ],
 "comments": [],
-"schema_version": 5
+"schema_version": 6,
+"annotation_user_names": []
 }

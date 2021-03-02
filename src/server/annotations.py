@@ -2,19 +2,20 @@ import hashlib
 import json
 import os
 
-
 from common import print_warning
+
 
 
 def has_annotations_file (root_path, data_file_relative_file_path):
     return os.path.isfile(root_path + data_file_relative_file_path + ".annotations")
 
 
+
 def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_path):
     root_path = vault_config["root_path"]
     data_file_relative_file_path = annotations_relative_file_path.replace(".annotations", "")
 
-    current_schema_version = 5
+    current_schema_version = 6
 
     if has_annotations_file(root_path, data_file_relative_file_path):
         with open(root_path + annotations_relative_file_path, "r", encoding="utf8") as f:
@@ -25,6 +26,7 @@ def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_p
 
         meta_data = {
             "file_sha1_hash": file_sha1_hash,
+            "annotation_user_names": [],
             "annotations": [],
             "comments": [],
             "schema_version": current_schema_version,
@@ -34,13 +36,7 @@ def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_p
         meta_data["schema_version"] = meta_data["version"]
 
     if meta_data["schema_version"] != current_schema_version:
-        meta_data = upgrade_meta_data(meta_data, current_schema_version)
-
-    # meta_data = ensure_consistent_labels(
-    #     meta_data=meta_data,
-    #     force_update=False,
-    #     relative_file_path=relative_file_path,
-    # )
+        meta_data = upgrade_meta_data(meta_data)
 
     if meta_data["comments"]:
         print("Commments!! ", meta_data["comments"])
@@ -51,9 +47,11 @@ def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_p
     return meta_data
 
 
+
 def write_annotations_file (annotations_file_path, data):
     with open(annotations_file_path, "w", encoding="utf8") as f:
         json.dump(data, f, indent=0, ensure_ascii=False)
+
 
 
 # Adapted from: https://stackoverflow.com/a/22058673/539490
@@ -72,23 +70,33 @@ def sha1_hash_file (file_descriptor):
     return sha1.hexdigest()
 
 
-def upgrade_meta_data (meta_data, current_schema_version):
+
+def upgrade_meta_data (meta_data):
     if "relative_file_path" in meta_data:
         del meta_data["relative_file_path"]
 
     if "version" in meta_data:
         del meta_data["version"]
 
-    for annotation in meta_data["annotations"]:
-        if "deleted" in annotation:
-            continue
 
-        for (i, label) in enumerate(annotation["labels"]):
-            annotation["labels"][i] = label["text"]
+    if meta_data["schema_version"] == 4:
+        for annotation in meta_data["annotations"]:
+            if "deleted" in annotation:
+                continue
 
-    meta_data["schema_version"] = current_schema_version
+            for (i, label) in enumerate(annotation["labels"]):
+                annotation["labels"][i] = label["text"]
+
+        meta_data["schema_version"] = 5
+
+
+    if meta_data["schema_version"] == 5:
+        meta_data["annotation_user_names"] = []
+        meta_data["schema_version"] = 6
+
 
     return meta_data
+
 
 
 def upgrade_all_annotations (vault_configs):
@@ -96,6 +104,7 @@ def upgrade_all_annotations (vault_configs):
         file_paths = get_annotation_relative_file_paths_in_vault(vault_config)
         for annotations_relative_file_path in file_paths:
             upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
+
 
 
 def get_annotation_relative_file_paths_in_vault (vault_config):
