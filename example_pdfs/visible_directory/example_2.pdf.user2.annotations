@@ -3,21 +3,20 @@
 "annotations": [
 {
 "colour": "rgba(200, 200, 255, 0.6)",
-"comment": "Another annotation",
+"comment": "An annotation by user2",
 "height": "28px",
 "id": 0,
 "labels": [
-"another label",
 "label one"
 ],
-"left": "92px",
+"left": "192px",
 "page_number": 1,
-"text": "Some text.",
+"text": "Some text from user2.",
 "top": "135px",
 "width": "94px"
 }
 ],
 "comments": [],
 "schema_version": 6,
-"annotation_user_names": ["user2"]
+"annotation_user_names": []
 }
