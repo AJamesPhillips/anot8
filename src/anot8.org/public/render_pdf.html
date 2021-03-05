@@ -1,1 +1,165 @@
-../../client/render_pdf.html
+<!-- Used for anot8.org and localhost server /r render page -->
+<html>
+<head>
+    <script>
+        // Automatic redirect to different server
+        const auto_redirect_to_different_server = localStorage.getItem("auto_redirect_to_different_server")
+
+        if (auto_redirect_to_different_server)
+        {
+            window.location = auto_redirect_to_different_server + window.location.pathname + window.location.search
+        }
+    </script>
+
+    <!-- From https://cdnjs.com/libraries/pdf.js/2.6.347 -->
+    <script src="/pdf.min.js"></script>
+    <script src="/pdf.worker.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js" integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js" integrity="sha512-lHibs5XrZL9hXP3Dhr/d2xJgPy91f2mhVAasrSbMkbmoTSm2Kz8DuSWszBLUg31v+BM6tSiHSqT72xwjaNvl0g==" crossorigin="anonymous"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;</script>
+    <style>
+        body
+        {
+            font-family: sans-serif;
+        }
+
+        #loading_progress
+        {
+            text-align: center;
+            font-size: 25;
+        }
+
+        #pages_container
+        {
+            float: left;
+            width: 70%;
+        }
+
+        #side_panel
+        {
+            width: 30%;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: #fbfbfb;
+            padding: 5px;
+        }
+        #side_panel>div
+        {
+            overflow: scroll;
+        }
+
+        #delete_annotations
+        {
+            float: right;
+        }
+
+        #annotations_list
+        {
+            height: 40%;
+        }
+        #annotation_details
+        {
+            height: 12%;
+        }
+        #labels_list
+        {
+            height: 48%;
+        }
+
+        .annotation_list_element
+        {
+            margin: 5px;
+            padding: 2px 2px;
+            border-radius: 2px;
+        }
+
+        #annotation_text, #annotation_comment
+        {
+            width: 100%;
+        }
+
+        #labels_list .label {
+            border: thin solid #ccc;
+            border-radius: 2px;
+            margin: 2px;
+        }
+        #labels_list .label.priority {
+            border: thin solid orange;
+        }
+        #labels_list .highlight_used_labels .label.used_label {
+            background-color: lightgreen;
+        }
+        .priority_label
+        {
+            float: right;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .page_container
+        {
+            margin: 5px;
+            position: relative;
+        }
+
+        canvas
+        {
+            border: thin solid black;
+            position: absolute;
+        }
+
+        .annotations_container, .annotation
+        {
+            position: absolute;
+        }
+
+        .annotation
+        {
+            background-color: rgba(200, 200, 255, 0.6);
+                             /* rgba(254, 255, 200, 0.7); */
+            pointer-events: none;
+        }
+        /* .annotation.editing_dimensions
+        {
+            pointer-events: none;
+        } */
+        .annotation.invalid
+        {
+            background-color: rgba(255, 50, 50, 0.5);
+        }
+    </style>
+
+    <style id="programmatic_styles"></style>
+</head>
+<body>
+    <div id="loading_progress">Downloading PDF...</div>
+    <div id="link_to_pdf_file"></div>
+
+    <div id="pages_container"></div>
+
+    <div id="side_panel">
+        <!-- <button id="save_changes" disabled="true">Save Changes</button> -->
+        <span id="auto_save"></span>
+        <button id="delete_annotations" disabled="true" title="Delete annotations">X</button>
+        <div id="annotations_list">
+            <!-- <h3>List of annotations:</h3> -->
+        </div>
+        <div id="annotation_details">
+            <!-- <h3>Annotation_details</h3> -->
+        </div>
+        <div id="labels_list">
+            <h3>List of labels:</h3>
+            <input id="labels_search" type="text" placeholder="Search labels..." />
+            <input id="labels_search_clear" type="button" value="x" />
+            Highlight used labels: <input id="labels_used_toggle" type="checkbox" />
+            <div id="labels_list_container"></div>
+        </div>
+    </div>
+
+    <script src="/bundle.js"></script>
+
+</body>
+</html>

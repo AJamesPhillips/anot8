@@ -270,7 +270,7 @@ def perma_render_pdf (naming_authority_and_vault_id, file_id):
             url += get_query_params()
             return redirect(url, code=302)
 
-    with open(dir_path + "/../client/render_pdf.html", "r", encoding="utf8") as f:
+    with open(dir_path + "/../anot8.org/public/render_pdf.html", "r", encoding="utf8") as f:
         html = f.read()
 
     return html
@@ -328,9 +328,18 @@ def serve_local_vault_config (vault_id):
 
 
 
+@app.route("/bundle.js")
+def bundle_js ():
+    with open(dir_path + "/../anot8.org/public/bundle.js", "r", encoding="utf8") as f:
+        js = f.read()
+
+    return js
+
+
+
 @app.route("/pdf.min.js")
 def pdf_min_js ():
-    with open(dir_path + "/../client/pdf.min.js", "r", encoding="utf8") as f:
+    with open(dir_path + "/../anot8.org/public/pdf.min.js", "r", encoding="utf8") as f:
         js = f.read()
 
     return js
@@ -339,7 +348,7 @@ def pdf_min_js ():
 
 @app.route("/pdf.worker.min.js")
 def pdf_worker_min_js ():
-    with open(dir_path + "/../client/pdf.worker.min.js", "r", encoding="utf8") as f:
+    with open(dir_path + "/../anot8.org/public/pdf.worker.min.js", "r", encoding="utf8") as f:
         js = f.read()
 
     return js

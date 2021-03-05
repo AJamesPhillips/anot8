@@ -1,0 +1,21 @@
+{
+  "name": "anot8",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/bootstrap.tsx",
+  "dependencies": {
+    "preact": "10.5.12"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "11.2.0",
+    "concurrently": "6.0.0",
+    "rollup": "2.40.0",
+    "typescript": "4.2.3"
+  },
+  "scripts": {
+    "build": "tsc && rollup --config rollup.config.js",
+    "watch": "concurrently \"tsc -w\" \"rollup --config rollup.config.js --watch\""
+  },
+  "author": "",
+  "license": "ISC"
+}
