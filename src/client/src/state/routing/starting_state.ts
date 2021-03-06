@@ -1,3 +1,4 @@
+import { RoutingState } from "../state"
 
 
 
@@ -37,7 +38,12 @@ function parse_location_search ()
 
 
 
-export {
-    parse_location_path,
-    parse_location_search,
+export function get_starting_routing_state (): RoutingState
+{
+    const vars = parse_location_search()
+
+    return {
+        ...parse_location_path(),
+        relative_file_path: vars.relative_file_path,
+    }
 }

@@ -1,10 +1,10 @@
 import { h, FunctionComponent, Component } from "preact"
 
-import { State } from "../state/state"
-import { config_store } from "../state/store"
+import { State } from "../../state/state"
+import { get_store } from "../../state/store"
 
 
-const store = config_store()
+const store = get_store()
 
 
 

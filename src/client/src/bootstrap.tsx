@@ -1,20 +1,19 @@
-import {
-    h,
-    render,
-    // createContext,
-} from "preact"
+import { h, render } from "preact"
 
+import { AnnotationsList } from "./components/annotations_list/AnnotationsList"
 import { App } from "./app"
-// import { config_store } from "./state/store"
+import { LoadingProgress } from "./components/LoadingProgress"
+import { load_files } from "./load_files/load_files"
 
 
 
-// const store = config_store()
+const annotations_list_el = document.getElementById("annotations_list")
+render(<AnnotationsList />, annotations_list_el)
 
-const root_element = document.getElementById("pages_container")
+const pages_container_el = document.getElementById("pages_container")
+render(<App />, pages_container_el)
 
-render(<App />, root_element)
+const loading_progress_el = document.getElementById("loading_progress")
+render(<LoadingProgress />, loading_progress_el)
 
-// const Provider = createContext(store).Provider
-
-// render(<Provider value={store}><App /></Provider>, root_element)
+load_files()
