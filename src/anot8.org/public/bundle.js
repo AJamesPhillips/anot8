@@ -203,17 +203,17 @@
         return connector;
     }
 
-    var map_state$1 = function (state) { return (__assign({}, state.loading)); };
-    var connector$1 = connect(map_state$1);
+    var map_state$2 = function (state) { return (__assign({}, state.loading)); };
+    var connector$2 = connect(map_state$2);
     function _App(props) {
         return a("div", null,
             "Hello ",
             props.status);
     }
-    var App = connector$1(_App);
+    var App = connector$2(_App);
 
-    var map_state = function (state) { return (__assign(__assign({}, state.loading), state.routing)); };
-    var connector = connect(map_state);
+    var map_state$1 = function (state) { return (__assign(__assign({}, state.loading), state.routing)); };
+    var connector$1 = connect(map_state$1);
     function _LoadingProgress(props) {
         var status = props.status;
         if (status === "not ready")
@@ -241,7 +241,7 @@
                 error_message);
         }
     }
-    var LoadingProgress = connector(_LoadingProgress);
+    var LoadingProgress = connector$1(_LoadingProgress);
 
     function get_url_to_file(state) {
         var resolved_relative_file_path = state.loading.resolved_relative_file_path;
@@ -353,6 +353,40 @@
             .then(fetch_files);
     }
 
+    var get_anot8_perma_link = function (_a) {
+        var routing = _a.routing;
+        var naming_authority = routing.naming_authority, vault_id = routing.vault_id, file_id = routing.file_id;
+        var anot8_perma_link = "";
+        if (naming_authority !== "-1" && vault_id !== "-1" && file_id !== "-1") {
+            anot8_perma_link = "https://anot8.org/r/" + naming_authority + "." + vault_id + "/" + file_id;
+        }
+        return anot8_perma_link;
+    };
+
+    var map_state = function (state) { return ({
+        url_to_file: get_url_to_file(state),
+        anot8_perma_link: get_anot8_perma_link(state),
+    }); };
+    var connector = connect(map_state);
+    function _TopInfoPanel(props) {
+        var url_to_file = props.url_to_file, anot8_perma_link = props.anot8_perma_link;
+        if (!url_to_file)
+            return null;
+        var perma_link_elements = anot8_perma_link
+            ? [a("br", null), a("a", { href: anot8_perma_link },
+                    "PermaLink: ",
+                    anot8_perma_link)]
+            : [a("br", null), a("span", { style: "color: grey; font-size: small;" }, "PermaLink not available (-1 present in part of link)")];
+        return a("div", null,
+            a("a", { href: url_to_file },
+                "Showing PDF from: ",
+                url_to_file),
+            perma_link_elements);
+    }
+    var TopInfoPanel = connector(_TopInfoPanel);
+
+    var link_to_pdf_el = document.getElementById("link_to_pdf_file");
+    N(a(TopInfoPanel, null), link_to_pdf_el);
     var annotations_list_el = document.getElementById("annotations_list");
     N(a(AnnotationsList, null), annotations_list_el);
     var pages_container_el = document.getElementById("pages_container");

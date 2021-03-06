@@ -8,8 +8,8 @@ interface OwnProps {}
 
 
 const map_state = (state: State) => ({ ...state.loading, ...state.routing })
-const connector = connect(map_state)
 type Props = ReturnType<typeof map_state> & OwnProps
+const connector = connect(map_state)
 
 
 function _LoadingProgress (props: Props)

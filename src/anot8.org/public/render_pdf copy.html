@@ -903,21 +903,6 @@
     </script>
 
     <script>
-        function render_top_info_panel ()
-        {
-            // show raw link
-            const link_to_pdf_el = document.getElementById("link_to_pdf_file")
-            link_to_pdf_el.innerHTML = `<a href="${url_to_file}">Showing PDF from: ${url_to_file}</a>`
-            const anot8_perma_link = get_anot8_perma_link()
-            if (anot8_perma_link)
-            {
-                link_to_pdf_el.innerHTML += `<br/>\n <a href="${anot8_perma_link}">PermaLink: ${anot8_perma_link}</a>`
-            }
-            else
-            {
-                link_to_pdf_el.innerHTML += `<br/>\n <span style="color: grey; font-size: small;">PermaLink not available (-1 present in part of link)</span>`
-            }
-        }
 
         function render_side_panel ()
         {
