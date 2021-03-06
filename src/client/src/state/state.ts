@@ -1,3 +1,5 @@
+import { Annotation } from "./interfaces"
+
 
 
 export interface RoutingState
@@ -31,6 +33,8 @@ export interface LoadingPDFState
 export interface AnnotationsState
 {
     status: "not ready" | "loading" | "loaded" | "error" | "saved" | "saving"
+    annotation_user_names: undefined | string[]
+    main_annotations: undefined | Annotation[]
 }
 
 

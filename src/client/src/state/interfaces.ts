@@ -29,7 +29,7 @@ export interface VaultConfig
 
 
 
-export interface FileMetaData
+export interface AnnotationsFile
 {
     file_sha1_hash: string
     annotations: Annotation[]

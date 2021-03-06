@@ -5,5 +5,5 @@ import { State } from "../state"
 
 export function get_users_annotations (state: State): Annotation[]
 {
-    return []
+    return state.annotations.main_annotations || []
 }
