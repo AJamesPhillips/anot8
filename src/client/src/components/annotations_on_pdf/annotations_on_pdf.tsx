@@ -1,8 +1,9 @@
 import { h, render } from "preact"
 import { Store } from "redux"
-import { ACTIONS } from "../state/actions"
 
-import { State } from "../state/state"
+import { ACTIONS } from "../../state/actions"
+import { State } from "../../state/state"
+import { AnnotationsContainer } from "./AnnotationsContainer"
 
 
 
@@ -15,23 +16,20 @@ export function add_annotations_to_PDF_page (store: Store<State>)
     const unsubscribe = store.subscribe(() =>
     {
         const state = store.getState()
+        const {
+            status,
+            last_rendered_page_annotations_container: annotations_container_el,
+            last_rendered_page_number: page_number,
+        } = state.rendering_pdf
 
-        if (state.rendering_pdf.status === "finished") unsubscribe()
+        if (status === "finished") unsubscribe()
 
-        if (!state.rendering_pdf.last_rendered_page_annotations_container)
+        if (!annotations_container_el || page_number === undefined)
         {
             return
         }
 
-        const annotations_container_el = state.rendering_pdf.last_rendered_page_annotations_container
-        render(<AnnotationsContainer />, annotations_container_el)
+        render(<AnnotationsContainer page_number={page_number} />, annotations_container_el)
         store.dispatch(ACTIONS.pdf_rendering.have_setup_annotations_container({}))
     })
-}
-
-
-
-function AnnotationsContainer ()
-{
-    return <div></div>
 }

@@ -4,7 +4,7 @@ import { PDFDocumentProxy, PDFPageViewport, PDFRenderParams } from "pdfjs-dist"
 import { ACTIONS } from "../state/actions"
 import { State } from "../state/state"
 import { get_store } from "../state/store"
-import { add_annotations_to_PDF_page } from "./annotations_on_pdf"
+import { add_annotations_to_PDF_page } from "./annotations_on_pdf/annotations_on_pdf"
 
 
 
