@@ -1,4 +1,5 @@
 import typescript from "rollup-plugin-typescript2"
+import replace from "@rollup/plugin-replace"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
 
 
@@ -10,8 +11,13 @@ export default {
     format: "iife"
   },
 	plugins: [
+    replace({
+      preventAssignment: true, // set to remove their warning message
+      "process.env.NODE_ENV": JSON.stringify("production"), // this is undesirable... it's another hack
+      // to work around redux failing in the browser due to them performing a similar transformation
+      // on their code (the dist version) but not on the es (or lib) version which is used by rollup
+    }),
 		typescript(/*{ plugin options }*/),
-    nodeResolve(), // will not load code from redux/package.json unpkg attribute instead bundling code
-                   // which contains `process.env`, which obviously errors when run in a browser
+    nodeResolve(),
 	]
 }

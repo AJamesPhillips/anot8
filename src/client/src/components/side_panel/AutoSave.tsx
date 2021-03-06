@@ -1,10 +1,7 @@
 import { h } from "preact"
 
 import { get_users_annotations } from "../../state/annotations/getters"
-import {
-    finished_attempt_to_resolve_url_to_write_annotations,
-    get_url_to_write_file_annotations,
-} from "../../state/loading/getters"
+import { get_url_to_write_file_annotations } from "../../state/loading/getters"
 import { State } from "../../state/state"
 import { connect } from "../../utils/preact-redux-simple/connect"
 

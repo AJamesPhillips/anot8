@@ -1,4 +1,7 @@
 import { Store } from "redux"
+import { getDocument, PDFDocumentProxy } from "pdfjs-dist"
+declare const pdfjsLib: any;
+
 import { ACTIONS } from "../state/actions"
 import { get_url_to_file, get_url_to_file_annotations } from "../state/loading/getters"
 import { State } from "../state/state"
@@ -10,8 +13,8 @@ export function fetch_files ()
 {
     const store = get_store()
 
-    fetch_pdf(store)
     fetch_annotation_files(store)
+    return fetch_pdf(store)
 }
 
 
@@ -19,12 +22,13 @@ export function fetch_files ()
 function fetch_pdf (store: Store<State>)
 {
     const state = store.getState()
-    const pdf_file_url = get_url_to_file(state)
+    const url_to_file = get_url_to_file(state)
 
-    fetch(pdf_file_url)
-    .then(() =>
+    const get_doc = pdfjsLib.getDocument as (typeof getDocument)
+
+    return new Promise<PDFDocumentProxy>(resolve =>
     {
-        console.log("Got PDF file")
+        get_doc(url_to_file).promise.then(pdf => resolve(pdf))
     })
 }
 

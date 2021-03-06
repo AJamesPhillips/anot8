@@ -2,12 +2,11 @@ import { Annotation } from "./interfaces"
 
 
 
-export interface RoutingState
+export interface AnnotationsState
 {
-    naming_authority: string
-    vault_id: string
-    file_id: string
-    relative_file_path: string | undefined
+    status: "not ready" | "loading" | "loaded" | "error" | "saved" | "saving"
+    annotation_user_names: undefined | string[]
+    main_annotations: undefined | Annotation[]
 }
 
 
@@ -30,20 +29,32 @@ export interface LoadingPDFState
 
 
 
-export interface AnnotationsState
+export interface RenderingPDFState
 {
-    status: "not ready" | "loading" | "loaded" | "error" | "saved" | "saving"
-    annotation_user_names: undefined | string[]
-    main_annotations: undefined | Annotation[]
+    status: "not started" | "rendering" | "finished"
+    max_pages: undefined | number
+    last_rendered_page_number: undefined | number
+    last_rendered_page_canvas: undefined | HTMLCanvasElement
+}
+
+
+
+export interface RoutingState
+{
+    naming_authority: string
+    vault_id: string
+    file_id: string
+    relative_file_path: string | undefined
 }
 
 
 
 export interface State
 {
+    annotations: AnnotationsState
+    loading_pdf: LoadingPDFState
+    override_naming_authority_server_url: string
+    rendering_pdf: RenderingPDFState
     routing: RoutingState
     running_locally: boolean
-    override_naming_authority_server_url: string
-    loading_pdf: LoadingPDFState
-    annotations: AnnotationsState
 }
