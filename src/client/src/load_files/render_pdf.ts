@@ -39,14 +39,13 @@ function render_pdf_page ({ pdf, pages_container_el, page_number, store }: Rende
         create_annotations_container_el({ single_page_container_el, page_number })
         add_page_number({ pages_container_el, page_number })
 
-        // add_canvas_mouse_event_handlers({ canvas, page_number })
+        // add_canvas_mouse_event_handlers({ canvas, page_number }) TODO
 
         page.render(render_context)
         .promise.then(() =>
         {
             store.dispatch(ACTIONS.pdf_rendering.rendered_page({ canvas, page_number }))
             // add_annotations_to_PDF_page({ page_number }) TODO
-            // update_loading_progress({ page_number }) TODO
 
             if (page_number < pdf.numPages)
             {

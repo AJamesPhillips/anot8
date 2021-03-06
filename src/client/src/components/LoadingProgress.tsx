@@ -1,4 +1,5 @@
 import { h } from "preact"
+import { useState } from "preact/hooks"
 import { State } from "../state/state"
 import { connect } from "../utils/preact-redux-simple/connect"
 
@@ -14,6 +15,8 @@ const map_state = (state: State) => ({
     error_during_loading__type: state.loading_pdf.loading_error_type,
     //
     rendering_status: state.rendering_pdf.status,
+    max_pages: state.rendering_pdf.max_pages,
+    page_number: state.rendering_pdf.last_rendered_page_number,
     //
     naming_authority: state.routing.naming_authority,
     vault_id: state.routing.vault_id,
@@ -25,15 +28,29 @@ const connector = connect(map_state)
 
 function _LoadingProgress (props: Props)
 {
-    const { loading_status, rendering_status } = props
+    const [visibility, set_visibility] = useState(true)
+    if (!visibility) return null
+
+    const { loading_status, rendering_status, max_pages, page_number } = props
 
     if (loading_status === "not ready" || loading_status === "resolving") return <div>Starting...</div>
 
     if (loading_status === "resolved") return <div>Downloading PDF...</div>
 
-    if (rendering_status === "finished") return <div></div>
+    if (loading_status === "downloaded")
+    {
+        if (rendering_status === "finished")
+        {
+            if (page_number === max_pages) setTimeout(() => {
+                set_visibility(false)
+            }, 500)
+        }
 
-    if (loading_status === "downloaded") return <div>Downloaded PDF.  Rendering...</div>
+        if (max_pages === undefined || page_number === undefined) return <div>Downloaded PDF.  Rendering...</div>
+
+        const progress = ((page_number / max_pages) * 100).toFixed(0)
+        return <div>Progress: {progress}%</div>
+    }
 
 
     // if (status === "errored")
