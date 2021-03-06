@@ -16,10 +16,22 @@
         margin: 20px;
         padding: 20px;
     }
+
+    @media print {
+        .pagebreak { page-break-before: always; }
+    }
 </style>
 </head>
 <body>
     <h1>Hello World!</h1>
     <div class="rectangle">Some text.  With an interesting fact to annotate.</div>
+
+    <div class="pagebreak"> </div>
+
+    <div class="rectangle">Page 2 text.</div>
+
+    <div class="pagebreak"> </div>
+
+    <div class="rectangle">Page 3 text.</div>
 </body>
 </html>
