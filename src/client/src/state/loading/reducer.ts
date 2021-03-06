@@ -1,5 +1,7 @@
 import { AnyAction } from "redux"
+import { update_substate } from "../../utils/update_state"
 
+import { is_start_rendering_pdf } from "../pdf_rendering/actions"
 import { LoadingPDFState, State } from "../state"
 import {
     is_error_during_loading,
@@ -55,6 +57,12 @@ export function loading_reducer (state: State, action: AnyAction): State
             resolved_relative_file_path: action.relative_file_path,
         }
         state = { ...state, loading_pdf: loading }
+    }
+
+
+    if (is_start_rendering_pdf(action))
+    {
+        state = update_substate(state, "loading_pdf", "status", "downloaded")
     }
 
 

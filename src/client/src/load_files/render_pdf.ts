@@ -10,7 +10,7 @@ import { get_store } from "../state/store"
 export function render_pdf (pdf: PDFDocumentProxy, pages_container_el: HTMLElement)
 {
     const store = get_store()
-    ACTIONS.pdf_rendering.start_rendering_pdf({ max_pages: pdf.numPages })
+    store.dispatch(ACTIONS.pdf_rendering.start_rendering_pdf({ max_pages: pdf.numPages }))
     // assume there is always at least 1 page to render
     render_pdf_page({ pdf, pages_container_el, page_number: 1, store })
 }
@@ -59,7 +59,7 @@ function render_pdf_page ({ pdf, pages_container_el, page_number, store }: Rende
             }
             else
             {
-                ACTIONS.pdf_rendering.finished_rendering_pdf({})
+                store.dispatch(ACTIONS.pdf_rendering.finished_rendering_pdf({}))
             }
         })
     })

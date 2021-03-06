@@ -7,25 +7,39 @@ import { connect } from "../utils/preact-redux-simple/connect"
 interface OwnProps {}
 
 
-const map_state = (state: State) => ({ ...state.loading_pdf, ...state.routing })
+const map_state = (state: State) => ({
+    //
+    loading_status: state.loading_pdf.status,
+    stage: state.loading_pdf.loading_stage,
+    error_during_loading__type: state.loading_pdf.loading_error_type,
+    //
+    rendering_status: state.rendering_pdf.status,
+    //
+    naming_authority: state.routing.naming_authority,
+    vault_id: state.routing.vault_id,
+    file_id: state.routing.file_id,
+})
 type Props = ReturnType<typeof map_state> & OwnProps
 const connector = connect(map_state)
 
 
 function _LoadingProgress (props: Props)
 {
-    const { status } = props
+    const { loading_status, rendering_status } = props
 
-    if (status === "not ready") return <div>Starting...</div>
+    if (loading_status === "not ready" || loading_status === "resolving") return <div>Starting...</div>
 
-    if (status === "loading") return <div>Downloading PDF...</div>
+    if (loading_status === "resolved") return <div>Downloading PDF...</div>
 
-    if (status === "downloaded") return <div>Downloaded PDF.  Rendering...</div>
+    if (rendering_status === "finished") return <div></div>
+
+    if (loading_status === "downloaded") return <div>Downloaded PDF.  Rendering...</div>
+
 
     // if (status === "errored")
     const {
-        loading_stage: stage,
-        loading_error_type: error_during_loading__type,
+        stage,
+        error_during_loading__type,
         naming_authority,
         vault_id,
         file_id,

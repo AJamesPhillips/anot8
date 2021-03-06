@@ -11,7 +11,7 @@ export interface AnnotationsState
 
 
 
-export type LoadingStatus = "not ready" | "resolving" | "resolved" | "loading" | "downloaded" | "errored"
+export type LoadingStatus = "not ready" | "resolving" | "resolved" | "downloaded" | "errored"
 export type LoadingStage = "resolve_naming_authority_url" | "resolve_vault_url" | "resolve_pdf_file_url" | "pdf_file"
 export type LoadingErrorType = "404" | "other"
 export interface LoadingPDFState
