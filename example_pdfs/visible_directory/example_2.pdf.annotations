@@ -15,6 +15,25 @@
 "text": "Some text.",
 "top": "135px",
 "width": "94px"
+},
+{
+"deleted": true,
+"id": 1
+},
+{
+"colour": "rgba(200, 200, 255, 0.6)",
+"comment": "An annotation on page 3",
+"height": "28px",
+"id": 2,
+"labels": [
+"another label",
+"label one"
+],
+"left": "95px",
+"page_number": 3,
+"text": "Some more text.",
+"top": "60px",
+"width": "100px"
 }
 ],
 "comments": [],

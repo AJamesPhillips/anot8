@@ -1,4 +1,4 @@
-import { Annotation } from "./interfaces"
+import { MaybeAnnotation } from "./interfaces"
 
 
 
@@ -6,7 +6,7 @@ export interface AnnotationsState
 {
     status: "not ready" | "loading" | "loaded" | "error" | "saved" | "saving"
     annotation_user_names: undefined | string[]
-    main_annotations: undefined | Annotation[]
+    main_annotations: undefined | MaybeAnnotation[]
 }
 
 

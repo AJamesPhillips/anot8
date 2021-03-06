@@ -9,21 +9,21 @@ const store = get_store()
 
 
 
-export function connect <MappedState> (map_state: (state: State) => MappedState)
+export function connect <MappedState, OwnProps> (map_state: (state: State, own_props: OwnProps) => MappedState)
 {
-    function connector <OwnProps> (ComponentToWrap: FunctionComponent<MappedState & OwnProps>)
+    function connector (ComponentToWrap: FunctionComponent<MappedState & OwnProps>)
     {
         return class WrappedComponent extends Component<OwnProps, MappedState>
         {
             private unsubscribe: Unsubscribe
 
-            constructor(props: OwnProps)
+            constructor(own_props: OwnProps)
             {
-                super(props)
-                this.setState(map_state(store.getState()))
+                super(own_props)
+                this.setState(map_state(store.getState(), own_props))
 
                 this.unsubscribe = store.subscribe(() => {
-                    this.setState(map_state(store.getState()))
+                    this.setState(map_state(store.getState(), own_props))
                 })
             }
 

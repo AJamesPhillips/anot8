@@ -40,8 +40,15 @@ export interface AnnotationsFile
 
 
 
+export interface DeletedAnnotation
+{
+    deleted: true
+    id: number
+}
+
 export interface Annotation
 {
+    deleted?: false
     colour: string
     comment: string
     height: string
@@ -52,4 +59,8 @@ export interface Annotation
     text: string
     top: string
     width: string
+    user_name: string
 }
+
+
+export type MaybeAnnotation = Annotation | DeletedAnnotation
