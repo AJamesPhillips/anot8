@@ -26,3 +26,30 @@ export interface VaultConfig
         // next_id: number
     }
 }
+
+
+
+export interface FileMetaData
+{
+    file_sha1_hash: string
+    annotations: Annotation[]
+    comments: string[]
+    schema_version: number
+    annotation_user_names: string[]
+}
+
+
+
+export interface Annotation
+{
+    colour: string
+    comment: string
+    height: string
+    id: number
+    labels: string[]
+    left: string
+    page_number: number
+    text: string
+    top: string
+    width: string
+}

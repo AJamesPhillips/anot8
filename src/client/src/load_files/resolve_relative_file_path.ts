@@ -73,7 +73,7 @@ export function resolve_relative_file_path ()
             return Promise.reject()
         }
 
-        store.dispatch(ACTIONS.resolved_relative_file_path({ relative_file_path }))
+        store.dispatch(ACTIONS.resolved_relative_file_path({ status: "resolved", relative_file_path }))
     })
 }
 

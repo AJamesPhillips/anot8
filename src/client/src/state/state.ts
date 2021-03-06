@@ -9,13 +9,13 @@ export interface RoutingState
 }
 
 
-export type LoadingStatus = "not ready" | "resolving" | "loading" | "downloaded" | "errored"
-export type LoadingStage = "resolve_naming_authority_url" | "resolve_vault_url" | "resolve_pdf_file_url" | "pdf_file" | "annotations_file"
+
+export type LoadingStatus = "not ready" | "resolving" | "resolved" | "loading" | "downloaded" | "errored"
+export type LoadingStage = "resolve_naming_authority_url" | "resolve_vault_url" | "resolve_pdf_file_url" | "pdf_file"
 export type LoadingErrorType = "404" | "other"
-export interface LoadingState
+export interface LoadingPDFState
 {
     status: LoadingStatus
-    downloading_file_name: string | undefined
     loading_stage: undefined | LoadingStage
     loading_error_type: undefined | LoadingErrorType
 
@@ -28,10 +28,18 @@ export interface LoadingState
 
 
 
+export interface AnnotationsState
+{
+    status: "not ready" | "loading" | "loaded" | "error" | "saved" | "saving"
+}
+
+
+
 export interface State
 {
     routing: RoutingState
     running_locally: boolean
     override_naming_authority_server_url: string
-    loading: LoadingState
+    loading_pdf: LoadingPDFState
+    annotations: AnnotationsState
 }

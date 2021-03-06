@@ -65,6 +65,7 @@ export const is_set_vault_config = (action: AnyAction): action is ActionSetVault
 
 interface ResolvedRelativeFilePathArgs
 {
+    status: "resolved"
     relative_file_path: string
 }
 interface ActionResolvedRelativeFilePath extends Action, ResolvedRelativeFilePathArgs {}

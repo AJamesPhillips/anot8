@@ -8,7 +8,7 @@ import { State } from "./state/state"
 interface OwnProps {}
 
 
-const map_state = (state: State) => ({ ...state.loading })
+const map_state = (state: State) => ({ ...state.loading_pdf })
 const connector = connect(map_state)
 type Props = ReturnType<typeof map_state> & OwnProps
 

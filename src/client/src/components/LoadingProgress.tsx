@@ -7,7 +7,7 @@ import { connect } from "../utils/preact-redux-simple/connect"
 interface OwnProps {}
 
 
-const map_state = (state: State) => ({ ...state.loading, ...state.routing })
+const map_state = (state: State) => ({ ...state.loading_pdf, ...state.routing })
 type Props = ReturnType<typeof map_state> & OwnProps
 const connector = connect(map_state)
 
