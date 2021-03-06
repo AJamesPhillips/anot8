@@ -4,13 +4,21 @@ import { PDFDocumentProxy, PDFPageViewport, PDFRenderParams } from "pdfjs-dist"
 import { ACTIONS } from "../state/actions"
 import { State } from "../state/state"
 import { get_store } from "../state/store"
+import { add_annotations_to_PDF_page } from "./annotations_on_pdf"
 
 
 
+let called_render_pdf = false
 export function render_pdf (pdf: PDFDocumentProxy, pages_container_el: HTMLElement)
 {
+    if (called_render_pdf) throw new Error("Only expecting to call render_pdf once")
+    called_render_pdf = true
+
     const store = get_store()
     store.dispatch(ACTIONS.pdf_rendering.start_rendering_pdf({ max_pages: pdf.numPages }))
+
+    add_annotations_to_PDF_page(store)
+
     // assume there is always at least 1 page to render
     render_pdf_page({ pdf, pages_container_el, page_number: 1, store })
 }
@@ -36,7 +44,7 @@ function render_pdf_page ({ pdf, pages_container_el, page_number, store }: Rende
         const single_page_container_el = create_single_page_container_el(pages_container_el, viewport)
         const canvas = create_pdf_canvas(single_page_container_el, viewport)
         const render_context = create_canvas_context(canvas, viewport)
-        create_annotations_container_el({ single_page_container_el, page_number })
+        const annotations_container_el = create_annotations_container_el({ single_page_container_el, page_number })
         add_page_number({ pages_container_el, page_number })
 
         // add_canvas_mouse_event_handlers({ canvas, page_number }) TODO
@@ -44,8 +52,7 @@ function render_pdf_page ({ pdf, pages_container_el, page_number, store }: Rende
         page.render(render_context)
         .promise.then(() =>
         {
-            store.dispatch(ACTIONS.pdf_rendering.rendered_page({ canvas, page_number }))
-            // add_annotations_to_PDF_page({ page_number }) TODO
+            store.dispatch(ACTIONS.pdf_rendering.rendered_page({ canvas, annotations_container_el, page_number }))
 
             if (page_number < pdf.numPages)
             {
@@ -114,6 +121,8 @@ function create_annotations_container_el ({ single_page_container_el, page_numbe
     annotations_container_el.className = "annotations_container"
     annotations_container_el.id = `annotations_container_el_${page_number}`
     single_page_container_el.appendChild(annotations_container_el)
+
+    return annotations_container_el
 }
 
 

@@ -33,6 +33,7 @@ export interface RenderingPDFState
 {
     status: "not started" | "rendering" | "finished"
     max_pages: undefined | number
+    last_rendered_page_annotations_container: undefined | HTMLElement
     last_rendered_page_number: undefined | number
     last_rendered_page_canvas: undefined | HTMLCanvasElement
 }

@@ -6,7 +6,7 @@ import { LoadingProgress } from "./components/LoadingProgress"
 import { load_files } from "./load_files/load_files"
 import { TopInfoPanel } from "./components/TopInfoPanel"
 import { AutoSave } from "./components/side_panel/AutoSave"
-import { render_pdf } from "./load_files/render_pdf"
+import { render_pdf } from "./components/render_pdf"
 
 
 
