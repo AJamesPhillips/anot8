@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import re
 import sys
 
 
@@ -9,13 +10,30 @@ config_dir_path = dir_path + "/../../config/"
 project_root_dir_path = dir_path + "/../../"
 
 
+regexp_data_file_name_from_annotations_file = re.compile(r"(.+\.pdf)(?:\.([a-z0-9_]+))?\.annotations$")
+
+
+
+def annotations_file_path_to_data_file_path (annotations_file_path):
+    # re.sub transforms:
+    #       abc.pdf.annotations => abc.pdf
+    #       abc.pdf.user_2.annotations => abc.pdf
+    return re.sub(regexp_data_file_name_from_annotations_file, r"\1", annotations_file_path)
+
+
+
+def get_user_name_from_annotations_file_path (annotations_file_path):
+    user_name = re.match(regexp_data_file_name_from_annotations_file, annotations_file_path).groups()[1]
+    return user_name if user_name else None
+
+
 
 def supported_relative_file_path (vault_config, relative_file_path):
     supported_file_type = False
     if relative_file_path and relative_file_path.endswith(".pdf"):
         supported_file_type = True
 
-    is_annotations = bool(relative_file_path) and relative_file_path.endswith(".pdf.annotations")
+    is_annotations = bool(relative_file_path) and re.match(regexp_data_file_name_from_annotations_file, relative_file_path)
     if is_annotations:
         supported_file_type = True
 

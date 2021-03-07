@@ -162,7 +162,6 @@ def perma_link_html (vault_config, data_file_relative_file_path):
 def serve_file (vault_id, vault_config):
     relative_file_path = request.args.get("relative_file_path", "")
 
-    is_annotations = relative_file_path.endswith(".pdf.annotations")
     supported = supported_relative_file_path(vault_config, relative_file_path)
     allow = supported["supported"] or (supported["is_annotations"] and supported["supported_directory"])
 
@@ -171,7 +170,7 @@ def serve_file (vault_id, vault_config):
 
     if relative_file_path.endswith(".pdf"):
         return serve_pdf_file(vault_config, relative_file_path)
-    elif relative_file_path.endswith(".pdf.annotations"):
+    elif relative_file_path.endswith(".annotations"):
         return serve_pdf_annotations(vault_config, relative_file_path)
 
 

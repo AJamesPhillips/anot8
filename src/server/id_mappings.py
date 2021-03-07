@@ -1,8 +1,9 @@
 import json
 import os
 
-from annotations import has_annotations_file, get_annotation_relative_file_paths_in_vault
+from annotations import has_main_annotations_file, get_annotation_relative_file_paths_in_vault
 from anot8_vault_config import write_anot8_vault_config
+from common import annotations_file_path_to_data_file_path
 
 
 
@@ -17,9 +18,7 @@ def get_id_to_relative_file_name_map (vault_config):
 
 
 def get_next_id (vault_config):
-    next_id = vault_config["DO_NOT_EDIT_auto_generated_fields"]["next_id"]
-
-    return next_id
+    return vault_config["DO_NOT_EDIT_auto_generated_fields"]["next_id"]
 
 
 
@@ -74,7 +73,7 @@ def get_perma_url (vault_config, data_file_relative_file_path):
         return [False, "naming_authority not yet set in vault config"]
 
     root_path = vault_config["root_path"]
-    if not has_annotations_file(root_path, data_file_relative_file_path):
+    if not has_main_annotations_file(root_path, data_file_relative_file_path):
         return [False, "no annotations file"]
 
     authorised_vault_id = vault_config["authorised_vault_id"]
@@ -96,7 +95,7 @@ def update_file_perma_ids_mapping (vault_config):
 
     relative_file_names_already_mapped = set(id_to_relative_file_name.values())
 
-    file_paths = get_annotation_relative_file_paths_in_vault(vault_config)
+    file_paths = get_annotation_relative_file_paths_in_vault(vault_config)["main_annotation_relative_file_paths"]
     for annotations_relative_file_path in file_paths:
         data_file_relative_file_path = annotations_relative_file_path.replace(".annotations", "")
 
@@ -114,7 +113,7 @@ def update_file_perma_ids_mapping (vault_config):
 
 
 def upsert_file_perma_id_mapping (vault_config, annotations_relative_file_path):
-    data_file_relative_file_path = annotations_relative_file_path.replace(".annotations", "")
+    data_file_relative_file_path = annotations_file_path_to_data_file_path(annotations_relative_file_path)
 
     id_to_relative_file_name = get_id_to_relative_file_name_map(vault_config)
 

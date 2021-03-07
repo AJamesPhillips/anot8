@@ -3,26 +3,50 @@ import json
 import os
 import re
 
-from common import print_warning
+from common import (
+    annotations_file_path_to_data_file_path,
+    get_user_name_from_annotations_file_path,
+    print_warning,
+)
 
 
 
-def has_annotations_file (root_path, data_file_relative_file_path):
+def has_main_annotations_file (root_path, data_file_relative_file_path):
     return os.path.isfile(root_path + data_file_relative_file_path + ".annotations")
 
 
 
 def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_path):
     root_path = vault_config["root_path"]
-    data_file_relative_file_path = annotations_relative_file_path.replace(".annotations", "")
+
+    data_file_relative_file_path = annotations_file_path_to_data_file_path(annotations_relative_file_path)
+    main_annotations_relative_file_path = data_file_relative_file_path + ".annotations"
+
+    user_name = get_user_name_from_annotations_file_path(annotations_relative_file_path)
+    meta_data = ensure_annotations_file(root_path, main_annotations_relative_file_path, user_name)
+
+    if user_name:
+        meta_data = ensure_annotations_file(root_path, annotations_relative_file_path, None)
+
+    return meta_data
+
+
+
+def ensure_annotations_file (root_path, annotations_relative_file_path, user_name):
+    data_file_relative_file_path = annotations_file_path_to_data_file_path(annotations_relative_file_path)
+
+    annotations_file_path = root_path + annotations_relative_file_path
+    data_file_path = root_path + data_file_relative_file_path
+
 
     current_schema_version = 6
 
-    if has_annotations_file(root_path, data_file_relative_file_path):
-        with open(root_path + annotations_relative_file_path, "r", encoding="utf8") as f:
+    if os.path.isfile(annotations_file_path):
+        with open(annotations_file_path, "r", encoding="utf8") as f:
             meta_data = json.load(f)
+
     else:
-        with open(root_path + data_file_relative_file_path, "rb") as f:
+        with open(data_file_path, "rb") as f:
             file_sha1_hash = sha1_hash_file(f)
 
         meta_data = {
@@ -33,19 +57,31 @@ def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_p
             "schema_version": current_schema_version,
         }
 
-    if "version" in meta_data:
-        meta_data["schema_version"] = meta_data["version"]
+    meta_data = upgrade_meta_data(meta_data, current_schema_version)
 
-    if meta_data["schema_version"] != current_schema_version:
-        meta_data = upgrade_meta_data(meta_data)
+    meta_data = ensure_user_name_in_annotation_user_names(meta_data, user_name)
 
-    if meta_data["comments"]:
-        print("Commments!! ", meta_data["comments"])
-
-    annotations_file_path = root_path + annotations_relative_file_path
     write_annotations_file(annotations_file_path, meta_data)
 
     return meta_data
+
+
+
+def ensure_user_name_in_annotation_user_names (meta_data, user_name):
+    if not user_name:
+        return meta_data
+
+    existing_safe_user_names = list(map(get_safe_user_name, meta_data["annotation_user_names"]))
+
+    if user_name not in existing_safe_user_names:
+        meta_data["annotation_user_names"].append(user_name)
+
+    return meta_data
+
+
+
+def get_safe_user_name (user_name):
+    return re.sub(r"[^a-z0-9_]", "_", user_name.strip().lower())
 
 
 
@@ -72,13 +108,16 @@ def sha1_hash_file (file_descriptor):
 
 
 
-def upgrade_meta_data (meta_data):
-    if "relative_file_path" in meta_data:
-        del meta_data["relative_file_path"]
-
+def upgrade_meta_data (meta_data, current_schema_version):
     if "version" in meta_data:
+        meta_data["schema_version"] = meta_data["version"]
         del meta_data["version"]
 
+    if meta_data["schema_version"] == current_schema_version:
+        return meta_data
+
+    if "relative_file_path" in meta_data:
+        del meta_data["relative_file_path"]
 
     if meta_data["schema_version"] == 4:
         for annotation in meta_data["annotations"]:
@@ -101,10 +140,17 @@ def upgrade_meta_data (meta_data):
 
 
 def upgrade_all_annotations (vault_configs):
+    print("+Ensure all annotations are upgraded")
+
     for vault_config in vault_configs:
         file_paths = get_annotation_relative_file_paths_in_vault(vault_config)
-        for annotations_relative_file_path in file_paths:
+
+        for annotations_relative_file_path in file_paths["main_annotation_relative_file_paths"]:
             upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
+        for annotations_relative_file_path in file_paths["user_specific_annotation_relative_file_paths"]:
+            upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
+
+    print("-Ensure all annotations are upgraded")
 
 
 
@@ -112,10 +158,9 @@ def get_annotation_relative_file_paths_in_vault (vault_config):
     root_path = vault_config["root_path"]
     all_directories = vault_config["all_directories"]
 
-    annotation_file_paths = []
+    main_annotation_relative_file_paths = []
+    user_specific_annotation_relative_file_paths = []
     broken_annotation_file_paths = []
-
-    regexp_data_file_name_from_annotations_file = re.compile(r"(\.pdf)(\.[a-z0-9_]+)?\.annotations$")
 
     for directory in all_directories:
         dir_path = root_path + directory
@@ -127,17 +172,22 @@ def get_annotation_relative_file_paths_in_vault (vault_config):
                 continue
 
             # check corresponding file exists
-            # re.sub transforms:
-            #       abc.pdf.annotations => abc.pdf
-            #       abc.pdf.user_2.annotations => abc.pdf
-            data_file_name = re.sub(regexp_data_file_name_from_annotations_file, r"\1", file_name)
+            data_file_name = annotations_file_path_to_data_file_path(file_name)
             absolute_data_file_path = dir_path + data_file_name
             if os.path.isfile(absolute_data_file_path) or os.path.islink(absolute_data_file_path):
-                annotation_file_paths.append(directory + file_name)
+                annotation_relative_file_path = directory + file_name
+                if annotation_relative_file_path.endswith(".pdf.annotations"):
+                    main_annotation_relative_file_paths.append(annotation_relative_file_path)
+                else:
+                    user_specific_annotation_relative_file_paths.append(annotation_relative_file_path)
+
             else:
                 broken_annotation_file_paths.append(dir_path + file_name)
 
     if broken_annotation_file_paths:
         print_warning("{} broken annotation file paths: {}".format(len(broken_annotation_file_paths), "\n".join(broken_annotation_file_paths)))
 
-    return annotation_file_paths
+    return {
+        "main_annotation_relative_file_paths": main_annotation_relative_file_paths,
+        "user_specific_annotation_relative_file_paths": user_specific_annotation_relative_file_paths,
+    }
