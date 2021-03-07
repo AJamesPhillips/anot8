@@ -19,5 +19,5 @@ export function get_safe_user_name (user_name: string)
 
 export function get_compound_id ({ id, safe_user_name }: MaybeAnnotation)
 {
-    return `${id}-${safe_user_name || ""}`
+    return safe_user_name ? `${id}-${safe_user_name || ""}` : id.toString()
 }

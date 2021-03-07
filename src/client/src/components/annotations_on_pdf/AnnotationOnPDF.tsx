@@ -29,8 +29,8 @@ function _AnnotationOnPDF (props: Props)
         return null
     }
 
-    const { id } = annotation
-    const class_name = `annotation annotation_${id} ` + (editing_dimensions ? " editing_dimensions " : "")
+    const { compound_id } = annotation
+    const class_name = `annotation annotation_${compound_id} ` + (editing_dimensions ? " editing_dimensions " : "")
 
     const { text, comment, left, top, width, height, colour: backgroundColor } = annotation
 
