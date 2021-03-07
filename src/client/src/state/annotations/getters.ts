@@ -1,14 +1,14 @@
 import { Annotation } from "../interfaces"
-import { State } from "../state"
+import { AnnotationsBySafeUserName, State } from "../state"
 import { get_compound_id, is_not_deleted } from "./utils"
 
 
 
-export function get_all_annotations (state: State): Annotation[]
+export function get_all_annotations (annotations_by_safe_user_name: AnnotationsBySafeUserName): Annotation[]
 {
     let all_annotations: Annotation[] = []
 
-    Object.values(state.annotations.annotations_by_safe_user_name)
+    Object.values(annotations_by_safe_user_name)
     .forEach(user_specific_annotations =>
     {
         const annotations = user_specific_annotations!.filter(is_not_deleted)

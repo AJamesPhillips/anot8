@@ -63,7 +63,7 @@ function fetch_annotation_file ({ store, user_name }: FetchAnnotationFileArgs)
     .then(resp => resp.json())
     .then((annotations_file: AnnotationsFile) =>
     {
-        store.dispatch(ACTIONS.annotations.got_annotations_file({ annotations_file, user_name, allow_overwrite: false }))
+        store.dispatch(ACTIONS.annotations.got_annotations_file({ annotations_file, user_name, overwrite: false }))
 
         return annotations_file
     })

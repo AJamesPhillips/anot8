@@ -7,7 +7,7 @@ interface GotAnnotationsFileArgs
 {
     annotations_file: AnnotationsFile
     user_name: string
-    allow_overwrite: boolean
+    overwrite: boolean
 }
 interface ActionGotAnnotationsFile extends Action, GotAnnotationsFileArgs {}
 

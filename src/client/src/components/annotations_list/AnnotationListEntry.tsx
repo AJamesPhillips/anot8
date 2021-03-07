@@ -2,9 +2,7 @@ import { h } from "preact"
 
 import { ACTIONS } from "../../state/actions"
 import { Annotation } from "../../state/interfaces"
-import { State } from "../../state/state"
 import { dispatch } from "../../state/store"
-import { connect } from "../../utils/preact-redux-simple/connect"
 
 
 
@@ -13,12 +11,7 @@ interface OwnProps {
 }
 
 
-const map_state = (state: State, own_props: OwnProps) => ({ a: 1 })
-const connector = connect(map_state)
-type Props = ReturnType<typeof map_state> & OwnProps
-
-
-function _AnnotationListEntry (props: Props)
+export function AnnotationListEntry (props: OwnProps)
 {
     const { compound_id, colour, dirty, text, comment, labels, page_number, user_name } = props.annotation
 
@@ -48,5 +41,3 @@ function _AnnotationListEntry (props: Props)
         <div style={{ clear: "both" }}></div>
     </div>
 }
-
-export const AnnotationListEntry = connector(_AnnotationListEntry)

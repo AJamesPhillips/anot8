@@ -5,6 +5,7 @@ import { Annotation, MaybeAnnotation } from "../interfaces"
 import { AnnotationsByCompoundId, AnnotationsByPageNumber, AnnotationsBySafeUserName, AnnotationsState, State } from "../state"
 import { get_safe_user_name } from "../user/utils"
 import { is_create_annotation, is_edit_annotation, is_got_annotations_file } from "./actions"
+import { get_all_annotations } from "./getters"
 import { get_compound_id, is_not_deleted } from "./utils"
 
 
@@ -18,7 +19,7 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
         const new_maybe_annotations = annotations_file.annotations.map(add_user_name_and_compound_id(user_name))
 
-        const prepared_state = prepare_new_annotations({ state, new_maybe_annotations, safe_user_name, allow_merge: false, allow_overwrite: action.allow_overwrite })
+        const prepared_state = prepare_new_annotations({ state, new_maybe_annotations, safe_user_name, allow_merge: false, overwrite: action.overwrite })
 
         const annotations_state: AnnotationsState = {
             ...state.annotations,
@@ -55,7 +56,7 @@ export function annotations_reducer (state: State, action: AnyAction): State
                 new_maybe_annotations,
                 safe_user_name,
                 allow_merge: true,
-                allow_overwrite: false,
+                overwrite: false,
             })
         }
 
@@ -120,11 +121,11 @@ interface PrepareNewAnnotationsArgs
     new_maybe_annotations: MaybeAnnotation[]
     safe_user_name: string
     allow_merge: boolean
-    allow_overwrite: boolean
+    overwrite: boolean
 }
 function prepare_new_annotations (args: PrepareNewAnnotationsArgs)
 {
-    const { state, new_maybe_annotations, safe_user_name, allow_merge, allow_overwrite } = args
+    const { state, new_maybe_annotations, safe_user_name, allow_merge, overwrite: allow_overwrite } = args
 
     const annotations_by_safe_user_name = add_new_annotations_by_safe_user_name({
         annotations_by_safe_user_name: state.annotations.annotations_by_safe_user_name,
@@ -134,8 +135,8 @@ function prepare_new_annotations (args: PrepareNewAnnotationsArgs)
         allow_overwrite,
     })
 
+    const all_annotations = get_all_annotations(annotations_by_safe_user_name)
     const new_annotations = new_maybe_annotations.filter(is_not_deleted)
-    const all_annotations = [...state.annotations.all_annotations, ...new_annotations]
     const annotations_by_page_number = add_new_annotations_by_page_number(
         state.annotations.annotations_by_page_number, new_annotations)
     const annotations_by_compound_id = add_new_annotations_by_compound_id(
@@ -163,11 +164,11 @@ function add_new_annotations_by_safe_user_name (args: AddNewAnnotationsBySafeUse
 {
     const {
         annotations_by_safe_user_name,
-        new_annotations,
         safe_user_name,
         allow_merge,
         allow_overwrite,
     } = args
+    let { new_annotations } = args
 
     if (!allow_merge)
     {
@@ -178,17 +179,17 @@ function add_new_annotations_by_safe_user_name (args: AddNewAnnotationsBySafeUse
 
         return {
             ...annotations_by_safe_user_name,
-            [safe_user_name]: new_annotations,
+            [safe_user_name]: [...new_annotations],
         }
     }
     else
     {
-        let existing_annotations = annotations_by_safe_user_name[safe_user_name] || []
-        existing_annotations = [...existing_annotations, ...new_annotations]
+        const existing_annotations = annotations_by_safe_user_name[safe_user_name] || []
+        new_annotations = [...existing_annotations, ...new_annotations]
 
         return {
             ...annotations_by_safe_user_name,
-            [safe_user_name]: existing_annotations,
+            [safe_user_name]: new_annotations,
         }
     }
 }
