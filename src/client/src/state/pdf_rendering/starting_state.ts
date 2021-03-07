@@ -7,8 +7,6 @@ export function get_starting_rendering_pdf_state (): RenderingPDFState
     return {
         status: "not started",
         max_pages: undefined,
-        last_rendered_page_annotations_container: undefined,
-        last_rendered_page_canvas: undefined,
         last_rendered_page_number: undefined,
     }
 }

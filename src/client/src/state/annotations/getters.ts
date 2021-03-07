@@ -33,3 +33,17 @@ export function get_annotation_ids_for_page (state: State, page_number: number)
         .map(get_compound_id)
         .join(",")
 }
+
+
+
+/**
+ * This is likely, but not guaranteed to be the id returned by the server
+ * If there are two tabs open with the same PDF then conflicting ids will be made.
+ * At the moment, conflicting annotations will also be overwritten so the first problem
+ * is of no importance.
+ */
+export function next_annotation_id_for_user (state: State, safe_user_name: string)
+{
+    const annotations = state.annotations.annotations_by_safe_user_name[safe_user_name]
+    return annotations ? annotations.length : 0
+}

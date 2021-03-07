@@ -41,9 +41,7 @@ export interface RenderingPDFState
 {
     status: "not started" | "rendering" | "finished"
     max_pages: undefined | number
-    last_rendered_page_annotations_container: undefined | HTMLElement
     last_rendered_page_number: undefined | number
-    last_rendered_page_canvas: undefined | HTMLCanvasElement
 }
 
 
@@ -65,6 +63,14 @@ export interface SelectedAnnotationsState
 
 
 
+export interface UserState
+{
+    user_name: string
+    safe_user_name: string
+}
+
+
+
 export interface State
 {
     annotations: AnnotationsState
@@ -74,4 +80,5 @@ export interface State
     routing: RoutingState
     running_locally: boolean
     selected_annotations: SelectedAnnotationsState
+    user: UserState
 }

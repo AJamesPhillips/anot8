@@ -4,6 +4,7 @@ import { get_starting_rendering_pdf_state } from "./pdf_rendering/starting_state
 import { get_starting_routing_state } from "./routing/starting_state"
 import { get_starting_selected_annotations_state } from "./selected_annotations/starting_state"
 import { State } from "./state"
+import { get_starting_user_state } from "./user/starting_state"
 
 
 
@@ -20,5 +21,6 @@ export function get_starting_state (): State
         routing: get_starting_routing_state(),
         running_locally,
         selected_annotations: get_starting_selected_annotations_state(),
+        user: get_starting_user_state(),
     }
 }

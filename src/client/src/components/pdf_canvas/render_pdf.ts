@@ -1,10 +1,11 @@
 import { Store } from "redux"
 import { PDFDocumentProxy, PDFPageViewport, PDFRenderParams } from "pdfjs-dist"
 
-import { ACTIONS } from "../state/actions"
-import { State } from "../state/state"
-import { get_store } from "../state/store"
-import { add_annotations_to_PDF_page } from "./annotations_on_pdf/annotations_on_pdf"
+import { ACTIONS } from "../../state/actions"
+import { State } from "../../state/state"
+import { get_store } from "../../state/store"
+import { add_annotations_to_PDF_page } from "../annotations_on_pdf/annotations_on_pdf"
+import { add_canvas_mouse_event_handlers } from "./add_canvas_mouse_event_handlers"
 
 
 
@@ -16,8 +17,6 @@ export function render_pdf (pdf: PDFDocumentProxy, pages_container_el: HTMLEleme
 
     const store = get_store()
     store.dispatch(ACTIONS.pdf_rendering.start_rendering_pdf({ max_pages: pdf.numPages }))
-
-    add_annotations_to_PDF_page(store)
 
     // assume there is always at least 1 page to render
     render_pdf_page({ pdf, pages_container_el, page_number: 1, store })
@@ -47,12 +46,13 @@ function render_pdf_page ({ pdf, pages_container_el, page_number, store }: Rende
         const annotations_container_el = create_annotations_container_el({ single_page_container_el, page_number })
         add_page_number({ pages_container_el, page_number })
 
-        // add_canvas_mouse_event_handlers({ canvas, page_number }) TODO
 
         page.render(render_context)
         .promise.then(() =>
         {
-            store.dispatch(ACTIONS.pdf_rendering.rendered_page({ canvas, annotations_container_el, page_number }))
+            add_canvas_mouse_event_handlers({ store, canvas, annotations_container_el, page_number })
+            add_annotations_to_PDF_page({ annotations_container_el, page_number })
+            store.dispatch(ACTIONS.pdf_rendering.rendered_page({ page_number }))
 
             if (page_number < pdf.numPages)
             {

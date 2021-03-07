@@ -25,7 +25,7 @@ function _AnnotationsContainer (props: Props)
     const ids = props.annotation_ids.length ? props.annotation_ids.split(",") : []
 
     return <div>
-        {ids.map(id => <AnnotationOnPDF key={id} compound_annotation_id={id} editing_dimensions={false} />)}
+        {ids.map(id => <AnnotationOnPDF key={id} compound_annotation_id={id} />)}
     </div>
 }
 

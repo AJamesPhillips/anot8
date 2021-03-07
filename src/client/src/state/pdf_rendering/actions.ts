@@ -24,8 +24,6 @@ const rendered_page_type = "rendered_page"
 
 interface RenderedPageArgs
 {
-    canvas: HTMLCanvasElement
-    annotations_container_el: HTMLElement
     page_number: number
 }
 interface ActionRenderedPage extends Action, RenderedPageArgs {}
@@ -36,21 +34,6 @@ const rendered_page = (args: RenderedPageArgs): ActionRenderedPage =>
 
 export const is_rendered_page = (action: AnyAction): action is ActionRenderedPage => {
     return action.type === rendered_page_type
-}
-
-
-
-const have_setup_annotations_container_type = "have_setup_annotations_container"
-
-interface HaveSetupAnnotationsContainerArgs {}
-interface ActionHaveSetupAnnotationsContainer extends Action, HaveSetupAnnotationsContainerArgs {}
-const have_setup_annotations_container = (args: HaveSetupAnnotationsContainerArgs): ActionHaveSetupAnnotationsContainer =>
-{
-    return { type: have_setup_annotations_container_type, ...args }
-}
-
-export const is_have_setup_annotations_container = (action: AnyAction): action is ActionHaveSetupAnnotationsContainer => {
-    return action.type === have_setup_annotations_container_type
 }
 
 
@@ -73,6 +56,5 @@ export const is_finished_rendering_pdf = (action: AnyAction): action is ActionFi
 export const pdf_rendering_actions = {
     start_rendering_pdf,
     rendered_page,
-    have_setup_annotations_container,
     finished_rendering_pdf,
 }

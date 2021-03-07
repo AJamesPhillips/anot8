@@ -2,7 +2,7 @@ import { AnyAction } from "redux"
 import { Annotation, MaybeAnnotation } from "../interfaces"
 
 import { AnnotationsByCompoundId, AnnotationsByPageNumber, AnnotationsBySafeUserName, AnnotationsState, State } from "../state"
-import { is_got_annotations_file } from "./actions"
+import { is_create_annotation, is_got_annotations_file } from "./actions"
 import { get_compound_id, get_safe_user_name, is_not_deleted } from "./utils"
 
 
@@ -15,35 +15,37 @@ export function annotations_reducer (state: State, action: AnyAction): State
         const safe_user_name = get_safe_user_name(user_name)
 
         const new_maybe_annotations = annotations_file.annotations.map(add_user_name_and_compound_id(user_name))
-        const new_annotations = new_maybe_annotations.filter(is_not_deleted)
 
-        const annotations_by_safe_user_name = add_new_annotations_by_safe_user_name(
-            state.annotations.annotations_by_safe_user_name, new_maybe_annotations, safe_user_name)
+        const prepared_state = prepare_new_annotations({ state, new_maybe_annotations, safe_user_name, allow_merge: false })
 
-        const all_annotations = [...state.annotations.all_annotations, ...new_annotations]
-        const annotations_by_page_number = add_new_annotations_by_page_number(
-            state.annotations.annotations_by_page_number, new_annotations)
-        const annotations_by_compound_id = add_new_annotations_by_compound_id(
-            state.annotations.annotations_by_compound_id, new_annotations)
-
-
-        const annotations: AnnotationsState = {
+        const annotations_state: AnnotationsState = {
             ...state.annotations,
             status: "loaded", // this field does not make sense now with multiple user annotation files
-            annotations_by_safe_user_name,
-            //
-            annotations_by_page_number,
-            all_annotations,
-            annotations_by_compound_id,
+            ...prepared_state
         }
 
         if (is_main_annotations_file(safe_user_name))
         {
-            annotations.annotation_user_names = annotations_file.annotation_user_names
+            annotations_state.annotation_user_names = annotations_file.annotation_user_names
         }
 
-        state = { ...state, annotations }
+        state = { ...state, annotations: annotations_state }
     }
+
+
+    if (is_create_annotation(action))
+    {
+        const new_maybe_annotations = [action.new_annotation]
+        const { safe_user_name } = action.new_annotation
+
+        const annotations_state: AnnotationsState = {
+            ...state.annotations,
+            ...prepare_new_annotations({ state, new_maybe_annotations, safe_user_name, allow_merge: true })
+        }
+
+        state = { ...state, annotations: annotations_state }
+    }
+
 
     return state
 }
@@ -62,18 +64,61 @@ function add_user_name_and_compound_id (user_name: string)
 }
 
 
-function is_main_annotations_file (safe_user_name: string)
+
+interface PrepareNewAnnotationsArgs
 {
-    return safe_user_name === ""
+    state: State
+    new_maybe_annotations: MaybeAnnotation[]
+    safe_user_name: string
+    allow_merge: boolean
+}
+function prepare_new_annotations (args: PrepareNewAnnotationsArgs)
+{
+    const { state, new_maybe_annotations, safe_user_name, allow_merge } = args
+
+    const annotations_by_safe_user_name = add_new_annotations_by_safe_user_name(
+        state.annotations.annotations_by_safe_user_name, new_maybe_annotations, safe_user_name, allow_merge)
+
+    const new_annotations = new_maybe_annotations.filter(is_not_deleted)
+    const all_annotations = [...state.annotations.all_annotations, ...new_annotations]
+    const annotations_by_page_number = add_new_annotations_by_page_number(
+        state.annotations.annotations_by_page_number, new_annotations)
+    const annotations_by_compound_id = add_new_annotations_by_compound_id(
+        state.annotations.annotations_by_compound_id, new_annotations)
+
+    return {
+        annotations_by_safe_user_name,
+        all_annotations,
+        annotations_by_page_number,
+        annotations_by_compound_id,
+    }
 }
 
 
 
-function add_new_annotations_by_safe_user_name (annotations_by_safe_user_name: AnnotationsBySafeUserName, new_annotations: MaybeAnnotation[], safe_user_name: string): AnnotationsBySafeUserName
+function add_new_annotations_by_safe_user_name (annotations_by_safe_user_name: AnnotationsBySafeUserName, new_annotations: MaybeAnnotation[], safe_user_name: string, allow_merge: boolean): AnnotationsBySafeUserName
 {
-    return {
-        ...annotations_by_safe_user_name,
-        [safe_user_name]: new_annotations,
+    if (!allow_merge)
+    {
+        if (annotations_by_safe_user_name[safe_user_name])
+        {
+            console.error("Overwritting annotations by safe_user_name ", annotations_by_safe_user_name[safe_user_name])
+        }
+
+        return {
+            ...annotations_by_safe_user_name,
+            [safe_user_name]: new_annotations,
+        }
+    }
+    else
+    {
+        let existing_annotations = annotations_by_safe_user_name[safe_user_name] || []
+        existing_annotations = [...existing_annotations, ...new_annotations]
+
+        return {
+            ...annotations_by_safe_user_name,
+            [safe_user_name]: existing_annotations,
+        }
     }
 }
 
@@ -111,4 +156,11 @@ function add_new_annotations_by_compound_id (annotations_by_compound_id: Annotat
     })
 
     return annotations_by_compound_id
+}
+
+
+
+function is_main_annotations_file (safe_user_name: string)
+{
+    return safe_user_name === ""
 }

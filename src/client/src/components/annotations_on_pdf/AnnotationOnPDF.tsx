@@ -8,7 +8,6 @@ import { connect } from "../../utils/preact-redux-simple/connect"
 
 interface OwnProps
 {
-    editing_dimensions: boolean
     compound_annotation_id: string
 }
 
@@ -21,7 +20,7 @@ const connector = connect(map_state)
 
 function _AnnotationOnPDF (props: Props)
 {
-    const { annotation, editing_dimensions } = props
+    const { annotation } = props
 
     if (!annotation)
     {
@@ -30,7 +29,7 @@ function _AnnotationOnPDF (props: Props)
     }
 
     const { compound_id } = annotation
-    const class_name = `annotation annotation_${compound_id} ` + (editing_dimensions ? " editing_dimensions " : "")
+    const class_name = `annotation annotation_${compound_id}`
 
     const { text, comment, left, top, width, height, colour: backgroundColor } = annotation
 
@@ -41,3 +40,18 @@ function _AnnotationOnPDF (props: Props)
 }
 
 export const AnnotationOnPDF = connector(_AnnotationOnPDF)
+
+
+
+interface CreateEmptyAnnotationElArgs
+{
+    annotations_container_el: HTMLElement
+}
+export function create_empty_annotation_el ({ annotations_container_el }: CreateEmptyAnnotationElArgs)
+{
+    const annotation_el = document.createElement("div")
+    annotation_el.className = "annotation"
+    annotations_container_el.appendChild(annotation_el)
+
+    return annotation_el
+}
