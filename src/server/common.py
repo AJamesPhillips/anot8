@@ -33,7 +33,7 @@ def supported_relative_file_path (vault_config, relative_file_path):
     if relative_file_path and relative_file_path.endswith(".pdf"):
         supported_file_type = True
 
-    is_annotations = bool(relative_file_path) and re.match(regexp_data_file_name_from_annotations_file, relative_file_path)
+    is_annotations = bool(relative_file_path and re.match(regexp_data_file_name_from_annotations_file, relative_file_path))
     if is_annotations:
         supported_file_type = True
 

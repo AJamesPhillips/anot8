@@ -218,23 +218,36 @@ def annotation (vault_id, vault_config):
 def update_annotations (vault_config, annotations_relative_file_path):
     meta_data = upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
     upsert_file_perma_id_mapping(vault_config, annotations_relative_file_path)
+    # Do not think this is necessary as upsert_meta_data_annotations_file does not mutate the vault_config
+    # and upsert_file_perma_id_mapping writes it if it mutates it
     upsert_anot8_vault_config(vault_config)
     root_path = vault_config["root_path"]
 
     annotations = request.get_json()  # TODO validate this data
 
     # Racy but should be fine for single user
+    annotations_to_save = []
+    annotations_to_return_via_api = []
     for (i, annotation) in enumerate(annotations):
-        annotation["id"] = i
+        annotation = dict(annotation)
         if "dirty" in annotation:
             del annotation["dirty"]
-    meta_data["annotations"] = annotations
+
+        annotation["old_id"] = annotation["id"]
+        annotation["id"] = i
+        annotations_to_return_via_api.append(annotation)
+
+        annotation_to_save = dict(annotation)
+        del annotation_to_save["old_id"]
+        annotations_to_save.append(annotation_to_save)
+
+    meta_data["annotations"] = annotations_to_save
 
     # Racy but should be fine for single user
     annotations_file_path = root_path + annotations_relative_file_path
     write_annotations_file(annotations_file_path, meta_data)
 
-    return json.dumps(annotations, ensure_ascii=False)
+    return json.dumps(annotations_to_return_via_api, ensure_ascii=False)
 
 
 
