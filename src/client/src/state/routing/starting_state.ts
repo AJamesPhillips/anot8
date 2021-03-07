@@ -1,3 +1,4 @@
+import { parse_location_search } from "../../utils/url"
 import { RoutingState } from "../state"
 
 
@@ -16,24 +17,6 @@ function parse_location_path () {
         vault_id,
         file_id,
     }
-}
-
-
-
-function parse_location_search ()
-{
-    const query = window.location.search.substring(1)
-    const vars: { [key: string]: string } = {}
-
-    if (query)
-    {
-        query.split("&").forEach(key_var => {
-            const [key, _var] = key_var.split("=")
-            vars[decodeURIComponent(key)] = decodeURIComponent(_var)
-        })
-    }
-
-    return vars
 }
 
 

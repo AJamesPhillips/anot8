@@ -18,10 +18,6 @@ type Props = ReturnType<typeof map_state> & OwnProps
 
 function _AnnotationsList (props: Props)
 {
-    //     update_page_location_and_highlighted_annotations()
-    // }
-    // changed_annotations_data_listeners.push(refresh_annotations_list)
-
     return <div>
         {props.annotations.map(a => <AnnotationListEntry key={a.compound_id} annotation={a} />)}
     </div>
