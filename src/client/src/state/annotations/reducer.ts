@@ -14,7 +14,7 @@ export function annotations_reducer (state: State, action: AnyAction): State
         const { annotations_file, user_name } = action
         const safe_user_name = get_safe_user_name(user_name)
 
-        const new_maybe_annotations = annotations_file.annotations.map(add_user_name(user_name))
+        const new_maybe_annotations = annotations_file.annotations.map(add_user_name_and_compound_id(user_name))
         const new_annotations = new_maybe_annotations.filter(is_not_deleted)
 
         const annotations_by_safe_user_name = add_new_annotations_by_safe_user_name(
@@ -50,10 +50,15 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
 
 
-function add_user_name (user_name: string)
+function add_user_name_and_compound_id (user_name: string)
 {
     const safe_user_name = get_safe_user_name(user_name)
-    return (a: MaybeAnnotation): MaybeAnnotation => ({ ...a, user_name, safe_user_name })
+
+    return (annotation: MaybeAnnotation): MaybeAnnotation => {
+        annotation = ({ ...annotation, user_name, safe_user_name })
+        const compound_id = get_compound_id(annotation)
+        return { ...annotation, compound_id }
+    }
 }
 
 

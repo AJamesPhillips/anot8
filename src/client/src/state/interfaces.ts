@@ -47,6 +47,7 @@ export interface DeletedAnnotation
     // not in individual annotation when stored, only added client side
     user_name: string
     safe_user_name: string
+    compound_id: string
 }
 
 export interface Annotation
@@ -65,6 +66,7 @@ export interface Annotation
     // not in individual annotation when stored, only added client side
     user_name: string
     safe_user_name: string
+    compound_id: string
 }
 
 
