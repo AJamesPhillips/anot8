@@ -1,5 +1,5 @@
 import { AnyAction } from "redux"
-import { toggle_set_entry } from "../../utils/set"
+import { toggle_list_entry } from "../../utils/list"
 import { update_substate } from "../../utils/update_state"
 
 import { State } from "../state"
@@ -11,8 +11,8 @@ export function selected_annotations_reducer (state: State, action: AnyAction): 
 {
     if (is_toggle_annotation_highlight(action))
     {
-        const selected_compound_ids = new Set(state.selected_annotations.selected_compound_ids)
-        toggle_set_entry(selected_compound_ids, action.compound_id)
+        const selected_compound_ids = toggle_list_entry(
+            state.selected_annotations.selected_compound_ids, action.compound_id)
         state = update_substate(state, "selected_annotations", "selected_compound_ids", selected_compound_ids)
     }
 

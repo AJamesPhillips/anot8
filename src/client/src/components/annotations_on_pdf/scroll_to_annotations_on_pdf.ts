@@ -1,11 +1,11 @@
 
-export function scroll_to_annotations_on_pdf (selected_compound_ids: Set<string>)
+
+
+export function scroll_to_annotations_on_pdf (selected_compound_ids: string[])
 {
-    const ids = Array.from(selected_compound_ids)
+    if (an_annotation_in_view(selected_compound_ids)) return
 
-    if (an_annotation_in_view(ids)) return
-
-    scroll_to_annotation(ids[0])
+    scroll_to_annotation(selected_compound_ids[0])
 }
 
 

@@ -35,4 +35,4 @@ load_files()
 .then(pdf => render_pdf(pdf, pages_container_el))
 
 
-setup_scrollers(store)
+setup_scrollers(annotations_list_el, store)

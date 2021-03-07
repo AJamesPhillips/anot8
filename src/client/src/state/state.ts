@@ -60,7 +60,7 @@ export interface RoutingState
 
 export interface SelectedAnnotationsState
 {
-    selected_compound_ids: Set<string>
+    selected_compound_ids: string[]
 }
 
 

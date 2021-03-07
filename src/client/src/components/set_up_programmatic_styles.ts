@@ -6,7 +6,7 @@ import { State } from "../state/state"
 
 export function set_up_programmatic_styles (programmatic_styles_el: HTMLElement, store: Store<State>)
 {
-    let selected_compound_ids: Set<string>
+    let selected_compound_ids: string[]
 
     store.subscribe(() =>
     {
@@ -17,9 +17,9 @@ export function set_up_programmatic_styles (programmatic_styles_el: HTMLElement,
 
         programmatic_styles_el.innerHTML = ""
 
-        if (!selected_compound_ids.size) return
+        if (!selected_compound_ids.length) return
 
-        const class_names = Array.from(selected_compound_ids).map(id => `.annotation_${id}`).join(",")
+        const class_names = selected_compound_ids.map(id => `.annotation_${id}`).join(",")
         // TODO: remove `!important` hack
         programmatic_styles_el.innerHTML = `${class_names} { background-color: rgba(255, 245, 150, 0.7) !important; }`
     })

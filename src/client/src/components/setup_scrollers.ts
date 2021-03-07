@@ -6,9 +6,9 @@ import { scroll_to_annotations_on_pdf } from "./annotations_on_pdf/scroll_to_ann
 
 
 
-export function setup_scrollers (store: Store<State>)
+export function setup_scrollers (annotations_list_el: HTMLElement, store: Store<State>)
 {
-    let selected_compound_ids: Set<string>
+    let selected_compound_ids: string[]
 
     store.subscribe(() =>
     {
@@ -17,7 +17,7 @@ export function setup_scrollers (store: Store<State>)
 
         selected_compound_ids = current_selected_compound_ids
 
-        scroll_to_entries(selected_compound_ids)
+        scroll_to_entries(annotations_list_el, selected_compound_ids)
         scroll_to_annotations_on_pdf(selected_compound_ids)
     })
 }
