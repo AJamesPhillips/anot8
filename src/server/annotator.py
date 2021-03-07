@@ -168,6 +168,7 @@ def serve_file (vault_id, vault_config):
     if not allow:
         return "<h1>Unknown relative_file_path {}</h1>".format(jinja2.escape(relative_file_path)), 404
 
+
     if relative_file_path.endswith(".pdf"):
         return serve_pdf_file(vault_config, relative_file_path)
     elif relative_file_path.endswith(".annotations"):
@@ -194,6 +195,10 @@ def serve_pdf_file (vault_config, relative_file_path):
 
 
 def serve_pdf_annotations (vault_config, annotations_relative_file_path):
+    if not annotations_relative_file_path.endswith(".pdf.annotations"):
+        if not os.path.isfile(vault_config["root_path"] + annotations_relative_file_path):
+            return jsonify({ "error": "file_not_present" }), 404
+
     json_annotations = upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
     upsert_file_perma_id_mapping(vault_config, annotations_relative_file_path)
     upsert_anot8_vault_config(vault_config)
@@ -208,7 +213,8 @@ def annotation (vault_id, vault_config):
     relative_file_path = request.args.get("relative_file_path", "")
 
     supported = supported_relative_file_path(vault_config, relative_file_path)
-    if not supported["supported"]:
+    allow = supported["supported"] or (supported["is_annotations"] and supported["supported_directory"])
+    if not allow:
         return "<h1>Unknown relative_file_path {}</h1>".format(jinja2.escape(relative_file_path)), 404
 
     return update_annotations(vault_config, relative_file_path)
@@ -216,44 +222,40 @@ def annotation (vault_id, vault_config):
 
 
 def update_annotations (vault_config, annotations_relative_file_path):
-    meta_data = upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
+    json_body = request.get_json()
+    user_name = json_body["user_name"]
+
+    meta_data = upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path, user_name)
     upsert_file_perma_id_mapping(vault_config, annotations_relative_file_path)
     # Do not think this is necessary as upsert_meta_data_annotations_file does not mutate the vault_config
     # and upsert_file_perma_id_mapping writes it if it mutates it
     upsert_anot8_vault_config(vault_config)
-    root_path = vault_config["root_path"]
 
-    annotations = request.get_json()  # TODO validate this data
+    annotations = json_body["annotations"]
 
     # Racy but should be fine for single user
-    annotations_to_save = []
-    annotations_to_return_via_api = []
+    current_annotations = []
     for (i, annotation) in enumerate(annotations):
         annotation = dict(annotation)
         if "dirty" in annotation:
             del annotation["dirty"]
-
-        annotation["old_id"] = annotation["id"]
+        if "user_name" in annotation:
+            del annotation["user_name"]
+        if "safe_user_name" in annotation:
+            del annotation["safe_user_name"]
+        if "compound_id" in annotation:
+            del annotation["compound_id"]
         annotation["id"] = i
-        annotations_to_return_via_api.append(annotation)
+        current_annotations.append(annotation)
 
-        annotation_to_save = dict(annotation)
-        del annotation_to_save["old_id"]
-        if "user_name" in annotation_to_save:
-            del annotation_to_save["user_name"]
-        if "safe_user_name" in annotation_to_save:
-            del annotation_to_save["safe_user_name"]
-        if "compound_id" in annotation_to_save:
-            del annotation_to_save["compound_id"]
-        annotations_to_save.append(annotation_to_save)
+    meta_data["annotations"] = current_annotations
 
-    meta_data["annotations"] = annotations_to_save
-
+    root_path = vault_config["root_path"]
     # Racy but should be fine for single user
     annotations_file_path = root_path + annotations_relative_file_path
     write_annotations_file(annotations_file_path, meta_data)
 
-    return json.dumps(annotations_to_return_via_api, ensure_ascii=False)
+    return json.dumps(meta_data, ensure_ascii=False)
 
 
 

@@ -16,13 +16,18 @@ def has_main_annotations_file (root_path, data_file_relative_file_path):
 
 
 
-def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_path):
+def upsert_meta_data_annotations_file (vault_config, annotations_relative_file_path, override_user_name=""):
     root_path = vault_config["root_path"]
 
     data_file_relative_file_path = annotations_file_path_to_data_file_path(annotations_relative_file_path)
     main_annotations_relative_file_path = data_file_relative_file_path + ".annotations"
 
-    user_name = get_user_name_from_annotations_file_path(annotations_relative_file_path)
+    safe_user_name = get_user_name_from_annotations_file_path(annotations_relative_file_path)
+    if override_user_name and get_safe_user_name(override_user_name) == safe_user_name:
+        user_name = override_user_name
+    else:
+        user_name = safe_user_name
+
     meta_data = ensure_annotations_file(root_path, main_annotations_relative_file_path, user_name)
 
     if user_name:
@@ -71,9 +76,9 @@ def ensure_user_name_in_annotation_user_names (meta_data, user_name):
     if not user_name:
         return meta_data
 
-    existing_safe_user_names = list(map(get_safe_user_name, meta_data["annotation_user_names"]))
+    existing_safe_user_names = set(map(get_safe_user_name, meta_data["annotation_user_names"]))
 
-    if user_name not in existing_safe_user_names:
+    if get_safe_user_name(user_name) not in existing_safe_user_names:
         meta_data["annotation_user_names"].append(user_name)
 
     return meta_data

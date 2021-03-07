@@ -25,7 +25,7 @@ export function get_url_to_file_annotations ({ state, safe_user_name }: { state:
     const { resolved_relative_file_path } = state.loading_pdf
     if (!resolved_relative_file_path) return ""
 
-    let user = safe_user_name && ("." + safe_user_name)
+    const user = get_user_part_of_url(safe_user_name)
 
     if (state.running_locally)
     {
@@ -59,5 +59,14 @@ export function get_url_to_write_file_annotations (state: State)
     if (!resolved_relative_file_path) return ""
 
     const { vault_id } = state.routing
-    return `/annotations/${vault_id}?relative_file_path=${resolved_relative_file_path}.annotations`
+    const safe_user_name = state.user.safe_user_name
+    const user = get_user_part_of_url(safe_user_name)
+    return `/annotations/${vault_id}?relative_file_path=${resolved_relative_file_path}${user}.annotations`
+}
+
+
+
+function get_user_part_of_url (safe_user_name: string)
+{
+    return safe_user_name && ("." + safe_user_name)
 }

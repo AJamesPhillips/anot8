@@ -1,7 +1,7 @@
 import { h, render } from "preact"
 
 import { AnnotationsList } from "./components/annotations_list/AnnotationsList"
-import { AuthorInfo } from "./components/AuthorInfo"
+import { AuthorInfo } from "./components/side_panel/AuthorInfo"
 import { LoadingProgress } from "./components/LoadingProgress"
 import { render_pdf } from "./components/pdf_canvas/render_pdf"
 import { setup_scrollers } from "./components/setup_scrollers"
@@ -13,6 +13,7 @@ import { load_files } from "./load_files/load_files"
 import { update_page_location } from "./state/routing/update_page_location"
 import { remove_non_existant_selected_annotation_ids } from "./state/selected_annotations/remove_non_existant_selected_annotation_ids"
 import { get_store } from "./state/store"
+import { auto_save } from "./state/annotations/auto_save"
 
 
 
@@ -48,3 +49,4 @@ load_files()
 setup_scrollers(annotations_list_el, store)
 update_page_location(store)
 remove_non_existant_selected_annotation_ids(store)
+auto_save(store)

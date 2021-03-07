@@ -1,11 +1,11 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
 
-import { ACTIONS } from "../state/actions"
-import { State } from "../state/state"
-import { get_store } from "../state/store"
-import { get_safe_user_name } from "../state/user/utils"
-import { connect } from "../utils/preact-redux-simple/connect"
+import { ACTIONS } from "../../state/actions"
+import { State } from "../../state/state"
+import { get_store } from "../../state/store"
+import { get_safe_user_name } from "../../state/user/utils"
+import { connect } from "../../utils/preact-redux-simple/connect"
 
 
 
