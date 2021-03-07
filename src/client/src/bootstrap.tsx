@@ -1,28 +1,32 @@
 import { h, render } from "preact"
 
 import { AnnotationsList } from "./components/annotations_list/AnnotationsList"
-import { App } from "./app"
+import { AuthorInfo } from "./components/AuthorInfo"
 import { LoadingProgress } from "./components/LoadingProgress"
-import { load_files } from "./load_files/load_files"
-import { TopInfoPanel } from "./components/TopInfoPanel"
-import { AutoSave } from "./components/side_panel/AutoSave"
 import { render_pdf } from "./components/pdf_canvas/render_pdf"
-import { set_up_programmatic_styles } from "./components/set_up_programmatic_styles"
-import { get_store } from "./state/store"
 import { setup_scrollers } from "./components/setup_scrollers"
-import { update_page_location } from "./state/routing/update_page_location"
+import { set_up_programmatic_styles } from "./components/set_up_programmatic_styles"
 import { AnnotationDetails } from "./components/side_panel/AnnotationDetails"
+import { AutoSave } from "./components/side_panel/AutoSave"
+import { TopInfoPanel } from "./components/TopInfoPanel"
+import { load_files } from "./load_files/load_files"
+import { update_page_location } from "./state/routing/update_page_location"
 import { remove_non_existant_selected_annotation_ids } from "./state/selected_annotations/remove_non_existant_selected_annotation_ids"
+import { get_store } from "./state/store"
+
 
 
 
 const store = get_store()
 
+const author_info_el = document.getElementById("author_info")!
+render(<AuthorInfo />, author_info_el)
+
 const programmatic_styles_el = document.getElementById("programmatic_styles")!
 set_up_programmatic_styles(programmatic_styles_el, store)
 
-const link_to_pdf_el = document.getElementById("link_to_pdf_file")
-render(<TopInfoPanel />, link_to_pdf_el!, link_to_pdf_el!)
+const link_to_pdf_el = document.getElementById("link_to_pdf_file")!
+render(<TopInfoPanel />, link_to_pdf_el)
 
 const annotations_list_el = document.getElementById("annotations_list")!
 render(<AnnotationsList />, annotations_list_el)

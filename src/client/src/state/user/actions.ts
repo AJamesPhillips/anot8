@@ -2,21 +2,24 @@ import { Action, AnyAction } from "redux"
 
 
 
-interface MouseUpArgs {}
-interface ActionMouseUp extends Action, MouseUpArgs {}
+interface SetUserNameArgs {
+    user_name: string
+}
+interface ActionSetUserName extends Action, SetUserNameArgs {}
 
-const mouse_up_type = "mouse_up"
+const set_user_name_type = "set_user_name"
 
-const mouse_up = (args: MouseUpArgs): ActionMouseUp =>
+const set_user_name = (args: SetUserNameArgs): ActionSetUserName =>
 {
-    return { type: mouse_up_type, ...args }
+    return { type: set_user_name_type, ...args }
 }
 
-export const is_mouse_up = (action: AnyAction): action is ActionMouseUp => {
-    return action.type === mouse_up_type
+export const is_set_user_name = (action: AnyAction): action is ActionSetUserName => {
+    return action.type === set_user_name_type
 }
 
 
 
 export const user_actions = {
+    set_user_name,
 }

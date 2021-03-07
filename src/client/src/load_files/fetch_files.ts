@@ -7,7 +7,7 @@ import { get_url_to_file, get_url_to_file_annotations } from "../state/loading/g
 import { State } from "../state/state"
 import { get_store } from "../state/store"
 import { AnnotationsFile } from "../state/interfaces"
-import { get_safe_user_name } from "../state/annotations/utils"
+import { get_safe_user_name } from "../state/user/utils"
 
 
 

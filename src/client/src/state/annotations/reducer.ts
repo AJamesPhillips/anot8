@@ -3,8 +3,9 @@ import { replace_entry } from "../../utils/list"
 import { Annotation, MaybeAnnotation } from "../interfaces"
 
 import { AnnotationsByCompoundId, AnnotationsByPageNumber, AnnotationsBySafeUserName, AnnotationsState, State } from "../state"
+import { get_safe_user_name } from "../user/utils"
 import { is_create_annotation, is_edit_annotation, is_got_annotations_file } from "./actions"
-import { get_compound_id, get_safe_user_name, is_not_deleted } from "./utils"
+import { get_compound_id, is_not_deleted } from "./utils"
 
 
 
