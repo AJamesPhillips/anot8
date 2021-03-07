@@ -11,6 +11,7 @@ import { set_up_programmatic_styles } from "./components/set_up_programmatic_sty
 import { get_store } from "./state/store"
 import { setup_scrollers } from "./components/setup_scrollers"
 import { update_page_location } from "./state/routing/update_page_location"
+import { AnnotationDetails } from "./components/side_panel/AnnotationDetails"
 
 
 
@@ -24,6 +25,9 @@ render(<TopInfoPanel />, link_to_pdf_el!, link_to_pdf_el!)
 
 const annotations_list_el = document.getElementById("annotations_list")!
 render(<AnnotationsList />, annotations_list_el)
+
+const annotation_details_el = document.getElementById("annotation_details")!
+render(<AnnotationDetails />, annotation_details_el)
 
 const loading_progress_el = document.getElementById("loading_progress")!
 render(<LoadingProgress />, loading_progress_el)

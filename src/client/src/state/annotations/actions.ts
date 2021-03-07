@@ -42,7 +42,27 @@ export const is_create_annotation = (action: AnyAction): action is ActionCreateA
 
 
 
+interface EditAnnotationArgs
+{
+    annotation: Annotation
+}
+interface ActionEditAnnotation extends Action, EditAnnotationArgs {}
+
+const edit_annotation_type = "edit_annotation"
+
+const edit_annotation = (args: EditAnnotationArgs): ActionEditAnnotation =>
+{
+    return { type: edit_annotation_type, ...args }
+}
+
+export const is_edit_annotation = (action: AnyAction): action is ActionEditAnnotation => {
+    return action.type === edit_annotation_type
+}
+
+
+
 export const annotations_actions = {
     got_annotations_file,
     create_annotation,
+    edit_annotation,
 }

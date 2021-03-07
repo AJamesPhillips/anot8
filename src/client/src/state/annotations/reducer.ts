@@ -1,8 +1,9 @@
 import { AnyAction } from "redux"
+import { replace_entry } from "../../utils/list"
 import { Annotation, MaybeAnnotation } from "../interfaces"
 
 import { AnnotationsByCompoundId, AnnotationsByPageNumber, AnnotationsBySafeUserName, AnnotationsState, State } from "../state"
-import { is_create_annotation, is_got_annotations_file } from "./actions"
+import { is_create_annotation, is_edit_annotation, is_got_annotations_file } from "./actions"
 import { get_compound_id, get_safe_user_name, is_not_deleted } from "./utils"
 
 
@@ -46,6 +47,39 @@ export function annotations_reducer (state: State, action: AnyAction): State
         state = { ...state, annotations: annotations_state }
     }
 
+
+    if (is_edit_annotation(action))
+    {
+        const edited_annotation = action.annotation
+        const predicate = (a: { compound_id: string }) => a.compound_id === edited_annotation.compound_id
+
+        const annotations_by_safe_user_name = {...state.annotations.annotations_by_safe_user_name}
+        annotations_by_safe_user_name[edited_annotation.safe_user_name] = replace_entry<MaybeAnnotation>(
+            annotations_by_safe_user_name[edited_annotation.safe_user_name]!,
+            edited_annotation, predicate, "editing state.annotations.annotations_by_safe_user_name")
+
+        const all_annotations = replace_entry<Annotation>(
+            state.annotations.all_annotations,
+            edited_annotation, predicate, "editing state.annotations.all_annotations")
+
+        const annotations_by_page_number = {...state.annotations.annotations_by_page_number}
+        annotations_by_page_number[edited_annotation.page_number] = replace_entry<Annotation>(
+            state.annotations.annotations_by_page_number[edited_annotation.page_number]!,
+            edited_annotation, predicate, "editing state.annotations.annotations_by_page_number")
+
+        const annotations_by_compound_id = {...state.annotations.annotations_by_compound_id}
+        annotations_by_compound_id[edited_annotation.compound_id] = edited_annotation
+
+        const new_annotations_state: AnnotationsState = {
+            ...state.annotations,
+            annotations_by_safe_user_name,
+            all_annotations,
+            annotations_by_page_number,
+            annotations_by_compound_id,
+        }
+
+        state = { ...state, annotations: new_annotations_state }
+    }
 
     return state
 }
@@ -151,8 +185,7 @@ function add_new_annotations_by_compound_id (annotations_by_compound_id: Annotat
 
     new_annotations.map(a =>
     {
-        const id = get_compound_id(a)
-        annotations_by_compound_id[id] = a
+        annotations_by_compound_id[a.compound_id] = a
     })
 
     return annotations_by_compound_id
