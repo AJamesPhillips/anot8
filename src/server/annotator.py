@@ -239,6 +239,12 @@ def update_annotations (vault_config, annotations_relative_file_path):
 
         annotation_to_save = dict(annotation)
         del annotation_to_save["old_id"]
+        if "user_name" in annotation_to_save:
+            del annotation_to_save["user_name"]
+        if "safe_user_name" in annotation_to_save:
+            del annotation_to_save["safe_user_name"]
+        if "compound_id" in annotation_to_save:
+            del annotation_to_save["compound_id"]
         annotations_to_save.append(annotation_to_save)
 
     meta_data["annotations"] = annotations_to_save
