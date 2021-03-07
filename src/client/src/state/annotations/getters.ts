@@ -1,47 +1,35 @@
-import { Annotation, MaybeAnnotation } from "../interfaces"
+import { Annotation } from "../interfaces"
 import { State } from "../state"
+import { get_compound_id, is_not_deleted } from "./utils"
 
 
 
-export function get_users_annotations (state: State): Annotation[]
+export function get_all_annotations (state: State): Annotation[]
 {
-    return (state.annotations.main_annotations || []).filter(is_not_deleted)
-}
+    let all_annotations: Annotation[] = []
 
-
-
-export function get_annotation (state: State, compound_annotation_id: string): Annotation | undefined
-{
-    return (state.annotations.main_annotations || [])
-        .find(factory_annotation_matches_compound_id(compound_annotation_id))
-}
-
-
-
-export function get_annotation_ids_to_display_for_page (state: State, page_number: number): string[]
-{
-    return (state.annotations.main_annotations || [])
-        .filter(is_not_deleted)
-        .filter(a => a.page_number === page_number)
-        .map(({ id, user_name }) => `${id}-${user_name || ""}`)
-}
-
-
-
-function is_not_deleted (annotation: MaybeAnnotation): annotation is Annotation
-{
-    return !annotation.deleted
-}
-
-
-
-function factory_annotation_matches_compound_id (compound_annotation_id: string)
-{
-    const [id_str, user_name] = compound_annotation_id.split("-")
-    const id = parseInt(id_str, 10)
-
-    return (a: MaybeAnnotation): a is Annotation =>
+    Object.values(state.annotations.annotations_by_safe_user_name)
+    .forEach(user_specific_annotations =>
     {
-        return is_not_deleted(a) && a.id === id && a.user_name === user_name
-    }
+        const annotations = user_specific_annotations!.filter(is_not_deleted)
+        all_annotations = all_annotations.concat(annotations)
+    })
+
+    return all_annotations
+}
+
+
+
+export function get_annotation_by_compound_id (state: State, compound_annotation_id: string): Annotation | undefined
+{
+    return state.annotations.annotations_by_compound_id[compound_annotation_id]
+}
+
+
+
+export function get_annotation_ids_for_page (state: State, page_number: number)
+{
+    return (state.annotations.annotations_by_page_number[page_number] || [])
+        .map(get_compound_id)
+        .join(",")
 }

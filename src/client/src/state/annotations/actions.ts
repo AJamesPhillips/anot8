@@ -3,25 +3,26 @@ import { AnnotationsFile } from "../interfaces"
 
 
 
-interface GotMainAnnotationsFileArgs
+interface GotAnnotationsFileArgs
 {
     annotations_file: AnnotationsFile
+    user_name: string
 }
-interface ActionGotMainAnnotationsFile extends Action, GotMainAnnotationsFileArgs {}
+interface ActionGotAnnotationsFile extends Action, GotAnnotationsFileArgs {}
 
-const got_main_annotations_file_type = "got_main_annotations_file"
+const got_annotations_file_type = "got_annotations_file"
 
-const got_main_annotations_file = (args: GotMainAnnotationsFileArgs): ActionGotMainAnnotationsFile =>
+const got_annotations_file = (args: GotAnnotationsFileArgs): ActionGotAnnotationsFile =>
 {
-    return { type: got_main_annotations_file_type, ...args }
+    return { type: got_annotations_file_type, ...args }
 }
 
-export const is_got_main_annotations_file = (action: AnyAction): action is ActionGotMainAnnotationsFile => {
-    return action.type === got_main_annotations_file_type
+export const is_got_annotations_file = (action: AnyAction): action is ActionGotAnnotationsFile => {
+    return action.type === got_annotations_file_type
 }
 
 
 
 export const annotations_actions = {
-    got_main_annotations_file
+    got_annotations_file
 }

@@ -32,7 +32,7 @@ export interface VaultConfig
 export interface AnnotationsFile
 {
     file_sha1_hash: string
-    annotations: Annotation[]
+    annotations: MaybeAnnotation[]
     comments: string[]
     schema_version: number
     annotation_user_names: string[]
@@ -44,6 +44,9 @@ export interface DeletedAnnotation
 {
     deleted: true
     id: number
+    // not in individual annotation when stored, only added client side
+    user_name: string
+    safe_user_name: string
 }
 
 export interface Annotation
@@ -59,7 +62,9 @@ export interface Annotation
     text: string
     top: string
     width: string
+    // not in individual annotation when stored, only added client side
     user_name: string
+    safe_user_name: string
 }
 
 

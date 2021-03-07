@@ -1,6 +1,6 @@
 import { h } from "preact"
 
-import { get_users_annotations } from "../../state/annotations/getters"
+import { get_all_annotations } from "../../state/annotations/getters"
 import { get_url_to_write_file_annotations } from "../../state/loading/getters"
 import { State } from "../../state/state"
 import { connect } from "../../utils/preact-redux-simple/connect"
@@ -12,7 +12,7 @@ const map_state = (state: State) => ({
     loading: state.annotations.status === "loading",
     saved: state.annotations.status === "saved",
     saving: state.annotations.status === "saving",
-    annotations_count: get_users_annotations(state).length,
+    annotations_count: get_all_annotations(state).length,
     url_to_write_file_annotations: get_url_to_write_file_annotations(state),
 })
 type Props = ReturnType<typeof map_state>

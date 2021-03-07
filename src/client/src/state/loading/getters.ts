@@ -20,20 +20,24 @@ export function get_url_to_file (state: State)
 
 
 
-export function get_url_to_file_annotations (state: State)
+export function get_url_to_file_annotations ({ state, safe_user_name }: { state: State, safe_user_name: string })
 {
     const { resolved_relative_file_path } = state.loading_pdf
     if (!resolved_relative_file_path) return ""
 
+    let user = safe_user_name && ("." + safe_user_name)
+
     if (state.running_locally)
     {
         const { vault_id } = state.routing
-        return `/serve_file/${vault_id}?relative_file_path=${resolved_relative_file_path}.annotations`
+        return `/serve_file/${vault_id}?relative_file_path=${resolved_relative_file_path}${user}.annotations`
     }
-
-    if (!state.loading_pdf.vault_config_loaded) return ""
-    const { publish_root_path } = state.loading_pdf
-    return `${publish_root_path}${resolved_relative_file_path}.annotations`
+    else
+    {
+        if (!state.loading_pdf.vault_config_loaded) return ""
+        const { publish_root_path } = state.loading_pdf
+        return `${publish_root_path}${resolved_relative_file_path}${user}.annotations`
+    }
 }
 
 

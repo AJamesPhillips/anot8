@@ -16,6 +16,11 @@
 See the [change log](./CHANGE_LOG.md) for breaking changes.
 
 
+## TODO
+
+Audit for malicous script injection via unsafely setting innerHTML.
+
+
 ## Installation
 
     python3 -m venv venv

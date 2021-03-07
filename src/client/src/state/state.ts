@@ -1,12 +1,20 @@
-import { MaybeAnnotation } from "./interfaces"
+import { Annotation, MaybeAnnotation } from "./interfaces"
 
 
 
+export type AnnotationsBySafeUserName = { [safe_user_name: string]: undefined | MaybeAnnotation[] }
+export type AnnotationsByPageNumber = { [page_number: number]: undefined | Annotation[] }
+export type AnnotationsByCompoundId = { [compound_id: string]: undefined | Annotation }
 export interface AnnotationsState
 {
     status: "not ready" | "loading" | "loaded" | "error" | "saved" | "saving"
     annotation_user_names: undefined | string[]
-    main_annotations: undefined | MaybeAnnotation[]
+    // all the annotations
+    annotations_by_safe_user_name: AnnotationsBySafeUserName
+    // easier access of annotations
+    annotations_by_page_number: AnnotationsByPageNumber
+    all_annotations: Annotation[]
+    annotations_by_compound_id: AnnotationsByCompoundId
 }
 
 

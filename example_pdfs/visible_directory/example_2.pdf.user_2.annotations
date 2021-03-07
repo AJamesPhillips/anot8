@@ -3,7 +3,7 @@
 "annotations": [
 {
 "colour": "rgba(200, 200, 255, 0.6)",
-"comment": "An annotation by user2",
+"comment": "An annotation by User 2",
 "height": "28px",
 "id": 0,
 "labels": [
@@ -11,7 +11,7 @@
 ],
 "left": "192px",
 "page_number": 1,
-"text": "Some text from user2.",
+"text": "Some text from User 2.",
 "top": "135px",
 "width": "94px"
 }

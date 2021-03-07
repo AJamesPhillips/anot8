@@ -7,6 +7,9 @@ export function get_starting_annotations_state (): AnnotationsState
     return {
         status: "not ready",
         annotation_user_names: undefined,
-        main_annotations: undefined,
+        annotations_by_safe_user_name: {},
+        all_annotations: [],
+        annotations_by_compound_id: {},
+        annotations_by_page_number: {},
     }
 }
