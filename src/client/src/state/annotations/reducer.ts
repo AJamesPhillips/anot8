@@ -21,13 +21,21 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
         const annotations_state: AnnotationsState = {
             ...state.annotations,
-            status: "loaded", // this field does not make sense now with multiple user annotation files
+            annotation_files_loaded: [...state.annotations.annotation_files_loaded, safe_user_name],
             ...prepared_state
         }
 
         if (is_main_annotations_file(safe_user_name))
         {
             annotations_state.annotation_user_names = annotations_file.annotation_user_names
+
+            const user_specific_annotation_files_to_load = annotations_file.annotation_user_names.map(get_safe_user_name)
+            annotations_state.annotation_files_to_load = ["", ...user_specific_annotation_files_to_load]
+        }
+
+        if (annotations_state.annotation_files_to_load.length === annotations_state.annotation_files_loaded.length)
+        {
+            annotations_state.status = "loaded"
         }
 
         state = { ...state, annotations: annotations_state }

@@ -12,6 +12,7 @@ import { get_store } from "./state/store"
 import { setup_scrollers } from "./components/setup_scrollers"
 import { update_page_location } from "./state/routing/update_page_location"
 import { AnnotationDetails } from "./components/side_panel/AnnotationDetails"
+import { remove_non_existant_selected_annotation_ids } from "./state/selected_annotations/remove_non_existant_selected_annotation_ids"
 
 
 
@@ -42,3 +43,4 @@ load_files()
 
 setup_scrollers(annotations_list_el, store)
 update_page_location(store)
+remove_non_existant_selected_annotation_ids(store)

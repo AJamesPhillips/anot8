@@ -8,6 +8,8 @@ export type AnnotationsByCompoundId = { [compound_id: string]: undefined | Annot
 export interface AnnotationsState
 {
     status: "not ready" | "loading" | "loaded" | "error" | "saved" | "saving"
+    annotation_files_to_load: string[]
+    annotation_files_loaded: string[]
     annotation_user_names: undefined | string[]
     // all the annotations
     annotations_by_safe_user_name: AnnotationsBySafeUserName
