@@ -13,8 +13,8 @@ import { render_pdf } from "./components/render_pdf"
 const link_to_pdf_el = document.getElementById("link_to_pdf_file")
 render(<TopInfoPanel />, link_to_pdf_el!, link_to_pdf_el!)
 
-// const annotations_list_el = document.getElementById("annotations_list")
-// render(<AnnotationsList />, annotations_list_el)
+const annotations_list_el = document.getElementById("annotations_list")!
+render(<AnnotationsList />, annotations_list_el)
 
 const loading_progress_el = document.getElementById("loading_progress")!
 render(<LoadingProgress />, loading_progress_el)

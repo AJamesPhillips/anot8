@@ -1,4 +1,4 @@
-import { createStore, Action, Store } from "redux"
+import { createStore, Action, Store, AnyAction } from "redux"
 
 import { root_reducer } from "./reducer"
 import { get_starting_state } from "./starting_state"
@@ -15,4 +15,12 @@ export function get_store ()
     store = createStore<State, Action, {}, {}>(root_reducer, starting_state)
 
     return store
+}
+
+
+
+export function dispatch (action: AnyAction)
+{
+    if (!store) get_store()
+    store.dispatch(action)
 }

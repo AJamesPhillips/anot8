@@ -48,6 +48,7 @@ export interface DeletedAnnotation
     user_name: string
     safe_user_name: string
     compound_id: string
+    dirty?: boolean
 }
 
 export interface Annotation
@@ -67,6 +68,7 @@ export interface Annotation
     user_name: string
     safe_user_name: string
     compound_id: string
+    dirty?: boolean
 }
 
 
