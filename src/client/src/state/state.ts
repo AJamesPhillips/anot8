@@ -58,6 +58,13 @@ export interface RoutingState
 
 
 
+export interface SelectedAnnotationsState
+{
+    selected_compound_ids: Set<string>
+}
+
+
+
 export interface State
 {
     annotations: AnnotationsState
@@ -66,4 +73,5 @@ export interface State
     rendering_pdf: RenderingPDFState
     routing: RoutingState
     running_locally: boolean
+    selected_annotations: SelectedAnnotationsState
 }

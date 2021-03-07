@@ -24,8 +24,7 @@ function _AnnotationListEntry (props: Props)
 
     const className = `annotation_list_element annotation_${compound_id}`
     const on_click = () => {
-        // dispatch(ACTIONS.toggle_annotation_highlight(compound_id))
-        // dispatch(ACTIONS.scroll_to_an_annotation({ annotation_ids: [compound_id] }))
+        dispatch(ACTIONS.selected_annotations.toggle_annotation_highlight({ compound_id }))
     }
 
     return <div

@@ -24,5 +24,5 @@ export const is_got_annotations_file = (action: AnyAction): action is ActionGotA
 
 
 export const annotations_actions = {
-    got_annotations_file
+    got_annotations_file,
 }
