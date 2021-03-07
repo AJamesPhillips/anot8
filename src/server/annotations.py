@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import re
 
 from common import print_warning
 
@@ -114,6 +115,8 @@ def get_annotation_relative_file_paths_in_vault (vault_config):
     annotation_file_paths = []
     broken_annotation_file_paths = []
 
+    regexp_data_file_name_from_annotations_file = re.compile(r"(\.pdf)(\.[a-z0-9_]+)?\.annotations$")
+
     for directory in all_directories:
         dir_path = root_path + directory
         file_names = os.listdir(dir_path)
@@ -124,7 +127,10 @@ def get_annotation_relative_file_paths_in_vault (vault_config):
                 continue
 
             # check corresponding file exists
-            data_file_name = file_name.replace(".annotations", "")
+            # re.sub transforms:
+            #       abc.pdf.annotations => abc.pdf
+            #       abc.pdf.user_2.annotations => abc.pdf
+            data_file_name = re.sub(regexp_data_file_name_from_annotations_file, r"\1", file_name)
             absolute_data_file_path = dir_path + data_file_name
             if os.path.isfile(absolute_data_file_path) or os.path.islink(absolute_data_file_path):
                 annotation_file_paths.append(directory + file_name)
