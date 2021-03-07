@@ -15,6 +15,7 @@ interface OwnProps {}
 
 const map_state = (state: State, own_props: OwnProps) => ({
     annotation: get_selected_annotation(state),
+    safe_user_name: state.user.safe_user_name,
 })
 type Props = ReturnType<typeof map_state>
 const connector = connect(map_state)
@@ -23,7 +24,7 @@ const connector = connect(map_state)
 
 function _AnnotationDetails (props: Props)
 {
-    const { annotation } = props
+    const { annotation, safe_user_name } = props
 
     if (annotation === "none")
     {
@@ -46,6 +47,7 @@ function _AnnotationDetails (props: Props)
         }
 
         return <AnnotationDetailsForm
+            disabled={annotation.safe_user_name !== safe_user_name}
             text={annotation.text}
             comment={annotation.comment}
             on_change={on_change}
