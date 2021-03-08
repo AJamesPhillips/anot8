@@ -14,7 +14,7 @@ export function annotations_reducer (state: State, action: AnyAction): State
 {
     if (is_got_annotations_file(action) || is_got_replacement_annotations_file(action))
     {
-        const is_intial_load = is_got_replacement_annotations_file(action)
+        const is_intial_load = is_got_annotations_file(action)
         const is_replacement = is_got_replacement_annotations_file(action)
 
         const { annotations_file, user_name } = action
