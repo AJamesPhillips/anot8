@@ -1,11 +1,12 @@
 import { h } from "preact"
-import { ACTIONS } from "../../state/actions"
 
+import { ACTIONS } from "../../state/actions"
 import { get_all_selected_annotations } from "../../state/annotations/getters"
 import { Label, State } from "../../state/state"
 import { get_store } from "../../state/store"
-import { ensure_entry_status, toggle_list_entry } from "../../utils/list"
+import { toggle_list_entry } from "../../utils/list"
 import { connect } from "../../utils/preact-redux-simple/connect"
+
 
 
 const store = get_store()
@@ -54,8 +55,11 @@ function _LabelComponent (props: Props)
         store.dispatch(ACTIONS.annotations.edit_annotation({ annotation: new_annotation }))
     }
 
+
+    const class_name = `label ${props.is_used ? "used_label" : ""} ${props.priority ? "priority" : ""}`
+
     return <div
-        className={"label " + (props.is_used ? " used_label " : "")}
+        className={class_name}
         onClick={() => toggle_label()}
     >
         <input

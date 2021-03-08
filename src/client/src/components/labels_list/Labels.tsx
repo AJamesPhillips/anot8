@@ -27,7 +27,7 @@ function _Labels (props: Props)
             type="text"
             placeholder="Search labels..."
             value={props.search_string}
-            onKeyPress={e => store.dispatch(ACTIONS.labels.set_search_string({ search: e.currentTarget.value }))}
+            onKeyUp={e => store.dispatch(ACTIONS.labels.set_search_string({ search: e.currentTarget.value }))}
         />
 
         &nbsp; Highlight used labels: <input

@@ -44,7 +44,7 @@ export function auto_save (store: Store<State>)
         })
         .catch(err =>
         {
-            console.log("caughgt error, ", err)
+            console.log("caught error, ", err)
             store.dispatch(ACTIONS.annotations.progress_saving_annotations({ status: "error", message: err }))
         })
     })
