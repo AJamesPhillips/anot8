@@ -1,10 +1,10 @@
 import { AnyAction } from "redux"
-import { replace_entry } from "../../utils/list"
+import { remove_entry, replace_entries, replace_entry } from "../../utils/list"
 import { Annotation, MaybeAnnotation } from "../interfaces"
 
 import { AnnotationsByCompoundId, AnnotationsByPageNumber, AnnotationsBySafeUserName, AnnotationsState, State } from "../state"
 import { get_safe_user_name } from "../user/utils"
-import { is_create_annotation, is_edit_annotation, is_got_annotations_file, is_got_replacement_annotations_file, is_progress_saving_annotations } from "./actions"
+import { is_create_annotation, is_delete_annotations, is_edit_annotation, is_got_annotations_file, is_got_replacement_annotations_file, is_progress_saving_annotations } from "./actions"
 import { get_all_annotations } from "./getters"
 import { get_compound_id, is_not_deleted } from "./utils"
 
@@ -89,6 +89,53 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
         const annotations_by_compound_id = {...state.annotations.annotations_by_compound_id}
         annotations_by_compound_id[edited_annotation.compound_id] = edited_annotation
+
+        const new_annotations_state: AnnotationsState = {
+            ...state.annotations,
+            annotations_by_safe_user_name,
+            all_annotations,
+            annotations_by_page_number,
+            annotations_by_compound_id,
+        }
+
+        state = { ...state, annotations: new_annotations_state }
+    }
+
+
+    if (is_delete_annotations(action))
+    {
+        const ids = new Set(action.compound_ids)
+        const safe_user_name = state.user.safe_user_name
+
+        const predicate = (a: { safe_user_name: string, compound_id: string }) => {
+            return a.safe_user_name === safe_user_name && ids.has(a.compound_id)
+        }
+        const replacer = (a: MaybeAnnotation): MaybeAnnotation => {
+            return predicate(a) ? { ...a, deleted: true, dirty: true } : a
+        }
+
+        const annotations_by_safe_user_name = {...state.annotations.annotations_by_safe_user_name}
+        annotations_by_safe_user_name[safe_user_name] = replace_entries<MaybeAnnotation>(
+            annotations_by_safe_user_name[safe_user_name]!,
+            replacer, "deleting from state.annotations.annotations_by_safe_user_name")
+
+        const all_annotations = remove_entry<Annotation>(
+            state.annotations.all_annotations, predicate)
+
+        const annotations_by_page_number = {...state.annotations.annotations_by_page_number}
+        Object.keys(annotations_by_page_number).forEach(page_number_str =>
+        {
+            const page_number = parseInt(page_number_str, 10)
+            annotations_by_page_number[page_number] = remove_entry<Annotation>(
+                state.annotations.annotations_by_page_number[page_number]!, predicate)
+        })
+
+        const annotations_by_compound_id = {...state.annotations.annotations_by_compound_id}
+        action.compound_ids.forEach(id =>
+        {
+            const annotation = annotations_by_compound_id[id]
+            if (annotation && predicate(annotation)) delete annotations_by_compound_id[id]
+        })
 
         const new_annotations_state: AnnotationsState = {
             ...state.annotations,

@@ -237,6 +237,8 @@ def update_annotations (vault_config, annotations_relative_file_path):
     current_annotations = []
     for (i, annotation) in enumerate(annotations):
         annotation = dict(annotation)
+        annotation["id"] = i
+        # TODO whitelist instead of blacklist these fields
         if "dirty" in annotation:
             del annotation["dirty"]
         if "user_name" in annotation:
@@ -245,7 +247,8 @@ def update_annotations (vault_config, annotations_relative_file_path):
             del annotation["safe_user_name"]
         if "compound_id" in annotation:
             del annotation["compound_id"]
-        annotation["id"] = i
+        if "deleted" in annotation and annotation["deleted"]:
+            annotation = {"id": annotation["id"], "deleted": True}
         current_annotations.append(annotation)
 
     meta_data["annotations"] = current_annotations

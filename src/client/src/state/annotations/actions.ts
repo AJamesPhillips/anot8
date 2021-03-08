@@ -81,6 +81,25 @@ export const is_edit_annotation = (action: AnyAction): action is ActionEditAnnot
 
 
 
+interface DeleteAnnotationArgs
+{
+    compound_ids: string[]
+}
+interface ActionDeleteAnnotation extends Action, DeleteAnnotationArgs {}
+
+const delete_annotations_type = "delete_annotations"
+
+const delete_annotations = (args: DeleteAnnotationArgs): ActionDeleteAnnotation =>
+{
+    return { type: delete_annotations_type, ...args }
+}
+
+export const is_delete_annotations = (action: AnyAction): action is ActionDeleteAnnotation => {
+    return action.type === delete_annotations_type
+}
+
+
+
 interface ProgressSavingAnnotationsArgs
 {
     status: "error" | "saved" | "saving"
@@ -106,5 +125,6 @@ export const annotations_actions = {
     got_replacement_annotations_file,
     create_annotation,
     edit_annotation,
+    delete_annotations,
     progress_saving_annotations,
 }

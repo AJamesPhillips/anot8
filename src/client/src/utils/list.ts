@@ -26,7 +26,7 @@ export function replace_entries<I> (existing: I[], replacer: (element: I) => I, 
 
 
 
-export function remove_from_list_by_predicate <I> (list: I[], predicate: (i: I) => boolean): I[]
+export function remove_entry <I> (list: I[], predicate: (i: I) => boolean): I[]
 {
     return list.filter(i => !predicate(i))
 }

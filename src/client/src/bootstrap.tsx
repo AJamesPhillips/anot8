@@ -14,7 +14,7 @@ import { update_page_location } from "./state/routing/update_page_location"
 import { remove_non_existant_selected_annotation_ids } from "./state/selected_annotations/remove_non_existant_selected_annotation_ids"
 import { get_store } from "./state/store"
 import { auto_save } from "./state/annotations/auto_save"
-
+import { DeleteButton } from "./components/DeleteButton"
 
 
 
@@ -40,6 +40,9 @@ render(<LoadingProgress />, loading_progress_el)
 
 const auto_save_el = document.getElementById("auto_save")!
 render(<AutoSave />, auto_save_el)
+
+const delete_annotations_el = document.getElementById("delete_annotations")!
+render(<DeleteButton />, delete_annotations_el)
 
 const pages_container_el = document.getElementById("pages_container")!
 load_files()
