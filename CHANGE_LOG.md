@@ -1,4 +1,11 @@
 
+
+# 2021-03-08
+
+* Complete re-write of front end code.
+* Can select user name and annotations will be saved to user specific annotation files.
+
+
 # 2021-03-01
 
 ## Breaking changes

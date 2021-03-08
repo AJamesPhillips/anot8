@@ -18,7 +18,6 @@ See the [change log](./CHANGE_LOG.md) for breaking changes.
 
 ## TODO
 
-* Audit for malicous script injection via unsafely setting innerHTML.
 * Guard against multiple tabs open with the same PDF, which will result in annotations being overwritten and lost.
 
 
