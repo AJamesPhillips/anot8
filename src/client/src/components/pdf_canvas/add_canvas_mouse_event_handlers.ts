@@ -5,6 +5,7 @@ import { get_compound_id } from "../../state/annotations/utils"
 import { Annotation } from "../../state/interfaces"
 
 import { State } from "../../state/state"
+import { get_element_position } from "../../utils/screen"
 import { create_empty_annotation_el } from "../annotations_on_pdf/AnnotationOnPDF"
 
 
@@ -67,23 +68,6 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
             store.dispatch(ACTIONS.annotations.create_annotation({ new_annotation }))
         }
     }
-}
-
-
-
-function get_element_position (element: HTMLElement)
-{
-    let el: HTMLElement | null = element
-
-    let top = 0
-    let left = 0
-    do {
-        top += el.offsetTop  || 0
-        left += el.offsetLeft || 0
-        el = el.offsetParent as HTMLElement
-    } while (el)
-
-    return { top, left }
 }
 
 

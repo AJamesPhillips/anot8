@@ -1,3 +1,4 @@
+import { get_element_position } from "../../utils/screen"
 
 
 
@@ -13,5 +14,7 @@ export function scroll_to_entries (annotations_list_el: HTMLElement, selected_co
 
     if (!an_list_el) return false
 
-    annotations_list_el.scrollTop = an_list_el.offsetTop - 10
+    const { top } = get_element_position(annotations_list_el)
+
+    annotations_list_el.scrollTop = an_list_el.offsetTop - top
 }
