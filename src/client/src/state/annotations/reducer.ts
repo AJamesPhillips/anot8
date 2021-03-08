@@ -1,10 +1,10 @@
 import { AnyAction } from "redux"
-import { remove_entry, replace_entries, replace_entry } from "../../utils/list"
-import { Annotation, MaybeAnnotation } from "../interfaces"
 
-import { AnnotationsByCompoundId, AnnotationsByPageNumber, AnnotationsBySafeUserName, AnnotationsState, State } from "../state"
+import { replace_entry, replace_entries, remove_entry } from "../../utils/list"
+import { MaybeAnnotation, Annotation } from "../interfaces"
+import { State, AnnotationsState, AnnotationsBySafeUserName, AnnotationsByPageNumber, AnnotationsByCompoundId } from "../state"
 import { get_safe_user_name } from "../user/utils"
-import { is_create_annotation, is_delete_annotations, is_edit_annotation, is_got_annotations_file, is_got_replacement_annotations_file, is_progress_saving_annotations } from "./actions"
+import { is_got_annotations_file, is_got_replacement_annotations_file, is_create_annotation, is_edit_annotation, is_delete_annotations, is_progress_saving_annotations } from "./actions"
 import { get_all_annotations } from "./getters"
 import { get_compound_id, is_not_deleted } from "./utils"
 
