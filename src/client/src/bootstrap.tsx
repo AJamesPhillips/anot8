@@ -2,7 +2,7 @@ import { h, render } from "preact"
 
 import { AnnotationsList } from "./components/annotations_list/AnnotationsList"
 import { DeleteButton } from "./components/DeleteButton"
-import { LabelsList } from "./components/labels_list/LabelsList"
+import { Labels } from "./components/labels_list/Labels"
 import { LoadingProgress } from "./components/LoadingProgress"
 import { render_pdf } from "./components/pdf_canvas/render_pdf"
 import { setup_scrollers } from "./components/setup_scrollers"
@@ -13,6 +13,8 @@ import { AutoSave } from "./components/side_panel/AutoSave"
 import { TopInfoPanel } from "./components/TopInfoPanel"
 import { load_files } from "./load_files/load_files"
 import { auto_save } from "./state/annotations/auto_save"
+import { update_labels_used_by_selected_annotations } from "./state/labels/update_labels_used_by_selected"
+import { update_used_labels } from "./state/labels/update_used_labels"
 import { update_page_location } from "./state/routing/update_page_location"
 import { remove_non_existant_selected_annotation_ids } from "./state/selected_annotations/remove_non_existant_selected_annotation_ids"
 import { get_store } from "./state/store"
@@ -20,6 +22,12 @@ import { get_store } from "./state/store"
 
 
 const store = get_store()
+update_page_location(store)
+remove_non_existant_selected_annotation_ids(store)
+auto_save(store)
+update_used_labels(store)
+update_labels_used_by_selected_annotations(store)
+
 
 const pages_container_el = document.getElementById("pages_container")!
 load_files()
@@ -51,10 +59,7 @@ render(<AnnotationDetails />, annotation_details_el)
 
 const labels_list_el = document.getElementById("labels_list")!
 labels_list_el.innerHTML = ""
-render(<LabelsList />, labels_list_el)
+render(<Labels />, labels_list_el)
 
 
 setup_scrollers(annotations_list_el, store)
-update_page_location(store)
-remove_non_existant_selected_annotation_ids(store)
-auto_save(store)

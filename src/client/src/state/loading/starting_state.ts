@@ -10,7 +10,6 @@ export function get_starting_loading_state (): LoadingPDFState
         loading_error_type: undefined,
 
         vault_config_loaded: false,
-        labels: [],
         publish_root_path: undefined,
 
         resolved_relative_file_path: undefined,

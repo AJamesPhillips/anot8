@@ -1,7 +1,7 @@
 import { h } from "preact"
 import { ACTIONS } from "../../state/actions"
+import { get_all_selected_annotations } from "../../state/annotations/getters"
 
-import { get_selected_annotation } from "../../state/getters"
 import { Annotation } from "../../state/interfaces"
 import { State } from "../../state/state"
 import { get_store } from "../../state/store"
@@ -14,7 +14,7 @@ interface OwnProps {}
 
 
 const map_state = (state: State, own_props: OwnProps) => ({
-    annotation: get_selected_annotation(state),
+    annotations: get_all_selected_annotations(state),
     safe_user_name: state.user.safe_user_name,
 })
 type Props = ReturnType<typeof map_state>
@@ -24,18 +24,20 @@ const connector = connect(map_state)
 
 function _AnnotationDetails (props: Props)
 {
-    const { annotation, safe_user_name } = props
+    const { annotations, safe_user_name } = props
 
-    if (annotation === "none")
+    if (annotations.length === 0)
     {
         return <div>No annotations selected</div>
     }
-    else if (annotation === "multiple")
+    else if (annotations.length > 1)
     {
         return <div>Multiple annotations selected</div>
     }
     else
     {
+        const annotation = annotations[0]
+
         const on_change = (changes: Partial<Annotation>) =>
         {
             const edited_annotation = {

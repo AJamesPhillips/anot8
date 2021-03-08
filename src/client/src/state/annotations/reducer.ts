@@ -42,7 +42,7 @@ export function annotations_reducer (state: State, action: AnyAction): State
         {
             annotations_state.status = "loaded"
         }
-        if (is_replacement) annotations_state.status = "saved"
+        else if (is_replacement) annotations_state.status = "saved"
 
         state = { ...state, annotations: annotations_state }
     }
@@ -198,6 +198,7 @@ function prepare_new_annotations (args: PrepareNewAnnotationsArgs)
     })
 
     const all_annotations = get_all_annotations(annotations_by_safe_user_name)
+
     const new_annotations = new_maybe_annotations.filter(is_not_deleted)
     const annotations_by_page_number = add_new_annotations_by_page_number(
         state.annotations.annotations_by_page_number, new_annotations)

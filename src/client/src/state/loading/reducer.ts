@@ -42,7 +42,6 @@ export function loading_reducer (state: State, action: AnyAction): State
         const loading: LoadingPDFState = {
             ...state.loading_pdf,
             vault_config_loaded: true,
-            labels: action.config.labels,
             publish_root_path: action.config.publish_root_path,
         }
         state = { ...state, loading_pdf: loading }

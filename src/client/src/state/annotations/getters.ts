@@ -47,3 +47,15 @@ export function next_annotation_id_for_user (state: State, safe_user_name: strin
     const annotations = state.annotations.annotations_by_safe_user_name[safe_user_name]
     return annotations ? annotations.length : 0
 }
+
+
+
+export function get_all_selected_annotations (state: State): Annotation[]
+{
+    return state.selected_annotations.selected_compound_ids.map(id =>
+        {
+            return state.annotations.annotations_by_compound_id[id]!
+        })
+        // annotations will be missing before they have loaded
+        .filter(a => !!a)
+}

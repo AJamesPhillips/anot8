@@ -1,5 +1,6 @@
 import { h } from "preact"
 import { ACTIONS } from "../state/actions"
+import { get_all_selected_annotations } from "../state/annotations/getters"
 
 import { State } from "../state/state"
 import { get_store } from "../state/store"
@@ -37,12 +38,9 @@ export const DeleteButton = connector(_DeleteButton)
 function get_selected_annotation_ids_owned_by_user(state: State)
 {
     const { safe_user_name } = state.user
-    const ids = state.selected_annotations.selected_compound_ids.map(id =>
-    {
-        return state.annotations.annotations_by_compound_id[id]
-    })
-    .filter(a => a && a.safe_user_name === safe_user_name)
-    .map(a => a!.compound_id)
+    const ids = get_all_selected_annotations(state)
+        .filter(a => a && a.safe_user_name === safe_user_name)
+        .map(a => a!.compound_id)
 
     return ids.join(",")
 }
