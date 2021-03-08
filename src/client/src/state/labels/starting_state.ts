@@ -25,6 +25,13 @@ export function store_setting_highlighting_used_labels (value: boolean)
 
 
 
+export function store_priority_labels (labels: string[])
+{
+    localStorage.setItem("priority_labels", JSON.stringify(labels))
+}
+
+
+
 function get_item_boolean (item: string, defalt: boolean)
 {
     const value = localStorage.getItem(item)

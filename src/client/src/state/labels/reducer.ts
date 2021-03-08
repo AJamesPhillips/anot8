@@ -1,10 +1,11 @@
 import { AnyAction } from "redux"
+import { toggle_set_entry } from "../../utils/set"
 
 import { update_substate } from "../../utils/update_state"
 import { is_set_vault_config } from "../loading/actions"
 import { LabelsById, LabelsState, State } from "../state"
-import { is_set_highlighting_used_labels, is_set_labels_used_by_selected_annotations, is_set_search_string, is_set_used_labels } from "./actions"
-import { store_setting_highlighting_used_labels } from "./starting_state"
+import { is_set_highlighting_used_labels, is_set_labels_used_by_selected_annotations, is_set_search_string, is_set_used_labels, is_toggle_label_priority } from "./actions"
+import { store_priority_labels, store_setting_highlighting_used_labels } from "./starting_state"
 
 
 
@@ -17,7 +18,7 @@ export function labels_reducer (state: State, action: AnyAction): State
         const labels: LabelsState = {
             ...state.labels,
             labels_by_id,
-            label_ids_list_to_display: label_ids_list_to_display(labels_by_id),
+            label_ids_list_to_display: get_label_ids_list_to_display(labels_by_id),
         }
         state = { ...state, labels }
     }
@@ -52,6 +53,29 @@ export function labels_reducer (state: State, action: AnyAction): State
     }
 
 
+    if (is_toggle_label_priority(action))
+    {
+        const label_str = action.toggle_label_priority
+
+        const priority_labels = state.labels.priority_labels
+        toggle_set_entry(priority_labels, label_str)
+        const priority = priority_labels.has(label_str)
+        const label = { ...state.labels.labels_by_id[label_str], priority}
+        const labels_by_id = { ...state.labels.labels_by_id, [label_str]: label }
+        const label_ids_list_to_display = get_label_ids_list_to_display(labels_by_id)
+
+        const labels_state: LabelsState = {
+            ...state.labels,
+            priority_labels,
+            labels_by_id,
+            label_ids_list_to_display,
+        }
+        state = { ...state, labels: labels_state }
+
+        store_priority_labels(Array.from(priority_labels))
+    }
+
+
     return state
 }
 
@@ -75,7 +99,7 @@ function get_labels_by_id (labels: string[], priority_labels: Set<string>): Labe
 
 
 
-function label_ids_list_to_display (labels_by_id: LabelsById): string[]
+function get_label_ids_list_to_display (labels_by_id: LabelsById): string[]
 {
     return Object.values(labels_by_id)
         .sort((a, b) =>

@@ -4,7 +4,7 @@ import { ACTIONS } from "../../state/actions"
 import { get_all_selected_annotations } from "../../state/annotations/getters"
 import { Label, State } from "../../state/state"
 import { get_store } from "../../state/store"
-import { ensure_entry_status } from "../../utils/list"
+import { ensure_entry_status, toggle_list_entry } from "../../utils/list"
 import { connect } from "../../utils/preact-redux-simple/connect"
 
 
@@ -27,6 +27,7 @@ const map_state = (state: State, own_props: OwnProps) => {
         display: matches_search_string(label, state.labels.search_string),
         ...is_checked_or_indeterminate(label, state),
         annotations_to_edit: get_all_selected_annotations(state),
+        priority: state.labels.priority_labels.has(label.value),
     }
 }
 type Props = ReturnType<typeof map_state> & OwnProps
@@ -38,7 +39,7 @@ function _LabelComponent (props: Props)
 {
     if (!props.display) return null
 
-    function change_label (checked: boolean)
+    function toggle_label ()
     {
         if (props.annotations_to_edit.length !== 1)
         {
@@ -47,28 +48,35 @@ function _LabelComponent (props: Props)
         }
 
         const annotation_to_edit = props.annotations_to_edit[0]
-        const labels = ensure_entry_status(annotation_to_edit.labels, props.label.value, checked)
-        if (labels === annotation_to_edit.labels)
-        {
-            console.warn("Should not have UI out of sync with data")
-            return
-        }
+        const labels = toggle_list_entry(annotation_to_edit.labels, props.label.value)
 
         const new_annotation = { ...annotation_to_edit, labels }
-        console.log(checked, new_annotation)
         store.dispatch(ACTIONS.annotations.edit_annotation({ annotation: new_annotation }))
     }
 
-    return <div className={"label " + (props.is_used ? " used_label " : "")}>
+    return <div
+        className={"label " + (props.is_used ? " used_label " : "")}
+        onClick={() => toggle_label()}
+    >
         <input
             type="checkbox"
             className="label_checkbox"
             disabled={props.disabled}
             checked={props.checked}
             ref={e => e && (e.indeterminate = props.indeterminate)}
-            onChange={e => change_label(e.currentTarget.checked)}
+            onChange={e => {e.stopPropagation(); toggle_label()}}
         />
+
         {props.label.value}
+
+        <span
+            className="priority_label"
+            onClick={e => {
+                e.stopPropagation()
+                store.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: props.label.value }))
+            }}
+            dangerouslySetInnerHTML={{__html: props.priority ? "&starf;" : "&star;" }}
+        />
     </div>
 }
 

@@ -17,7 +17,7 @@ const connector = connect(map_state)
 function _LabelsList (props: Props)
 {
     return <div id="labels_list_container">
-        {props.label_ids_list_to_display.map(label_id => <LabelComponent label_id={label_id} />)}
+        {props.label_ids_list_to_display.map(label_id => <LabelComponent key={label_id} label_id={label_id} />)}
     </div>
 }
 

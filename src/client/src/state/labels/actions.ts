@@ -79,9 +79,29 @@ export const is_set_labels_used_by_selected_annotations = (action: AnyAction): a
 
 
 
+interface ToggleLabelPriorityArgs
+{
+    toggle_label_priority: string
+}
+interface ActionToggleLabelPriority extends Action, ToggleLabelPriorityArgs {}
+
+const toggle_label_priority_type = "toggle_label_priority"
+
+const toggle_label_priority = (args: ToggleLabelPriorityArgs): ActionToggleLabelPriority =>
+{
+    return { type: toggle_label_priority_type, ...args }
+}
+
+export const is_toggle_label_priority = (action: AnyAction): action is ActionToggleLabelPriority => {
+    return action.type === toggle_label_priority_type
+}
+
+
+
 export const labels_actions = {
     set_highlighting_used_labels,
     set_search_string,
     set_used_labels,
     set_labels_used_by_selected_annotations,
+    toggle_label_priority,
 }
