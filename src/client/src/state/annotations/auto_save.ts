@@ -20,39 +20,42 @@ export function auto_save (store: Store<State>)
 
         if (current_annotations === annotations) return
 
+        if (state.annotations.status === "saving" || state.annotations.status === "error") return
+
         if (!current_annotations.find(({ dirty }) => dirty))
         {
             annotations = current_annotations
             return
         }
 
+        const url_to_write_file_annotations = get_url_to_write_file_annotations(state)
+        if (!url_to_write_file_annotations)
+        {
+            console.log(`Not saving ${annotations.length} annotations to server as no end point to save against`)
+            return
+        }
+
+        store.dispatch(ACTIONS.annotations.progress_saving_annotations({ status: "saving" }))
+
         post_annotations_to_server(store, current_annotations, user_name)
         .then(annotations_file =>
         {
-            store.dispatch(ACTIONS.annotations.got_annotations_file({ annotations_file, user_name, overwrite: true }))
+            store.dispatch(ACTIONS.annotations.got_replacement_annotations_file({ annotations_file, user_name }))
+        })
+        .catch(err =>
+        {
+            console.log("caughgt error, ", err)
+            store.dispatch(ACTIONS.annotations.progress_saving_annotations({ status: "error", message: err }))
         })
     })
 }
 
 
-let consecutive_server_errors = 0
+
 function post_annotations_to_server (store: Store<State>, annotations: MaybeAnnotation[], user_name: string)
 {
-    if (consecutive_server_errors)
-    {
-        console.log(`Not saving ${annotations.length} annotations to server due to previous error`)
-        return Promise.reject("previous errors encountered")
-    }
-
     const state = store.getState()
     const url_to_write_file_annotations = get_url_to_write_file_annotations(state)
-
-    if (!url_to_write_file_annotations)
-    {
-        console.log(`Not saving ${annotations.length} annotations to server as no end point to save against`)
-        return Promise.reject("no endpoint set")
-    }
-
 
     console.log(`Saving ${annotations.length} annotations to server for user: "${user_name}"`)
 
@@ -68,7 +71,6 @@ function post_annotations_to_server (store: Store<State>, annotations: MaybeAnno
         if (resp.status === 200) {
             return resp.json() as Promise<AnnotationsFile>
         } else {
-            consecutive_server_errors += 1
             return Promise.reject("server error")
         }
     })

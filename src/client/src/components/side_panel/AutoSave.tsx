@@ -11,6 +11,7 @@ const map_state = (state: State) => ({
     loading: state.annotations.status === "loading",
     saved: state.annotations.status === "saved",
     saving: state.annotations.status === "saving",
+    errored: state.annotations.status === "error",
     annotations_count: state.annotations.all_annotations.length,
     url_to_write_file_annotations: get_url_to_write_file_annotations(state),
 })
@@ -20,7 +21,7 @@ const connector = connect(map_state)
 
 function _AutoSave (props: Props)
 {
-    const { ready, loading, saved, saving, annotations_count, url_to_write_file_annotations } = props
+    const { ready, loading, saving, saved, errored, annotations_count, url_to_write_file_annotations } = props
 
     if (!ready || loading) return null
 
@@ -37,6 +38,10 @@ function _AutoSave (props: Props)
     else if (saved)
     {
         return <div>Saved ({annotations_count})</div>
+    }
+    else if (errored)
+    {
+        return <div>Errored</div>
     }
     else
     {

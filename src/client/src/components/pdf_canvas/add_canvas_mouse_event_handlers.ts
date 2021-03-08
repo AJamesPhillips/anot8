@@ -39,7 +39,6 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
 
         const x = e.clientX - left + document.body.scrollLeft
         const y = e.clientY - top + document.body.scrollTop
-        console.log(left, top, x, y)
 
         mouse_down_handler({ x, y })
     }

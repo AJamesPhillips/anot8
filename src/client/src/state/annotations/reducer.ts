@@ -4,7 +4,7 @@ import { Annotation, MaybeAnnotation } from "../interfaces"
 
 import { AnnotationsByCompoundId, AnnotationsByPageNumber, AnnotationsBySafeUserName, AnnotationsState, State } from "../state"
 import { get_safe_user_name } from "../user/utils"
-import { is_create_annotation, is_edit_annotation, is_got_annotations_file } from "./actions"
+import { is_create_annotation, is_edit_annotation, is_got_annotations_file, is_got_replacement_annotations_file, is_progress_saving_annotations } from "./actions"
 import { get_all_annotations } from "./getters"
 import { get_compound_id, is_not_deleted } from "./utils"
 
@@ -12,14 +12,17 @@ import { get_compound_id, is_not_deleted } from "./utils"
 
 export function annotations_reducer (state: State, action: AnyAction): State
 {
-    if (is_got_annotations_file(action))
+    if (is_got_annotations_file(action) || is_got_replacement_annotations_file(action))
     {
+        const is_intial_load = is_got_replacement_annotations_file(action)
+        const is_replacement = is_got_replacement_annotations_file(action)
+
         const { annotations_file, user_name } = action
         const safe_user_name = get_safe_user_name(user_name)
 
         const new_maybe_annotations = annotations_file.annotations.map(add_user_name_and_compound_id(user_name))
 
-        const prepared_state = prepare_new_annotations({ state, new_maybe_annotations, safe_user_name, allow_merge: false, overwrite: action.overwrite })
+        const prepared_state = prepare_new_annotations({ state, new_maybe_annotations, safe_user_name, allow_merge: false, overwrite: is_replacement })
 
         const annotations_state: AnnotationsState = {
             ...state.annotations,
@@ -27,7 +30,7 @@ export function annotations_reducer (state: State, action: AnyAction): State
             ...prepared_state
         }
 
-        if (is_main_annotations_file(safe_user_name))
+        if (is_main_annotations_file(safe_user_name) && is_intial_load)
         {
             annotations_state.annotation_user_names = annotations_file.annotation_user_names
 
@@ -35,10 +38,11 @@ export function annotations_reducer (state: State, action: AnyAction): State
             annotations_state.annotation_files_to_load = ["", ...user_specific_annotation_files_to_load]
         }
 
-        if (annotations_state.annotation_files_to_load.length === annotations_state.annotation_files_loaded.length)
+        if (is_intial_load && annotations_state.annotation_files_to_load.length === annotations_state.annotation_files_loaded.length)
         {
             annotations_state.status = "loaded"
         }
+        if (is_replacement) annotations_state.status = "saved"
 
         state = { ...state, annotations: annotations_state }
     }
@@ -96,6 +100,17 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
         state = { ...state, annotations: new_annotations_state }
     }
+
+
+    if (is_progress_saving_annotations(action))
+    {
+        const annotations = {
+            ...state.annotations,
+            status: action.status,
+        }
+        state = { ...state, annotations }
+    }
+
 
     return state
 }
