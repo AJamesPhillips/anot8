@@ -13,7 +13,7 @@ export function labels_reducer (state: State, action: AnyAction): State
 {
     if (is_set_vault_config(action))
     {
-        const labels_by_id = get_labels_by_id(action.config.labels, state.labels.priority_labels)
+        const labels_by_id = get_labels_by_id(action.config.labels, state)
 
         const labels: LabelsState = {
             ...state.labels,
@@ -81,15 +81,26 @@ export function labels_reducer (state: State, action: AnyAction): State
 
 
 
-function get_labels_by_id (labels: string[], priority_labels: Set<string>): LabelsById
+function get_labels_by_id (labels: string[], state: State): LabelsById
 {
+    const priority_labels = state.labels.priority_labels
+    const hide_label_roots = state.labels.hide_label_roots
+
     const labels_by_id: LabelsById = {}
 
     labels.forEach(label =>
     {
+        const display_text = hide_label_roots.reduce((accum, to_remove) =>
+        {
+            if (!accum.startsWith(to_remove)) return accum
+
+            return accum.replace(to_remove, "")
+        }, label)
+
         labels_by_id[label] = {
             value: label,
             lower_case_value: label.toLowerCase(),
+            display_text,
             priority: priority_labels.has(label),
         }
     })

@@ -71,7 +71,7 @@ function _LabelComponent (props: Props)
             onChange={e => {e.stopPropagation(); toggle_label()}}
         />
 
-        {props.label.value}
+        {props.label.display_text}
 
         <span
             className="priority_label"

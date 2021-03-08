@@ -33,6 +33,7 @@ export interface Label
 {
     value: string
     lower_case_value: string
+    display_text: string
     priority: boolean
 }
 export type LabelsById = { [value: string]: Label }
