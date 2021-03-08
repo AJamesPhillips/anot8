@@ -1,9 +1,14 @@
 import { h } from "preact"
-import { get_all_selected_annotations } from "../../state/annotations/getters"
+import { ACTIONS } from "../../state/actions"
 
+import { get_all_selected_annotations } from "../../state/annotations/getters"
 import { Label, State } from "../../state/state"
+import { get_store } from "../../state/store"
+import { ensure_entry_status } from "../../utils/list"
 import { connect } from "../../utils/preact-redux-simple/connect"
 
+
+const store = get_store()
 
 
 interface OwnProps
@@ -21,6 +26,7 @@ const map_state = (state: State, own_props: OwnProps) => {
         is_used: state.labels.used_labels.has(label.value),
         display: matches_search_string(label, state.labels.search_string),
         ...is_checked_or_indeterminate(label, state),
+        annotations_to_edit: get_all_selected_annotations(state),
     }
 }
 type Props = ReturnType<typeof map_state> & OwnProps
@@ -32,6 +38,27 @@ function _LabelComponent (props: Props)
 {
     if (!props.display) return null
 
+    function change_label (checked: boolean)
+    {
+        if (props.annotations_to_edit.length !== 1)
+        {
+            console.warn("Should not be able to edit multiple annotations")
+            return
+        }
+
+        const annotation_to_edit = props.annotations_to_edit[0]
+        const labels = ensure_entry_status(annotation_to_edit.labels, props.label.value, checked)
+        if (labels === annotation_to_edit.labels)
+        {
+            console.warn("Should not have UI out of sync with data")
+            return
+        }
+
+        const new_annotation = { ...annotation_to_edit, labels }
+        console.log(checked, new_annotation)
+        store.dispatch(ACTIONS.annotations.edit_annotation({ annotation: new_annotation }))
+    }
+
     return <div className={"label " + (props.is_used ? " used_label " : "")}>
         <input
             type="checkbox"
@@ -39,6 +66,7 @@ function _LabelComponent (props: Props)
             disabled={props.disabled}
             checked={props.checked}
             ref={e => e && (e.indeterminate = props.indeterminate)}
+            onChange={e => change_label(e.currentTarget.checked)}
         />
         {props.label.value}
     </div>

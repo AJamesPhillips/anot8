@@ -139,7 +139,6 @@ function create_mouse_handlers ({ annotations_container_el, page_number }: Creat
         if (valid_annotation_size())
         {
             partial_annotation = {
-                dirty: true,
                 page_number,
                 left: el.style.left,
                 top: el.style.top,

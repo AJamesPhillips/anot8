@@ -43,7 +43,6 @@ function _AnnotationDetails (props: Props)
             const edited_annotation = {
                 ...annotation,
                 ...changes,
-                dirty: true,
             }
             get_store().dispatch(ACTIONS.annotations.edit_annotation({ annotation: edited_annotation }))
         }

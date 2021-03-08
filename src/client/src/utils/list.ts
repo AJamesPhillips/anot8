@@ -30,3 +30,22 @@ export function remove_entry <I> (list: I[], predicate: (i: I) => boolean): I[]
 {
     return list.filter(i => !predicate(i))
 }
+
+
+
+export function ensure_entry_status <I> (list: I[], value: I, ensure_presence: boolean): I[]
+{
+    let result = list.filter(v => v !== value)
+    const not_present = list.length === result.length
+    if (not_present)
+    {
+        if (ensure_presence) result.push(value)
+        else result = list // no not change return value
+    }
+    else
+    {
+        if (ensure_presence) result = list // no not change return value
+    }
+
+    return result
+}

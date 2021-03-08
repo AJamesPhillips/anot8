@@ -53,7 +53,7 @@ const create_annotation_type = "create_annotation"
 
 const create_annotation = (args: CreateAnnotationArgs): ActionCreateAnnotation =>
 {
-    return { type: create_annotation_type, ...args }
+    return { type: create_annotation_type, new_annotation: { ...args.new_annotation, dirty: true } }
 }
 
 export const is_create_annotation = (action: AnyAction): action is ActionCreateAnnotation => {
@@ -72,7 +72,7 @@ const edit_annotation_type = "edit_annotation"
 
 const edit_annotation = (args: EditAnnotationArgs): ActionEditAnnotation =>
 {
-    return { type: edit_annotation_type, ...args }
+    return { type: edit_annotation_type, annotation: { ...args.annotation, dirty: true } }
 }
 
 export const is_edit_annotation = (action: AnyAction): action is ActionEditAnnotation => {
