@@ -200,7 +200,9 @@ function prepare_new_annotations (args: PrepareNewAnnotationsArgs)
     const all_annotations = get_all_annotations(annotations_by_safe_user_name)
 
     const new_annotations = new_maybe_annotations.filter(is_not_deleted)
-    const annotations_by_page_number = add_new_annotations_by_page_number(
+    const annotations_by_page_number = allow_overwrite
+        ? get_annotations_by_page_number(all_annotations)
+        : add_new_annotations_by_page_number(
         state.annotations.annotations_by_page_number, new_annotations)
     const annotations_by_compound_id = add_new_annotations_by_compound_id(
         state.annotations.annotations_by_compound_id, new_annotations)
@@ -255,6 +257,26 @@ function add_new_annotations_by_safe_user_name (args: AddNewAnnotationsBySafeUse
             [safe_user_name]: new_annotations,
         }
     }
+}
+
+
+
+function get_annotations_by_page_number (all_annotations: Annotation[])
+{
+    const annotations_by_page_number: AnnotationsByPageNumber = {}
+    const unique_page_numbers = Array.from(new Set(all_annotations.map(a => a.page_number)))
+
+    unique_page_numbers.forEach(page_number =>
+    {
+        annotations_by_page_number[page_number] = []
+    })
+
+    all_annotations.map(a =>
+    {
+        annotations_by_page_number[a.page_number]!.push(a)
+    })
+
+    return annotations_by_page_number
 }
 
 

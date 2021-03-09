@@ -605,7 +605,9 @@
         });
         var all_annotations = get_all_annotations(annotations_by_safe_user_name);
         var new_annotations = new_maybe_annotations.filter(is_not_deleted);
-        var annotations_by_page_number = add_new_annotations_by_page_number(state.annotations.annotations_by_page_number, new_annotations);
+        var annotations_by_page_number = allow_overwrite
+            ? get_annotations_by_page_number(all_annotations)
+            : add_new_annotations_by_page_number(state.annotations.annotations_by_page_number, new_annotations);
         var annotations_by_compound_id = add_new_annotations_by_compound_id(state.annotations.annotations_by_compound_id, new_annotations);
         return {
             annotations_by_safe_user_name: annotations_by_safe_user_name,
@@ -629,6 +631,17 @@
             new_annotations = __spreadArray(__spreadArray([], existing_annotations), new_annotations);
             return __assign(__assign({}, annotations_by_safe_user_name), (_b = {}, _b[safe_user_name] = new_annotations, _b));
         }
+    }
+    function get_annotations_by_page_number(all_annotations) {
+        var annotations_by_page_number = {};
+        var unique_page_numbers = Array.from(new Set(all_annotations.map(function (a) { return a.page_number; })));
+        unique_page_numbers.forEach(function (page_number) {
+            annotations_by_page_number[page_number] = [];
+        });
+        all_annotations.map(function (a) {
+            annotations_by_page_number[a.page_number].push(a);
+        });
+        return annotations_by_page_number;
     }
     function add_new_annotations_by_page_number(annotations_by_page_number, new_annotations) {
         annotations_by_page_number = __assign({}, annotations_by_page_number);
@@ -1128,6 +1141,23 @@
                 }
                 WrappedComponent.prototype.componentWillUnmount = function () {
                     this.unsubscribe();
+                };
+                WrappedComponent.prototype.shouldComponentUpdate = function (next_props, next_state) {
+                    var _this = this;
+                    var prop_keys = Object.keys(this.props);
+                    var state_keys = Object.keys(this.state);
+                    var nprop_keys = Object.keys(next_props);
+                    var nstate_keys = Object.keys(next_state);
+                    var should_update = false;
+                    if (prop_keys.length !== nprop_keys.length || state_keys.length !== nstate_keys.length)
+                        return true;
+                    var change_in_props = prop_keys.find(function (k) { return _this.props[k] !== next_props[k]; });
+                    if (change_in_props)
+                        return true;
+                    var change_in_state = state_keys.find(function (k) { return _this.state[k] !== next_state[k]; });
+                    if (change_in_state)
+                        return true;
+                    return should_update;
                 };
                 WrappedComponent.prototype.render = function () {
                     return a$1(ComponentToWrap, __assign({}, this.props, this.state));

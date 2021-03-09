@@ -12,12 +12,16 @@ import { user_reducer } from "./user/reducer"
 
 export const root_reducer: Reducer<State, any> = ((state: State, action: AnyAction) =>
 {
+    const start = state
+
     state = annotations_reducer(state, action)
     state = labels_reducer(state, action)
     state = loading_reducer(state, action)
     state = pdf_rendering_reducer(state, action)
     state = selected_annotations_reducer(state, action)
     state = user_reducer(state, action)
+
+    // console .log(action, "before:", start, "after:", state)
 
     return state
 }) as any

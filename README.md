@@ -149,11 +149,20 @@ At the moment this is only possible when running the server locally.
 
 ## Dev
 
-### Updating dependencies
+### Updating server dependencies
 
 Remember to:
 
     pip freeze > requirements.txt
+
+
+### Watching and recompiling client code
+
+    src/client$  npm run watch
+
+Or to just build:
+
+    src/client$  npm run build
 
 
 ## Deployment
