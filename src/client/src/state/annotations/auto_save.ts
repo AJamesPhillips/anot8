@@ -22,8 +22,10 @@ export function auto_save (store: Store<State>)
 
         if (state.annotations.status === "saving" || state.annotations.status === "error") return
 
-        if (!current_annotations.find(({ dirty }) => dirty))
+        const dirty = current_annotations.find(({ dirty }) => dirty)
+        if (!dirty)
         {
+            // This will be hit anytime the annotations are first loaded, or the user name is changed
             annotations = current_annotations
             return
         }
@@ -31,9 +33,17 @@ export function auto_save (store: Store<State>)
         const url_to_write_file_annotations = get_url_to_write_file_annotations(state)
         if (!url_to_write_file_annotations)
         {
-            console.log(`Not saving ${annotations.length} annotations to server as no end point to save against`)
+            console.warn(`Not saving ${annotations && annotations.length} annotations to server as no end point to save against`)
             return
         }
+
+        if (state.annotations.unsupported_schema_version)
+        {
+            console.warn(`Not saving annotations to server as unsupported_schema_version`)
+            return
+        }
+
+        annotations = current_annotations
 
         store.dispatch(ACTIONS.annotations.progress_saving_annotations({ status: "saving" }))
 

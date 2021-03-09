@@ -44,7 +44,8 @@ def ensure_annotations_file (root_path, annotations_relative_file_path, user_nam
     data_file_path = root_path + data_file_relative_file_path
 
 
-    current_schema_version = 6
+    # Remember to also edit this value in the client app
+    current_schema_version = SUPPORTED_SCHEMA_VERSION = 6
 
     if os.path.isfile(annotations_file_path):
         with open(annotations_file_path, "r", encoding="utf8") as f:

@@ -1,7 +1,8 @@
 import { AnyAction } from "redux"
+import { SUPPORTED_SCHEMA_VERSION } from "../../SUPPORTED_SCHEMA_VERSION"
 
 import { replace_entry, replace_entries, remove_entry } from "../../utils/list"
-import { MaybeAnnotation, Annotation } from "../interfaces"
+import { MaybeAnnotation, Annotation, AnnotationsFile } from "../interfaces"
 import { State, AnnotationsState, AnnotationsBySafeUserName, AnnotationsByPageNumber, AnnotationsByCompoundId } from "../state"
 import { get_safe_user_name } from "../user/utils"
 import { is_got_annotations_file, is_got_replacement_annotations_file, is_create_annotation, is_edit_annotation, is_delete_annotations, is_progress_saving_annotations } from "./actions"
@@ -27,7 +28,9 @@ export function annotations_reducer (state: State, action: AnyAction): State
         const annotations_state: AnnotationsState = {
             ...state.annotations,
             annotation_files_loaded: [...state.annotations.annotation_files_loaded, safe_user_name],
-            ...prepared_state
+            unsupported_schema_version: get_unsupported_schema_version
+        (state, annotations_file),
+            ...prepared_state,
         }
 
         if (is_main_annotations_file(safe_user_name) && is_intial_load)
@@ -319,4 +322,13 @@ function add_new_annotations_by_compound_id (annotations_by_compound_id: Annotat
 function is_main_annotations_file (safe_user_name: string)
 {
     return safe_user_name === ""
+}
+
+
+
+function get_unsupported_schema_version (state: State, annotations_file: AnnotationsFile)
+{
+    const unsupported_schema_version = annotations_file.schema_version !== SUPPORTED_SCHEMA_VERSION
+
+    return state.annotations.unsupported_schema_version || unsupported_schema_version
 }

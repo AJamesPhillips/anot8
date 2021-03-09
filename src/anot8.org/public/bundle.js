@@ -394,6 +394,8 @@
       }, _ref2[result] = observable, _ref2;
     }
 
+    var SUPPORTED_SCHEMA_VERSION = 6;
+
     function toggle_list_entry(list, entry) {
         var new_list = list.filter(function (e) { return e !== entry; });
         if (new_list.length === list.length)
@@ -510,7 +512,7 @@
             var safe_user_name = get_safe_user_name(user_name);
             var new_maybe_annotations = annotations_file.annotations.map(add_user_name_and_compound_id(user_name));
             var prepared_state = prepare_new_annotations({ state: state, new_maybe_annotations: new_maybe_annotations, safe_user_name: safe_user_name, allow_merge: false, overwrite: is_replacement });
-            var annotations_state = __assign(__assign(__assign({}, state.annotations), { annotation_files_loaded: __spreadArray(__spreadArray([], state.annotations.annotation_files_loaded), [safe_user_name]) }), prepared_state);
+            var annotations_state = __assign(__assign(__assign({}, state.annotations), { annotation_files_loaded: __spreadArray(__spreadArray([], state.annotations.annotation_files_loaded), [safe_user_name]), unsupported_schema_version: get_unsupported_schema_version(state, annotations_file) }), prepared_state);
             if (is_main_annotations_file(safe_user_name) && is_intial_load) {
                 annotations_state.annotation_user_names = annotations_file.annotation_user_names;
                 var user_specific_annotation_files_to_load = annotations_file.annotation_user_names.map(get_safe_user_name);
@@ -663,6 +665,10 @@
     }
     function is_main_annotations_file(safe_user_name) {
         return safe_user_name === "";
+    }
+    function get_unsupported_schema_version(state, annotations_file) {
+        var unsupported_schema_version = annotations_file.schema_version !== SUPPORTED_SCHEMA_VERSION;
+        return state.annotations.unsupported_schema_version || unsupported_schema_version;
     }
 
     function toggle_set_entry(set, entry) {
@@ -1010,6 +1016,7 @@
             status: "not ready",
             annotation_files_to_load: [""],
             annotation_files_loaded: [],
+            unsupported_schema_version: undefined,
             annotation_user_names: undefined,
             annotations_by_safe_user_name: {},
             all_annotations: [],
@@ -1814,10 +1821,11 @@
         errored: state.annotations.status === "error",
         annotations_count: state.annotations.all_annotations.length,
         url_to_write_file_annotations: get_url_to_write_file_annotations(state),
+        unsupported_schema_version: state.annotations.unsupported_schema_version,
     }); };
     var connector$1 = connect(map_state$1);
     function _AutoSave(props) {
-        var ready = props.ready, loading = props.loading, saving = props.saving, saved = props.saved, errored = props.errored, annotations_count = props.annotations_count, url_to_write_file_annotations = props.url_to_write_file_annotations;
+        var ready = props.ready, loading = props.loading, saving = props.saving, saved = props.saved, errored = props.errored, annotations_count = props.annotations_count, url_to_write_file_annotations = props.url_to_write_file_annotations, unsupported_schema_version = props.unsupported_schema_version;
         if (!ready || loading)
             return null;
         if (!url_to_write_file_annotations) {
@@ -1826,6 +1834,11 @@
                 " Saving not enabled. Must ",
                 a$1("a", { href: "https://github.com/centerofci/anot8" }, "run locally"),
                 ".");
+        }
+        else if (unsupported_schema_version) {
+            return a$1("div", null,
+                a$1("span", { style: "background-color: yellow;" }, "\u26A0"),
+                " Saving not enabled. Version of annotations file is not supported.");
         }
         else if (saving) {
             return a$1("div", null, "Auto saving...");
@@ -1982,18 +1995,24 @@
                 return;
             if (state.annotations.status === "saving" || state.annotations.status === "error")
                 return;
-            if (!current_annotations.find(function (_a) {
+            var dirty = current_annotations.find(function (_a) {
                 var dirty = _a.dirty;
                 return dirty;
-            })) {
+            });
+            if (!dirty) {
                 annotations = current_annotations;
                 return;
             }
             var url_to_write_file_annotations = get_url_to_write_file_annotations(state);
             if (!url_to_write_file_annotations) {
-                console.log("Not saving " + annotations.length + " annotations to server as no end point to save against");
+                console.warn("Not saving " + (annotations && annotations.length) + " annotations to server as no end point to save against");
                 return;
             }
+            if (state.annotations.unsupported_schema_version) {
+                console.warn("Not saving annotations to server as unsupported_schema_version");
+                return;
+            }
+            annotations = current_annotations;
             store.dispatch(ACTIONS.annotations.progress_saving_annotations({ status: "saving" }));
             post_annotations_to_server(store, current_annotations, user_name)
                 .then(function (annotations_file) {
