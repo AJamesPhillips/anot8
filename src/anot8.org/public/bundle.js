@@ -1387,13 +1387,13 @@
         var text = annotation.text, comment = annotation.comment, left = annotation.left, top = annotation.top, width = annotation.width, height = annotation.height, backgroundColor = annotation.colour;
         var title = text + " " + comment;
         var style = { left: left, top: top, width: width, height: height, backgroundColor: backgroundColor };
-        return a$1("div", { className: class_name, style: style, title: title });
+        return a$1("div", { className: class_name, style: style, title: title, onClick: function () { return dispatch(ACTIONS.selected_annotations.toggle_annotation_highlight({ compound_id: compound_id })); } });
     }
     var AnnotationOnPDF = connector$5(_AnnotationOnPDF);
     function create_empty_annotation_el(_a) {
         var annotations_container_el = _a.annotations_container_el;
         var annotation_el = document.createElement("div");
-        annotation_el.className = "annotation";
+        annotation_el.className = "annotation editing_dimensions";
         annotations_container_el.appendChild(annotation_el);
         return annotation_el;
     }
