@@ -1,10 +1,10 @@
 import { h } from "preact"
-import { ACTIONS } from "../state/actions"
-import { get_all_selected_annotations } from "../state/annotations/getters"
+import { ACTIONS } from "../../state/actions"
+import { get_all_selected_annotations } from "../../state/annotations/getters"
 
-import { State } from "../state/state"
-import { get_store } from "../state/store"
-import { connect } from "../utils/preact-redux-simple/connect"
+import { State } from "../../state/state"
+import { get_store } from "../../state/store"
+import { connect } from "../../utils/preact-redux-simple/connect"
 
 
 

@@ -1,9 +1,9 @@
 import { h } from "preact"
 
-import { ACTIONS } from "../../state/actions"
-import { State } from "../../state/state"
-import { get_store } from "../../state/store"
-import { connect } from "../../utils/preact-redux-simple/connect"
+import { ACTIONS } from "../../../state/actions"
+import { State } from "../../../state/state"
+import { get_store } from "../../../state/store"
+import { connect } from "../../../utils/preact-redux-simple/connect"
 import { LabelsList } from "./LabelsList"
 
 

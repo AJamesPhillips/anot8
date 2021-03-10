@@ -1,7 +1,7 @@
 import { Store } from "redux"
 
 import { State } from "../state/state"
-import { scroll_to_entries } from "./annotations_list/scroll_to_entries"
+import { scroll_to_entries } from "./side_panel/annotations_list/scroll_to_entries"
 import { scroll_to_annotations_on_pdf } from "./annotations_on_pdf/scroll_to_annotations_on_pdf"
 
 

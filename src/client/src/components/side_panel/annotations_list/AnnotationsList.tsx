@@ -1,7 +1,7 @@
 import { h } from "preact"
 
-import { State } from "../../state/state"
-import { connect } from "../../utils/preact-redux-simple/connect"
+import { State } from "../../../state/state"
+import { connect } from "../../../utils/preact-redux-simple/connect"
 import { AnnotationListEntry } from "./AnnotationListEntry"
 
 

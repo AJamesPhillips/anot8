@@ -1,8 +1,8 @@
 import { h } from "preact"
 
-import { ACTIONS } from "../../state/actions"
-import { Annotation } from "../../state/interfaces"
-import { dispatch } from "../../state/store"
+import { ACTIONS } from "../../../state/actions"
+import { Annotation } from "../../../state/interfaces"
+import { dispatch } from "../../../state/store"
 
 
 

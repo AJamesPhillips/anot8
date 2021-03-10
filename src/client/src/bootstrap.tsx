@@ -1,8 +1,8 @@
 import { h, render } from "preact"
 
-import { AnnotationsList } from "./components/annotations_list/AnnotationsList"
-import { DeleteButton } from "./components/DeleteButton"
-import { Labels } from "./components/labels_list/Labels"
+import { AnnotationsList } from "./components/side_panel/annotations_list/AnnotationsList"
+import { DeleteButton } from "./components/side_panel/DeleteButton"
+import { Labels } from "./components/side_panel/labels_list/Labels"
 import { LoadingProgress } from "./components/LoadingProgress"
 import { render_pdf } from "./components/pdf_canvas/render_pdf"
 import { setup_scrollers } from "./components/setup_scrollers"

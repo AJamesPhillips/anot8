@@ -1,11 +1,11 @@
 import { h } from "preact"
 
-import { ACTIONS } from "../../state/actions"
-import { get_all_selected_annotations } from "../../state/annotations/getters"
-import { Label, State } from "../../state/state"
-import { get_store } from "../../state/store"
-import { toggle_list_entry } from "../../utils/list"
-import { connect } from "../../utils/preact-redux-simple/connect"
+import { ACTIONS } from "../../../state/actions"
+import { get_all_selected_annotations } from "../../../state/annotations/getters"
+import { Label, State } from "../../../state/state"
+import { get_store } from "../../../state/store"
+import { toggle_list_entry } from "../../../utils/list"
+import { connect } from "../../../utils/preact-redux-simple/connect"
 
 
 

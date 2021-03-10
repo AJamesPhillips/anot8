@@ -1,9 +1,9 @@
 import { Store } from "redux"
+
 import { ACTIONS } from "../../state/actions"
 import { next_annotation_id_for_user } from "../../state/annotations/getters"
 import { get_compound_id } from "../../state/annotations/utils"
 import { Annotation } from "../../state/interfaces"
-
 import { State } from "../../state/state"
 import { get_element_position } from "../../utils/screen"
 import { create_empty_annotation_el } from "../annotations_on_pdf/AnnotationOnPDF"
