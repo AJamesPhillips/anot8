@@ -1,5 +1,9 @@
 
 
+# 2021-03-10
+
+* Annotations on PDF are clickable.
+
 # 2021-03-09
 
 * Fix bug with multiple annotations showing any time a single annotation is edited.
