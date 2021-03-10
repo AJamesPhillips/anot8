@@ -53,8 +53,8 @@ def get_pathname (**kwargs):
 
 
 def get_local_url (vault_config, data_file_relative_file_path):
-    naming_authority = "-1" # get_naming_authority(vault_config)
-    vault_id = vault_config["local_vault_id"]
+    naming_authority = get_naming_authority(vault_config)
+    vault_id = vault_config["authorised_vault_id"] or vault_config["local_vault_id"]
     file_id = get_id_for_data_file_relative_file_path(vault_config, data_file_relative_file_path)
 
     pathname = get_pathname(naming_authority=naming_authority, vault_id=vault_id, file_id=file_id)
