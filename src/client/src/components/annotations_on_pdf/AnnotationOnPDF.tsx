@@ -1,7 +1,9 @@
 import { h } from "preact"
+import { ACTIONS } from "../../state/actions"
 
 import { get_annotation_by_compound_id } from "../../state/annotations/getters"
 import { State } from "../../state/state"
+import { dispatch } from "../../state/store"
 import { connect } from "../../utils/preact-redux-simple/connect"
 
 
@@ -36,7 +38,12 @@ function _AnnotationOnPDF (props: Props)
     const title = text + " " + comment
     const style: h.JSX.CSSProperties = { left, top, width, height, backgroundColor }
 
-    return <div className={class_name} style={style} title={title}></div>
+    return <div
+        className={class_name}
+        style={style}
+        title={title}
+        onClick={() => dispatch(ACTIONS.selected_annotations.toggle_annotation_highlight({ compound_id }))}
+    />
 }
 
 export const AnnotationOnPDF = connector(_AnnotationOnPDF)
@@ -50,7 +57,7 @@ interface CreateEmptyAnnotationElArgs
 export function create_empty_annotation_el ({ annotations_container_el }: CreateEmptyAnnotationElArgs)
 {
     const annotation_el = document.createElement("div")
-    annotation_el.className = "annotation"
+    annotation_el.className = "annotation editing_dimensions"
     annotations_container_el.appendChild(annotation_el)
 
     return annotation_el
