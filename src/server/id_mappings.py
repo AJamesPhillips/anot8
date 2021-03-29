@@ -3,7 +3,7 @@ import os
 
 from annotations import has_main_annotations_file, get_annotation_relative_file_paths_in_vault
 from anot8_vault_config import write_anot8_vault_config
-from common import annotations_file_path_to_data_file_path
+from common import (annotations_file_path_to_data_file_path, print_warning)
 
 
 
@@ -90,10 +90,13 @@ def get_perma_url (vault_config, data_file_relative_file_path):
 
 
 def update_file_perma_ids_mapping (vault_config):
-    id_to_relative_file_name = get_id_to_relative_file_name_map(vault_config)
+    id_to_relative_file_name_map = get_id_to_relative_file_name_map(vault_config)
     next_id = get_next_id(vault_config)
 
-    relative_file_names_already_mapped = set(id_to_relative_file_name.values())
+    relative_file_names_already_mapped = set(id_to_relative_file_name_map.values())
+
+    check_mapped_files_exist(vault_config["root_path"], id_to_relative_file_name_map)
+
 
     file_paths = get_annotation_relative_file_paths_in_vault(vault_config)["main_annotation_relative_file_paths"]
     for annotations_relative_file_path in file_paths:
@@ -102,13 +105,28 @@ def update_file_perma_ids_mapping (vault_config):
         if data_file_relative_file_path in relative_file_names_already_mapped:
             continue
 
-        id_to_relative_file_name[next_id] = data_file_relative_file_path
+        id_to_relative_file_name_map[next_id] = data_file_relative_file_path
         next_id += 1
 
-    vault_config["DO_NOT_EDIT_auto_generated_fields"]["id_to_relative_file_name"] = id_to_relative_file_name
+    vault_config["DO_NOT_EDIT_auto_generated_fields"]["id_to_relative_file_name"] = id_to_relative_file_name_map
     vault_config["DO_NOT_EDIT_auto_generated_fields"]["next_id"] = next_id
 
     write_anot8_vault_config(vault_config)
+
+
+
+def check_mapped_files_exist (root_path, id_to_relative_file_name_map):
+    broken_file_paths = []
+
+    for data_file_relative_file_path in id_to_relative_file_name_map.values():
+        file_path = root_path + data_file_relative_file_path
+        file_exists = os.path.isfile(file_path)
+        if not file_exists:
+            broken_file_paths.append(file_path)
+        continue
+
+    if broken_file_paths:
+        print_warning("{} broken file paths: {}".format(len(broken_file_paths), "\n".join(broken_file_paths)))
 
 
 

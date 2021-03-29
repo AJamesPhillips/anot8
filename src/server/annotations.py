@@ -174,7 +174,11 @@ def get_annotation_relative_file_paths_in_vault (vault_config):
         for file_name in file_names:
 
             is_not_a_file = not os.path.isfile(dir_path + file_name)
-            if is_not_a_file or not file_name.endswith(".annotations"):
+            if is_not_a_file:
+                continue
+
+            is_not_annotations_file = not file_name.endswith(".annotations")
+            if is_not_annotations_file:
                 continue
 
             # check corresponding file exists
