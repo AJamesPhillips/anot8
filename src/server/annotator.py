@@ -189,7 +189,8 @@ def serve_pdf_file (vault_config, relative_file_path):
 
     response = make_response(binary_pdf)
     response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = "inline; filename={}.pdf".format(relative_file_path)
+    latin1_relative_file_path = relative_file_path.encode("latin-1", "replace")
+    response.headers["Content-Disposition"] = "inline; filename={}.pdf".format(latin1_relative_file_path)
     return response
 
 
