@@ -119,11 +119,11 @@ Then the label list will display:
 
 ### Use anot8.org server when running locally
 
-The render_pdf.html file can use the anot8.org maing authority server (i.e. how to translate a file_id into a url of a file) instead of your local server by setting:
+The render_pdf.html file can use the anot8.org naming authority server (i.e. how to translate a file_id into a url of a file) instead of your local server by setting:
 
-    localStorage.setItem("override_naming_authority_server_url", "https://raw.githubusercontent.com/centerofci/anot8/master/anot8_org_naming_authority_lookup.json") // set value to "" to stop
+    localStorage.setItem("override_naming_authority_server_url", "https://raw.githubusercontent.com/centerofci/anot8/master/anot8_org_naming_authority_lookup.json") // set value to "" to revert to using your local server
 
-This will work when running locally or against a remote server.
+This will work when running locally or from anot8.org.
 
 
 ## Feature examples for central resolving server
@@ -132,9 +132,10 @@ This will work when running locally or against a remote server.
 
 To get permalinks which work for anyone you'll need to open a new issue here: https://github.com/CenterOfCI/anot8.org/issues/new?title=Request%20for%20perma%20link%20name%20id to get a naming id and have it added to the anot8.org resolver.
 
-Once set up the following anot8.org URLs should work:
+TODO: update, this example URL already works
+~~Once set up the following anot8.org URLs should work:~~
 
-https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0
+~~https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0~~
 
 
 ### Redirect from anot8.org to local

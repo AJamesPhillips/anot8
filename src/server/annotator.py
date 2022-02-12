@@ -35,6 +35,7 @@ from common import supported_relative_file_path
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 app = Flask(__name__)
+app.url_map.strict_slashes = False  # Allow
 
 upsert_anot8_config_and_perma_id_mappings()
 upgrade_all_annotations(get_vault_configs_by_id().values())
@@ -260,6 +261,15 @@ def update_annotations (vault_config, annotations_relative_file_path):
     write_annotations_file(annotations_file_path, meta_data)
 
     return json.dumps(meta_data, ensure_ascii=False)
+
+
+
+@app.route("/r")
+def flex_render_pdf ():
+    with open(dir_path + "/../anot8.org/public/render_pdf.html", "r", encoding="utf8") as f:
+        html = f.read()
+
+    return html
 
 
 
