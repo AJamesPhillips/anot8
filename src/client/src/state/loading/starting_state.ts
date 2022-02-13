@@ -1,11 +1,11 @@
-import { LoadingPDFState } from "../state"
+import { LoadingPDFState, LoadingStatus } from "../state"
 
 
 
 export function get_starting_loading_state (): LoadingPDFState
 {
     return {
-        status: "not ready",
+        status: LoadingStatus.not_ready,
         loading_stage: undefined,
         loading_error_type: undefined,
 

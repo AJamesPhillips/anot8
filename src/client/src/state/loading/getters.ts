@@ -43,7 +43,7 @@ export function get_url_to_file_annotations ({ state, safe_user_name }: { state:
 
 
 const states_post_attempt_to_resolve_url_to_write_annotations = new Set<LoadingStatus>([
-    "resolved", "downloaded", "errored"
+    LoadingStatus.resolved, LoadingStatus.downloaded, LoadingStatus.errored
 ])
 export function finished_attempt_to_resolve_url_to_write_annotations (state: State)
 {

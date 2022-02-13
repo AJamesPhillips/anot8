@@ -1,6 +1,6 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
-import { State } from "../state/state"
+import { LoadingStage, State } from "../state/state"
 import { connect } from "../utils/preact-redux-simple/connect"
 
 
@@ -66,15 +66,15 @@ function _LoadingProgress (props: Props)
 
     if (error_during_loading__type === "404")
     {
-        if (stage === "resolve_naming_authority_url")
+        if (stage === LoadingStage.resolve_naming_authority_url)
         {
             error_message = `naming authority "${naming_authority}" not found`
         }
-        else if (stage === "resolve_vault_url")
+        else if (stage === LoadingStage.resolve_vault_url)
         {
             error_message = `vault id "${vault_id}" not found`
         }
-        else if (stage === "resolve_pdf_file_url")
+        else if (stage === LoadingStage.resolve_pdf_file_url)
         {
             error_message = `No relative file path found for file id "${file_id}"`
         }

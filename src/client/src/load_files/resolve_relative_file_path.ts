@@ -1,6 +1,6 @@
 import { ACTIONS } from "../state/actions"
 import { NamingAuthorityConfigURLLookup, VaultsConfigURLLookup, VaultConfig } from "../state/interfaces"
-import { State } from "../state/state"
+import { LoadingStage, LoadingStatus, State } from "../state/state"
 import { get_store } from "../state/store"
 
 
@@ -12,7 +12,10 @@ export function resolve_relative_file_path ()
     const naming_authority_lookup_url = get_naming_authority_lookup_url(state)
 
 
-    store.dispatch(ACTIONS.loading.update_loading_status({ status: "resolving", stage: "resolve_naming_authority_url" }))
+    store.dispatch(ACTIONS.loading.update_loading_status({
+        status: LoadingStatus.resolving,
+        stage: LoadingStage.resolve_naming_authority_url,
+    }))
 
 
     return fetch(naming_authority_lookup_url)
@@ -27,12 +30,18 @@ export function resolve_relative_file_path ()
             const msg = `No naming_authority ${naming_authority} in naming_authority_lookup`
             console.error(msg, naming_authority_lookup)
 
-            store.dispatch(ACTIONS.loading.error_during_loading({ error_stage: "resolve_naming_authority_url", error_type: "404" }))
+            store.dispatch(ACTIONS.loading.error_during_loading({
+                error_stage: LoadingStage.resolve_naming_authority_url,
+                error_type: "404",
+            }))
 
             return Promise.reject()
         }
 
-        store.dispatch(ACTIONS.loading.update_loading_status({ status: "resolving", stage: "resolve_vault_url" }))
+        store.dispatch(ACTIONS.loading.update_loading_status({
+            status: LoadingStatus.resolving,
+            stage: LoadingStage.resolve_vault_url,
+        }))
 
         return fetch(vaults_map_url)
     })
@@ -46,12 +55,18 @@ export function resolve_relative_file_path ()
         {
             console.error(`No vault_id ${vault_id} in vaults_map`, vaults_map)
 
-            store.dispatch(ACTIONS.loading.error_during_loading({ error_stage: "resolve_vault_url", error_type: "404" }))
+            store.dispatch(ACTIONS.loading.error_during_loading({
+                error_stage: LoadingStage.resolve_vault_url,
+                error_type: "404",
+            }))
 
             return Promise.reject()
         }
 
-        store.dispatch(ACTIONS.loading.update_loading_status({ status: "resolving", stage: "resolve_pdf_file_url" }))
+        store.dispatch(ACTIONS.loading.update_loading_status({
+            status: LoadingStatus.resolving,
+            stage: LoadingStage.resolve_pdf_file_url,
+        }))
 
         return fetch(vault_config_url)
     })
@@ -68,7 +83,10 @@ export function resolve_relative_file_path ()
         {
             console.error(`No relative_file_path for file_id ${file_id} `, id_to_relative_file_name)
 
-            store.dispatch(ACTIONS.loading.error_during_loading({ error_stage: "resolve_pdf_file_url", error_type: "404" }))
+            store.dispatch(ACTIONS.loading.error_during_loading({
+                error_stage: LoadingStage.resolve_pdf_file_url,
+                error_type: "404",
+            }))
 
             return Promise.reject()
         }

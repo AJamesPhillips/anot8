@@ -53,8 +53,21 @@ export interface LabelsState
 
 
 
-export type LoadingStatus = "not ready" | "resolving" | "resolved" | "downloaded" | "errored"
-export type LoadingStage = "resolve_naming_authority_url" | "resolve_vault_url" | "resolve_pdf_file_url" | "pdf_file"
+export enum LoadingStatus
+{
+    not_ready = "not ready",
+    resolving = "resolving",
+    resolved = "resolved",
+    downloaded = "downloaded",
+    errored = "errored",
+}
+export enum LoadingStage
+{
+    resolve_naming_authority_url = "resolve_naming_authority_url",
+    resolve_vault_url = "resolve_vault_url",
+    resolve_pdf_file_url = "resolve_pdf_file_url",
+    pdf_file = "pdf_file",
+}
 export type LoadingErrorType = "404" | "other"
 export interface LoadingPDFState
 {
