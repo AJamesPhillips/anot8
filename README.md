@@ -95,7 +95,7 @@ Additionally when you first set up a vault of PDFs to annotate, the vault will n
 
 When annotating specific pieces of data it's helpful to prioritise certain labels to the top of the labels list.  This can be done using:
 
-    localStorage.setItem("priority_labels", JSON.stringify(["label one"]))
+    localStorage.setItem("priority_labels", JSON.stringify(["label one", "another label"]))
 
 
 ### Hiding common label roots
