@@ -12,7 +12,8 @@ export function parse_location_search ()
     if (query)
     {
         query.split("&").forEach(key_var => {
-            const [key, _var] = key_var.split("=")
+            const [key = "", _var = ""] = key_var.split("=")
+            if (!key) return
             obj[decodeURIComponent(key)] = decodeURIComponent(_var)
         })
     }

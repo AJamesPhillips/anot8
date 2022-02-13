@@ -24,11 +24,11 @@ const map_state = (state: State, own_props: OwnProps) => {
     return {
         label,
         disabled: is_disabled(state),
-        is_used: state.labels.used_labels.has(label.value),
-        display: matches_search_string(label, state.labels.search_string),
+        used_labels: state.labels.used_labels,
+        priority_labels: state.labels.priority_labels,
+        search_string: state.labels.search_string,
         ...is_checked_or_indeterminate(label, state),
         annotations_to_edit: get_all_selected_annotations(state),
-        priority: state.labels.priority_labels.has(label.value),
     }
 }
 type Props = ReturnType<typeof map_state> & OwnProps
@@ -38,25 +38,40 @@ const connector = connect(map_state)
 
 function _LabelComponent (props: Props)
 {
-    if (!props.display) return null
+    const { label } = props
+    if (!label) return null
+
+    const is_used = props.used_labels.has(label.value)
+    const priority = props.priority_labels.has(label.value)
+    const display = matches_search_string(label, props.search_string)
+    if (!display) return null
+
 
     function toggle_label ()
     {
-        if (props.annotations_to_edit.length !== 1)
+        const annotation_to_edit = props.annotations_to_edit[0]
+
+        if (!annotation_to_edit)
+        {
+            console.warn("toggle_label requires an annotation")
+            return
+        }
+        else if (props.annotations_to_edit.length > 1)
         {
             console.warn("Should not be able to edit multiple annotations")
             return
         }
 
-        const annotation_to_edit = props.annotations_to_edit[0]
-        const labels = toggle_list_entry(annotation_to_edit.labels, props.label.value)
+        if (!label) return // type guard
+
+        const labels = toggle_list_entry(annotation_to_edit.labels, label.value)
 
         const new_annotation = { ...annotation_to_edit, labels }
         store.dispatch(ACTIONS.annotations.edit_annotation({ annotation: new_annotation }))
     }
 
 
-    const class_name = `label ${props.is_used ? "used_label" : ""} ${props.priority ? "priority" : ""}`
+    const class_name = `label ${is_used ? "used_label" : ""} ${priority ? "priority" : ""}`
 
     return <div
         className={class_name}
@@ -71,15 +86,15 @@ function _LabelComponent (props: Props)
             onChange={e => {e.stopPropagation(); toggle_label()}}
         />
 
-        {props.label.display_text}
+        {label.display_text}
 
         <span
             className="priority_label"
             onClick={e => {
                 e.stopPropagation()
-                store.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: props.label.value }))
+                store.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: label.value }))
             }}
-            dangerouslySetInnerHTML={{__html: props.priority ? "&starf;" : "&star;" }}
+            dangerouslySetInnerHTML={{__html: priority ? "&starf;" : "&star;" }}
         />
     </div>
 }
@@ -98,7 +113,7 @@ function is_disabled(state: State): boolean {
 
 
 
-function matches_search_string(label: Label, search_string: string) {
+function matches_search_string (label: Label, search_string: string) {
     if (!search_string) return true
 
     return label.lower_case_value.includes(search_string.toLowerCase())
@@ -106,8 +121,8 @@ function matches_search_string(label: Label, search_string: string) {
 
 
 
-function is_checked_or_indeterminate (label: Label, state: State) {
-    const count = state.labels.labels_used_by_selected_annotations[label.value] || 0
+function is_checked_or_indeterminate (label: Label | undefined, state: State) {
+    const count = state.labels.labels_used_by_selected_annotations[label?.value || ""] || 0
 
     const checked = count > 0
     const indeterminate = checked && count !== state.selected_annotations.selected_compound_ids.length

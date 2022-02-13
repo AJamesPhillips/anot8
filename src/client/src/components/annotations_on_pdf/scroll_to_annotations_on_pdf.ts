@@ -5,7 +5,10 @@ export function scroll_to_annotations_on_pdf (selected_compound_ids: string[])
 {
     if (an_annotation_in_view(selected_compound_ids)) return
 
-    return scroll_to_annotation(selected_compound_ids[0])
+    const an_id = selected_compound_ids[0]
+    if (!an_id) return
+
+    return scroll_to_annotation(an_id)
 }
 
 

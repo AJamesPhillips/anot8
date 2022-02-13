@@ -10,7 +10,8 @@
     "removeComments": true,
     "sourceMap": true,
     "jsx": "react",
-    "jsxFactory": "h"
+    "jsxFactory": "h",
+    "noUncheckedIndexedAccess": true
   },
   "include": [
     "./src/**/*.tsx",

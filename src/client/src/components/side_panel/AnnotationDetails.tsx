@@ -26,7 +26,9 @@ function _AnnotationDetails (props: Props)
 {
     const { annotations, safe_user_name } = props
 
-    if (annotations.length === 0)
+    const annotation = annotations[0]
+
+    if (!annotation)
     {
         return <div>No annotations selected</div>
     }
@@ -36,8 +38,6 @@ function _AnnotationDetails (props: Props)
     }
     else
     {
-        const annotation = annotations[0]
-
         const on_change = (changes: Partial<Annotation>) =>
         {
             const edited_annotation = {
