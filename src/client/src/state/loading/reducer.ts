@@ -53,7 +53,7 @@ export function loading_reducer (state: State, action: AnyAction): State
         const loading: LoadingPDFState = {
             ...state.loading_pdf,
             status: LoadingStatus.resolved, // action.status
-            resolved_relative_file_path: action.relative_file_path,
+            resolved_relative_file_path: action.resolved_relative_file_path,
         }
         state = { ...state, loading_pdf: loading }
     }
