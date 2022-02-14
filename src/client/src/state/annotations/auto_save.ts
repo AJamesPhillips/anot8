@@ -22,7 +22,7 @@ export function auto_save (store: Store<State>)
 
         if (state.annotations.status === "saving" || state.annotations.status === "error") return
 
-        const dirty = current_annotations.find(({ dirty }) => dirty)
+        const dirty = current_annotations.find(({ dirty, temporary }) => dirty && !temporary)
         if (!dirty)
         {
             // This will be hit anytime the annotations are first loaded, or the user name is changed

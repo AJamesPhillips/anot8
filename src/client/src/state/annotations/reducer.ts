@@ -65,8 +65,13 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
     if (is_create_annotation(action))
     {
-        const new_maybe_annotations = [action.new_annotation]
-        const { safe_user_name } = action.new_annotation
+        // We do not yet support persisting annotations created on anot8.org
+        // nor PDFs specified by url or doi
+        const temporary = !state.running_locally || !!state.routing.url || !!state.routing.doi
+
+        const new_maybe_annotation: MaybeAnnotation = { ...action.new_annotation, temporary }
+        const new_maybe_annotations = [new_maybe_annotation]
+        const { safe_user_name } = new_maybe_annotation
 
         const annotations_state: AnnotationsState = {
             ...state.annotations,

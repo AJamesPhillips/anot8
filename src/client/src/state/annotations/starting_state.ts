@@ -1,6 +1,8 @@
+import { parse_location_search } from "../../utils/url"
 import { Annotation } from "../interfaces"
 import { AnnotationsState } from "../state"
 import { prepare_new_annotations } from "./prepare_new_annotations"
+import { inflate_temporary_annotations, TEMPORARY_ANNOTATIONS_PARAM_KEY } from "./temporary_annotations"
 
 
 
@@ -19,30 +21,14 @@ export function get_starting_annotations_state (): AnnotationsState
     }
 
 
-    const ans: Annotation[] = [
-        // {
-        //     colour: "rgba(200, 200, 255, 0.6)",
-        //     comment: "Annotation is useful",
-        //     height: "27px",
-        //     id: 3,
-        //     labels: ["label one"],
-        //     left: "393px",
-        //     page_number: 1,
-        //     text: "An annotation",
-        //     top: "137px",
-        //     width: "80px",
-
-        //     user_name: "",
-        //     safe_user_name: "",
-        //     compound_id: "3",
-        // }
-    ]
+    const temp_annotations = parse_location_search()[TEMPORARY_ANNOTATIONS_PARAM_KEY]
+    const new_maybe_annotations: Annotation[] = inflate_temporary_annotations(temp_annotations)
 
     state = {
         ...state,
         ...prepare_new_annotations({
             annotations_state: state,
-            new_maybe_annotations: ans,
+            new_maybe_annotations,
             safe_user_name: "",
             allow_overwrite: true,
         })
