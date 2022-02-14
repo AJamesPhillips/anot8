@@ -23,12 +23,15 @@ function parse_location_path () {
 
 export function get_starting_routing_state (): RoutingState
 {
+    const path_location = parse_location_path()
     const vars = parse_location_search()
 
+    const have_valid_path_location = !!path_location.naming_authority && !!path_location.vault_id && !!path_location.file_id
+
     return {
-        ...parse_location_path(),
+        ...path_location,
         relative_file_path: vars.relative_file_path,
-        url: vars.url,
-        doi: vars.doi,
+        url: have_valid_path_location ? undefined : vars.url,
+        doi: undefined, //vars.doi,
     }
 }

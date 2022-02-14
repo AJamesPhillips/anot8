@@ -23,6 +23,13 @@ export function update_page_location (store: Store<State>)
             obj["h"] = selected_compound_ids.join(",")
         }
 
+        const { naming_authority, vault_id, file_id } = state.routing
+        if (obj["url"] && naming_authority && vault_id && file_id)
+        {
+            // Clean up parameters by removing url if there is a path specifying the file to load
+            delete obj["url"]
+        }
+
         const search_string = object_to_search_string(obj)
         const new_url = window.location.protocol + "//" + window.location.host + window.location.pathname + search_string
 
