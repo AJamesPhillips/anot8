@@ -100,6 +100,7 @@ export interface RoutingState
     file_id: string
     relative_file_path: string | undefined
     url: string | undefined
+    doi: string | undefined
 }
 
 

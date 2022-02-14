@@ -29,7 +29,7 @@ const connector = connect(map_state)
 function _LoadingProgress (props: Props)
 {
     const [visibility, set_visibility] = useState(true)
-    const [pdf_url, set_pdf_url] = useState("")
+    const [url, set_url] = useState("")
     if (!visibility) return null
 
     const { loading_status, rendering_status, max_pages, page_number } = props
@@ -74,17 +74,19 @@ function _LoadingProgress (props: Props)
                     <input
                         type="text"
                         placeholder="Enter a URL"
-                        onInput={e => set_pdf_url(e.currentTarget.value)}
-                        onBlur={e => set_pdf_url(e.currentTarget.value)}
+                        onInput={e => set_url(e.currentTarget.value)}
+                        onBlur={e => set_url(e.currentTarget.value)}
                     />
                 </p>
 
                 <p>
                     <button
-                        disabled={!pdf_url}
+                        disabled={!url}
                         onClick={() =>
                         {
-                            document.location.href = "/r/?url=" + pdf_url
+                            // We do not have to encode the url if it does not contain the "&" character
+                            const safe_url = url.includes("&") ? encodeURIComponent(url) : url
+                            document.location.href = "/r/?url=" + safe_url
                         }}
                     >
                         Load PDF

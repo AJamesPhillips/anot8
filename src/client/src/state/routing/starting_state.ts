@@ -29,5 +29,6 @@ export function get_starting_routing_state (): RoutingState
         ...parse_location_path(),
         relative_file_path: vars.relative_file_path,
         url: vars.url,
+        doi: vars.doi,
     }
 }
