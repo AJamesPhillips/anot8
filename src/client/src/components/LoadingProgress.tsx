@@ -62,7 +62,17 @@ function _LoadingProgress (props: Props)
         file_id,
     } = props
 
-    let error_message = ""
+    if (error_during_loading__type === "422")
+    {
+        if (stage === LoadingStage.analysing_location_path)
+        {
+            return <div>
+                Set a url to load...
+            </div>
+        }
+    }
+
+    let error_message = "Unknown error"
 
     if (error_during_loading__type === "404")
     {

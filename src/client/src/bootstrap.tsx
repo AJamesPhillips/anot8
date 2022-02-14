@@ -32,6 +32,12 @@ update_labels_used_by_selected_annotations(store)
 const pages_container_el = document.getElementById("pages_container")!
 load_files()
 .then(pdf => render_pdf(pdf, pages_container_el))
+.catch(e =>
+{
+    const state = store.getState()
+    if (state.loading_pdf.loading_error_type === "422") return
+    console.error("Erroring during loading files: ", e)
+})
 
 const programmatic_styles_el = document.getElementById("programmatic_styles")!
 set_up_programmatic_styles(programmatic_styles_el, store)

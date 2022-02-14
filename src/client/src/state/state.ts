@@ -63,12 +63,13 @@ export enum LoadingStatus
 }
 export enum LoadingStage
 {
+    analysing_location_path = "analysing_location_path",
     resolve_naming_authority_url = "resolve_naming_authority_url",
     resolve_vault_url = "resolve_vault_url",
     resolve_pdf_file_url = "resolve_pdf_file_url",
     pdf_file = "pdf_file",
 }
-export type LoadingErrorType = "404" | "other"
+export type LoadingErrorType = "404" | "422" | "other"
 export interface LoadingPDFState
 {
     status: LoadingStatus
@@ -98,6 +99,7 @@ export interface RoutingState
     vault_id: string
     file_id: string
     relative_file_path: string | undefined
+    url: string | undefined
 }
 
 

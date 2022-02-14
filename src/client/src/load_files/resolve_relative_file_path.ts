@@ -5,11 +5,24 @@ import { get_store } from "../state/store"
 
 
 
-export async function resolve_relative_file_path ()
+export async function resolve_relative_file_path_or_url ()
 {
     const store = get_store()
     const state = store.getState()
-    const { naming_authority, vault_id, file_id, relative_file_path } = state.routing
+    const { url, naming_authority, vault_id, file_id, relative_file_path } = state.routing
+
+    if (url) return // no action needed
+
+    if (!naming_authority || !vault_id || !file_id)
+    {
+        store.dispatch(ACTIONS.loading.error_during_loading({
+            error_stage: LoadingStage.analysing_location_path,
+            error_type: "422",
+        }))
+        return Promise.reject()
+    }
+
+
     const naming_authority_lookup_url = get_naming_authority_lookup_url(state)
 
 

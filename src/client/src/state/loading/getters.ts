@@ -4,6 +4,9 @@ import { LoadingStatus, State } from "../state"
 
 export function get_url_to_file (state: State)
 {
+    const { url } = state.routing
+    if (url) return url
+
     const { resolved_relative_file_path } = state.loading_pdf
     if (!resolved_relative_file_path) return ""
 
