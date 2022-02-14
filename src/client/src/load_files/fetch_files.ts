@@ -54,7 +54,11 @@ function fetch_annotation_files (store: Store<State>)
             fetch_annotation_file({ store, user_name })
         })
     })
-    .catch(e => console.error("fetch_annotation_files error: ", e))
+    .catch(e =>
+    {
+        if (e === FetchAnnotationFileError.no_file_annotations_url) return
+        console.error("fetch_annotation_files error: ", e)
+    })
 }
 
 
@@ -64,13 +68,17 @@ interface FetchAnnotationFileArgs
     store: Store<State>
     user_name: string
 }
+enum FetchAnnotationFileError
+{
+    no_file_annotations_url,
+}
 function fetch_annotation_file ({ store, user_name }: FetchAnnotationFileArgs)
 {
     const safe_user_name = get_safe_user_name(user_name)
     const state = store.getState()
     const file_annotations_url = get_url_to_file_annotations({ state, safe_user_name })
 
-    if (!file_annotations_url) return Promise.reject()
+    if (!file_annotations_url) return Promise.reject(FetchAnnotationFileError.no_file_annotations_url)
 
     return fetch(file_annotations_url)
     .then(resp => resp.json())
