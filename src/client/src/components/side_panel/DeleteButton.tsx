@@ -21,14 +21,21 @@ const connector = connect(map_state)
 
 function _DeleteButton (props: Props)
 {
+    const disabled = !props.selected_annotation_ids_owned_by_user
+    const fill = disabled ? "#aaa" : "#000"
+
     return <button
-        disabled={!props.selected_annotation_ids_owned_by_user}
+        disabled={disabled}
         title="Delete annotations"
         onClick={() => {
             const compound_ids = props.selected_annotation_ids_owned_by_user.split(",")
             get_store().dispatch(ACTIONS.annotations.delete_annotations({ compound_ids }))
         }}
-    >X</button>
+    >
+        <svg focusable="false" aria-hidden="true" viewBox="0 0 24 24" style={{ width: 20, fill }}>
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+        </svg>
+    </button>
 }
 
 export const DeleteButton = connector(_DeleteButton)
