@@ -29,6 +29,7 @@ const connector = connect(map_state)
 function _LoadingProgress (props: Props)
 {
     const [visibility, set_visibility] = useState(true)
+    const [pdf_url, set_pdf_url] = useState("")
     if (!visibility) return null
 
     const { loading_status, rendering_status, max_pages, page_number } = props
@@ -67,7 +68,28 @@ function _LoadingProgress (props: Props)
         if (stage === LoadingStage.analysing_location_path)
         {
             return <div>
-                Set a url to load...
+                Enter a URL of a PDF to annotate...
+
+                <p>
+                    <input
+                        type="text"
+                        placeholder="Enter a URL"
+                        onInput={e => set_pdf_url(e.currentTarget.value)}
+                        onBlur={e => set_pdf_url(e.currentTarget.value)}
+                    />
+                </p>
+
+                <p>
+                    <button
+                        disabled={!pdf_url}
+                        onClick={() =>
+                        {
+                            document.location.href = "/r/?url=" + pdf_url
+                        }}
+                    >
+                        Load PDF
+                    </button>
+                </p>
             </div>
         }
     }

@@ -12,8 +12,15 @@ export function parse_location_search ()
     if (query)
     {
         query.split("&").forEach(key_var => {
-            const [key = "", _var = ""] = key_var.split("=")
+            // Allows for parsing parameters where there is a URL which itself has parameters in it like:
+            // https://anot8.org/r/?url=https://example.com/serve_file?id=123
+            const index_of_equals = key_var.indexOf("=")
+            if (index_of_equals === -1) return
+
+            const key = key_var.slice(0, index_of_equals)
+            const _var = key_var.slice(index_of_equals + 1)
             if (!key) return
+
             obj[decodeURIComponent(key)] = decodeURIComponent(_var)
         })
     }

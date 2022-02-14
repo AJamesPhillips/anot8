@@ -7,10 +7,10 @@ function parse_location_path () {
     const parts = window.location.pathname.split("/")
         .filter(p => !!p)
 
-    const naming_authority_and_vault_ids = parts[parts.length - 2] || ""
+    const naming_authority_and_vault_ids = parts[1] || ""
     const [naming_authority = "", vault_id = ""] = naming_authority_and_vault_ids.split(".")
 
-    const file_id = parts[parts.length - 1] || ""
+    const file_id = parts[2] || ""
 
     return {
         naming_authority,
