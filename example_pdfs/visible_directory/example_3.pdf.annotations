@@ -1,0 +1,44 @@
+{
+"file_sha1_hash": "1d3ba3284d4c61ed943af1c05c515b3856244209",
+"annotation_user_names": [],
+"annotations": [
+{
+"colour": "rgba(200, 200, 255, 0.6)",
+"comment": "",
+"height": "36px",
+"id": 0,
+"labels": [],
+"left": "820px",
+"page_number": 1,
+"text": "",
+"top": "124px",
+"width": "159px"
+},
+{
+"colour": "rgba(200, 200, 255, 0.6)",
+"comment": "",
+"height": "52px",
+"id": 1,
+"labels": [],
+"left": "1500px",
+"page_number": 1,
+"text": "",
+"top": "139px",
+"width": "208px"
+},
+{
+"page_number": 1,
+"left": "1495px",
+"top": "1125px",
+"width": "192px",
+"height": "42px",
+"colour": "rgba(200, 200, 255, 0.6)",
+"text": "",
+"labels": [],
+"comment": "",
+"id": 2
+}
+],
+"comments": [],
+"schema_version": 6
+}

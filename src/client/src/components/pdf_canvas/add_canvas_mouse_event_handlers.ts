@@ -37,7 +37,9 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
         left = position.left
         top = position.top
 
-        const x = e.clientX - left + document.body.scrollLeft
+        const pages_container_scroll_left = document.getElementById("pages_container")?.scrollLeft ?? 0
+
+        const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
         const y = e.clientY - top + document.body.scrollTop
 
         mouse_down_handler({ x, y })
@@ -47,7 +49,9 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
     {
         if (!editing_on_this_canvas) return
 
-        const x = e.clientX - left + document.body.scrollLeft
+        const pages_container_scroll_left = document.getElementById("pages_container")?.scrollLeft ?? 0
+
+        const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
         const y = e.clientY - top + document.body.scrollTop
         mouse_moved_handler({ x, y })
     }
@@ -57,7 +61,9 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
         if (!editing_on_this_canvas) return
         editing_on_this_canvas = false
 
-        const x = e.clientX - left + document.body.scrollLeft
+        const pages_container_scroll_left = document.getElementById("pages_container")?.scrollLeft ?? 0
+
+        const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
         const y = e.clientY - top + document.body.scrollTop
         const partial_annotation = mouse_up_handler({ x, y })
 
