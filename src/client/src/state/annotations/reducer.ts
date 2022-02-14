@@ -3,11 +3,18 @@ import { SUPPORTED_SCHEMA_VERSION } from "../../SUPPORTED_SCHEMA_VERSION"
 
 import { replace_entry, replace_entries, remove_entry } from "../../utils/list"
 import { MaybeAnnotation, Annotation, AnnotationsFile } from "../interfaces"
-import { State, AnnotationsState, AnnotationsBySafeUserName, AnnotationsByPageNumber, AnnotationsByCompoundId } from "../state"
+import { State, AnnotationsState } from "../state"
 import { get_safe_user_name } from "../user/utils"
-import { is_got_annotations_file, is_got_replacement_annotations_file, is_create_annotation, is_edit_annotation, is_delete_annotations, is_progress_saving_annotations } from "./actions"
-import { get_all_annotations } from "./getters"
-import { get_compound_id, is_not_deleted } from "./utils"
+import {
+    is_got_annotations_file,
+    is_got_replacement_annotations_file,
+    is_create_annotation,
+    is_edit_annotation,
+    is_delete_annotations,
+    is_progress_saving_annotations,
+} from "./actions"
+import { prepare_new_annotations } from "./prepare_new_annotations"
+import { add_user_name_and_compound_id } from "./utils"
 
 
 
@@ -23,7 +30,12 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
         const new_maybe_annotations = annotations_file.annotations.map(add_user_name_and_compound_id(user_name))
 
-        const prepared_state = prepare_new_annotations({ state, new_maybe_annotations, safe_user_name, allow_merge: false, overwrite: is_replacement })
+        const prepared_state = prepare_new_annotations({
+            annotations_state: state.annotations,
+            new_maybe_annotations,
+            safe_user_name,
+            allow_overwrite: is_replacement,
+        })
 
         const annotations_state: AnnotationsState = {
             ...state.annotations,
@@ -59,11 +71,10 @@ export function annotations_reducer (state: State, action: AnyAction): State
         const annotations_state: AnnotationsState = {
             ...state.annotations,
             ...prepare_new_annotations({
-                state,
+                annotations_state: state.annotations,
                 new_maybe_annotations,
                 safe_user_name,
-                allow_merge: true,
-                overwrite: false,
+                allow_overwrite: false,
             })
         }
 
@@ -163,158 +174,6 @@ export function annotations_reducer (state: State, action: AnyAction): State
 
 
     return state
-}
-
-
-
-function add_user_name_and_compound_id (user_name: string)
-{
-    const safe_user_name = get_safe_user_name(user_name)
-
-    return (annotation: MaybeAnnotation): MaybeAnnotation => {
-        annotation = ({ ...annotation, user_name, safe_user_name })
-        const compound_id = get_compound_id(annotation)
-        return { ...annotation, compound_id }
-    }
-}
-
-
-
-interface PrepareNewAnnotationsArgs
-{
-    state: State
-    new_maybe_annotations: MaybeAnnotation[]
-    safe_user_name: string
-    allow_merge: boolean
-    overwrite: boolean
-}
-function prepare_new_annotations (args: PrepareNewAnnotationsArgs)
-{
-    const { state, new_maybe_annotations, safe_user_name, allow_merge, overwrite: allow_overwrite } = args
-
-    const annotations_by_safe_user_name = add_new_annotations_by_safe_user_name({
-        annotations_by_safe_user_name: state.annotations.annotations_by_safe_user_name,
-        new_annotations: new_maybe_annotations,
-        safe_user_name,
-        allow_merge,
-        allow_overwrite,
-    })
-
-    const all_annotations = get_all_annotations(annotations_by_safe_user_name)
-
-    const new_annotations = new_maybe_annotations.filter(is_not_deleted)
-    const annotations_by_page_number = allow_overwrite
-        ? get_annotations_by_page_number(all_annotations)
-        : add_new_annotations_by_page_number(
-        state.annotations.annotations_by_page_number, new_annotations)
-    const annotations_by_compound_id = add_new_annotations_by_compound_id(
-        state.annotations.annotations_by_compound_id, new_annotations)
-
-    return {
-        annotations_by_safe_user_name,
-        all_annotations,
-        annotations_by_page_number,
-        annotations_by_compound_id,
-    }
-}
-
-
-
-interface AddNewAnnotationsBySafeUserNameArgs
-{
-    annotations_by_safe_user_name: AnnotationsBySafeUserName
-    new_annotations: MaybeAnnotation[]
-    safe_user_name: string
-    allow_merge: boolean
-    allow_overwrite: boolean
-}
-function add_new_annotations_by_safe_user_name (args: AddNewAnnotationsBySafeUserNameArgs): AnnotationsBySafeUserName
-{
-    const {
-        annotations_by_safe_user_name,
-        safe_user_name,
-        allow_merge,
-        allow_overwrite,
-    } = args
-    let { new_annotations } = args
-
-    if (!allow_merge)
-    {
-        if (annotations_by_safe_user_name[safe_user_name] && !allow_overwrite)
-        {
-            console.error("Overwritting annotations by safe_user_name ", annotations_by_safe_user_name[safe_user_name])
-        }
-
-        return {
-            ...annotations_by_safe_user_name,
-            [safe_user_name]: [...new_annotations],
-        }
-    }
-    else
-    {
-        const existing_annotations = annotations_by_safe_user_name[safe_user_name] || []
-        new_annotations = [...existing_annotations, ...new_annotations]
-
-        return {
-            ...annotations_by_safe_user_name,
-            [safe_user_name]: new_annotations,
-        }
-    }
-}
-
-
-
-function get_annotations_by_page_number (all_annotations: Annotation[])
-{
-    const annotations_by_page_number: AnnotationsByPageNumber = {}
-    const unique_page_numbers = Array.from(new Set(all_annotations.map(a => a.page_number)))
-
-    unique_page_numbers.forEach(page_number =>
-    {
-        annotations_by_page_number[page_number] = []
-    })
-
-    all_annotations.map(a =>
-    {
-        annotations_by_page_number[a.page_number]!.push(a)
-    })
-
-    return annotations_by_page_number
-}
-
-
-
-function add_new_annotations_by_page_number (annotations_by_page_number: AnnotationsByPageNumber, new_annotations: Annotation[]): AnnotationsByPageNumber
-{
-    annotations_by_page_number = { ...annotations_by_page_number }
-
-    const unique_page_numbers = Array.from(new Set(new_annotations.map(a => a.page_number)))
-
-    unique_page_numbers.forEach(page_number =>
-    {
-        annotations_by_page_number[page_number] = [...(annotations_by_page_number[page_number] || [])]
-    })
-
-    new_annotations.map(a =>
-    {
-        annotations_by_page_number[a.page_number]!.push(a)
-    })
-
-    return annotations_by_page_number
-}
-
-
-
-function add_new_annotations_by_compound_id (annotations_by_compound_id: AnnotationsByCompoundId, new_annotations: Annotation[]): AnnotationsByCompoundId
-{
-    annotations_by_compound_id = { ...annotations_by_compound_id }
-
-    new_annotations.map(a =>
-    {
-        annotations_by_compound_id[a.compound_id] = a
-    })
-
-    return annotations_by_compound_id
 }
 
 

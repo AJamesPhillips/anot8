@@ -44,8 +44,11 @@ export function get_annotation_ids_for_page (state: State, page_number: number)
  */
 export function next_annotation_id_for_user (state: State, safe_user_name: string)
 {
-    const annotations = state.annotations.annotations_by_safe_user_name[safe_user_name]
-    return annotations ? annotations.length : 0
+    const annotations = state.annotations.annotations_by_safe_user_name[safe_user_name] || []
+    let max_id = -1
+    annotations.forEach(({ id }) => max_id = Math.max(id, max_id))
+
+    return max_id + 1
 }
 
 
