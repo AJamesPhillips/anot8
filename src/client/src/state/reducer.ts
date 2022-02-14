@@ -23,5 +23,7 @@ export const root_reducer: Reducer<State, any> = ((state: State, action: AnyActi
 
     // console .log(action, "before:", start, "after:", state)
 
+    ;(window as any).debug_state = state
+
     return state
 }) as any
