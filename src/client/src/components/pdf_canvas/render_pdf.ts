@@ -1,5 +1,6 @@
 import { Store } from "redux"
-import { PDFDocumentProxy, PDFPageViewport, PDFRenderParams } from "pdfjs-dist"
+import type { PageViewport } from "pdfjs-dist/types/web/interfaces"
+import type { PDFDocumentProxy, RenderParameters } from "pdfjs-dist/types/src/display/api"
 
 import { ACTIONS } from "../../state/actions"
 import { State } from "../../state/state"
@@ -73,7 +74,7 @@ function render_pdf_page ({ pdf, pages_container_el, page_number, store }: Rende
 
 
 
-function create_single_page_container_el (pages_container_el: HTMLElement, viewport: PDFPageViewport)
+function create_single_page_container_el (pages_container_el: HTMLElement, viewport: PageViewport)
 {
     const single_page_container_el = document.createElement("div")
     single_page_container_el.className = "page_container"
@@ -88,7 +89,7 @@ function create_single_page_container_el (pages_container_el: HTMLElement, viewp
 
 
 
-function create_pdf_canvas (single_page_container_el: HTMLElement, viewport: PDFPageViewport)
+function create_pdf_canvas (single_page_container_el: HTMLElement, viewport: PageViewport)
 {
     const canvas = document.createElement("canvas")
     canvas.height = viewport.height
@@ -100,11 +101,11 @@ function create_pdf_canvas (single_page_container_el: HTMLElement, viewport: PDF
 
 
 
-function create_canvas_context (canvas: HTMLCanvasElement, viewport: PDFPageViewport)
+function create_canvas_context (canvas: HTMLCanvasElement, viewport: PageViewport)
 {
     const canvasContext = canvas.getContext("2d")!
 
-    const render_context: PDFRenderParams = { canvasContext, viewport }
+    const render_context: RenderParameters = { canvasContext, viewport }
     return render_context
 }
 

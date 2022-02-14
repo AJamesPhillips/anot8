@@ -1,5 +1,5 @@
 import { Store } from "redux"
-import * as PDFJS from "pdfjs-dist"
+import type * as PDFJS from "pdfjs-dist/types/src/pdf"
 declare const pdfjsLib: typeof PDFJS
 
 import { ACTIONS } from "../state/actions"
