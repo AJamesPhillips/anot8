@@ -45,6 +45,44 @@
         return __assign.apply(this, arguments);
     };
 
+    function __awaiter(thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    }
+
+    function __generator(thisArg, body) {
+        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+            if (f) throw new TypeError("Generator is already executing.");
+            while (_) try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+                if (y = 0, t) op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0: case 1: t = op; break;
+                    case 4: _.label++; return { value: op[1], done: false };
+                    case 5: _.label++; y = op[1]; op = [0]; continue;
+                    case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                        if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                        if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                        if (t[2]) _.ops.pop();
+                        _.trys.pop(); continue;
+                }
+                op = body.call(thisArg, _);
+            } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+            if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+    }
+
     function __spreadArray(to, from) {
         for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
             to[j] = from[i];
@@ -468,6 +506,14 @@
         progress_saving_annotations: progress_saving_annotations,
     };
 
+    function add_user_name_and_compound_id(user_name) {
+        var safe_user_name = get_safe_user_name(user_name);
+        return function (annotation) {
+            annotation = (__assign(__assign({}, annotation), { user_name: user_name, safe_user_name: safe_user_name }));
+            var compound_id = get_compound_id(annotation);
+            return __assign(__assign({}, annotation), { compound_id: compound_id });
+        };
+    }
     function is_not_deleted(annotation) {
         return !annotation.deleted;
     }
@@ -494,14 +540,77 @@
             .join(",");
     }
     function next_annotation_id_for_user(state, safe_user_name) {
-        var annotations = state.annotations.annotations_by_safe_user_name[safe_user_name];
-        return annotations ? annotations.length : 0;
+        var annotations = state.annotations.annotations_by_safe_user_name[safe_user_name] || [];
+        var max_id = -1;
+        annotations.forEach(function (_a) {
+            var id = _a.id;
+            return max_id = Math.max(id, max_id);
+        });
+        return max_id + 1;
     }
     function get_all_selected_annotations(state) {
         return state.selected_annotations.selected_compound_ids.map(function (id) {
             return state.annotations.annotations_by_compound_id[id];
         })
             .filter(function (a) { return !!a; });
+    }
+
+    function prepare_new_annotations(args) {
+        var annotations_state = args.annotations_state, new_maybe_annotations = args.new_maybe_annotations, safe_user_name = args.safe_user_name, allow_overwrite = args.allow_overwrite;
+        var annotations_by_safe_user_name = add_new_annotations_by_safe_user_name({
+            annotations_by_safe_user_name: annotations_state.annotations_by_safe_user_name,
+            new_annotations: new_maybe_annotations,
+            safe_user_name: safe_user_name,
+        });
+        var all_annotations = get_all_annotations(annotations_by_safe_user_name);
+        var new_annotations = new_maybe_annotations.filter(is_not_deleted);
+        var annotations_by_page_number = allow_overwrite
+            ? get_annotations_by_page_number(all_annotations)
+            : add_new_annotations_by_page_number(annotations_state.annotations_by_page_number, new_annotations);
+        var annotations_by_compound_id = add_new_annotations_by_compound_id(annotations_state.annotations_by_compound_id, new_annotations);
+        return {
+            annotations_by_safe_user_name: annotations_by_safe_user_name,
+            all_annotations: all_annotations,
+            annotations_by_page_number: annotations_by_page_number,
+            annotations_by_compound_id: annotations_by_compound_id,
+        };
+    }
+    function add_new_annotations_by_safe_user_name(args) {
+        var _a;
+        var annotations_by_safe_user_name = args.annotations_by_safe_user_name, safe_user_name = args.safe_user_name;
+        var new_annotations = args.new_annotations;
+        var existing_annotations = annotations_by_safe_user_name[safe_user_name] || [];
+        new_annotations = __spreadArray(__spreadArray([], existing_annotations), new_annotations);
+        return __assign(__assign({}, annotations_by_safe_user_name), (_a = {}, _a[safe_user_name] = new_annotations, _a));
+    }
+    function get_annotations_by_page_number(all_annotations) {
+        var annotations_by_page_number = {};
+        var unique_page_numbers = Array.from(new Set(all_annotations.map(function (a) { return a.page_number; })));
+        unique_page_numbers.forEach(function (page_number) {
+            annotations_by_page_number[page_number] = [];
+        });
+        all_annotations.map(function (a) {
+            annotations_by_page_number[a.page_number].push(a);
+        });
+        return annotations_by_page_number;
+    }
+    function add_new_annotations_by_page_number(annotations_by_page_number, new_annotations) {
+        annotations_by_page_number = __assign({}, annotations_by_page_number);
+        var unique_page_numbers = Array.from(new Set(new_annotations.map(function (a) { return a.page_number; })));
+        unique_page_numbers.forEach(function (page_number) {
+            annotations_by_page_number[page_number] = __spreadArray([], (annotations_by_page_number[page_number] || []));
+        });
+        new_annotations.map(function (a) {
+            annotations_by_page_number[a.page_number].push(a);
+        });
+        return annotations_by_page_number;
+    }
+    function add_new_annotations_by_compound_id(annotations_by_compound_id, new_annotations) {
+        annotations_by_compound_id = __assign({}, annotations_by_compound_id);
+        new_annotations.map(function (a) {
+            annotations_by_compound_id[a.compound_id] = a;
+        });
+        return annotations_by_compound_id;
     }
 
     function annotations_reducer(state, action) {
@@ -511,7 +620,12 @@
             var annotations_file = action.annotations_file, user_name = action.user_name;
             var safe_user_name = get_safe_user_name(user_name);
             var new_maybe_annotations = annotations_file.annotations.map(add_user_name_and_compound_id(user_name));
-            var prepared_state = prepare_new_annotations({ state: state, new_maybe_annotations: new_maybe_annotations, safe_user_name: safe_user_name, allow_merge: false, overwrite: is_replacement });
+            var prepared_state = prepare_new_annotations({
+                annotations_state: state.annotations,
+                new_maybe_annotations: new_maybe_annotations,
+                safe_user_name: safe_user_name,
+                allow_overwrite: is_replacement,
+            });
             var annotations_state = __assign(__assign(__assign({}, state.annotations), { annotation_files_loaded: __spreadArray(__spreadArray([], state.annotations.annotation_files_loaded), [safe_user_name]), unsupported_schema_version: get_unsupported_schema_version(state, annotations_file) }), prepared_state);
             if (is_main_annotations_file(safe_user_name) && is_intial_load) {
                 annotations_state.annotation_user_names = annotations_file.annotation_user_names;
@@ -526,14 +640,15 @@
             state = __assign(__assign({}, state), { annotations: annotations_state });
         }
         if (is_create_annotation(action)) {
-            var new_maybe_annotations = [action.new_annotation];
-            var safe_user_name = action.new_annotation.safe_user_name;
+            var temporary = !state.running_locally || !!state.routing.url || !!state.routing.doi;
+            var new_maybe_annotation = __assign(__assign({}, action.new_annotation), { temporary: temporary });
+            var new_maybe_annotations = [new_maybe_annotation];
+            var safe_user_name = new_maybe_annotation.safe_user_name;
             var annotations_state = __assign(__assign({}, state.annotations), prepare_new_annotations({
-                state: state,
+                annotations_state: state.annotations,
                 new_maybe_annotations: new_maybe_annotations,
                 safe_user_name: safe_user_name,
-                allow_merge: true,
-                overwrite: false,
+                allow_overwrite: false,
             }));
             state = __assign(__assign({}, state), { annotations: annotations_state });
         }
@@ -587,81 +702,6 @@
             state = __assign(__assign({}, state), { annotations: annotations });
         }
         return state;
-    }
-    function add_user_name_and_compound_id(user_name) {
-        var safe_user_name = get_safe_user_name(user_name);
-        return function (annotation) {
-            annotation = (__assign(__assign({}, annotation), { user_name: user_name, safe_user_name: safe_user_name }));
-            var compound_id = get_compound_id(annotation);
-            return __assign(__assign({}, annotation), { compound_id: compound_id });
-        };
-    }
-    function prepare_new_annotations(args) {
-        var state = args.state, new_maybe_annotations = args.new_maybe_annotations, safe_user_name = args.safe_user_name, allow_merge = args.allow_merge, allow_overwrite = args.overwrite;
-        var annotations_by_safe_user_name = add_new_annotations_by_safe_user_name({
-            annotations_by_safe_user_name: state.annotations.annotations_by_safe_user_name,
-            new_annotations: new_maybe_annotations,
-            safe_user_name: safe_user_name,
-            allow_merge: allow_merge,
-            allow_overwrite: allow_overwrite,
-        });
-        var all_annotations = get_all_annotations(annotations_by_safe_user_name);
-        var new_annotations = new_maybe_annotations.filter(is_not_deleted);
-        var annotations_by_page_number = allow_overwrite
-            ? get_annotations_by_page_number(all_annotations)
-            : add_new_annotations_by_page_number(state.annotations.annotations_by_page_number, new_annotations);
-        var annotations_by_compound_id = add_new_annotations_by_compound_id(state.annotations.annotations_by_compound_id, new_annotations);
-        return {
-            annotations_by_safe_user_name: annotations_by_safe_user_name,
-            all_annotations: all_annotations,
-            annotations_by_page_number: annotations_by_page_number,
-            annotations_by_compound_id: annotations_by_compound_id,
-        };
-    }
-    function add_new_annotations_by_safe_user_name(args) {
-        var _a, _b;
-        var annotations_by_safe_user_name = args.annotations_by_safe_user_name, safe_user_name = args.safe_user_name, allow_merge = args.allow_merge, allow_overwrite = args.allow_overwrite;
-        var new_annotations = args.new_annotations;
-        if (!allow_merge) {
-            if (annotations_by_safe_user_name[safe_user_name] && !allow_overwrite) {
-                console.error("Overwritting annotations by safe_user_name ", annotations_by_safe_user_name[safe_user_name]);
-            }
-            return __assign(__assign({}, annotations_by_safe_user_name), (_a = {}, _a[safe_user_name] = __spreadArray([], new_annotations), _a));
-        }
-        else {
-            var existing_annotations = annotations_by_safe_user_name[safe_user_name] || [];
-            new_annotations = __spreadArray(__spreadArray([], existing_annotations), new_annotations);
-            return __assign(__assign({}, annotations_by_safe_user_name), (_b = {}, _b[safe_user_name] = new_annotations, _b));
-        }
-    }
-    function get_annotations_by_page_number(all_annotations) {
-        var annotations_by_page_number = {};
-        var unique_page_numbers = Array.from(new Set(all_annotations.map(function (a) { return a.page_number; })));
-        unique_page_numbers.forEach(function (page_number) {
-            annotations_by_page_number[page_number] = [];
-        });
-        all_annotations.map(function (a) {
-            annotations_by_page_number[a.page_number].push(a);
-        });
-        return annotations_by_page_number;
-    }
-    function add_new_annotations_by_page_number(annotations_by_page_number, new_annotations) {
-        annotations_by_page_number = __assign({}, annotations_by_page_number);
-        var unique_page_numbers = Array.from(new Set(new_annotations.map(function (a) { return a.page_number; })));
-        unique_page_numbers.forEach(function (page_number) {
-            annotations_by_page_number[page_number] = __spreadArray([], (annotations_by_page_number[page_number] || []));
-        });
-        new_annotations.map(function (a) {
-            annotations_by_page_number[a.page_number].push(a);
-        });
-        return annotations_by_page_number;
-    }
-    function add_new_annotations_by_compound_id(annotations_by_compound_id, new_annotations) {
-        annotations_by_compound_id = __assign({}, annotations_by_compound_id);
-        new_annotations.map(function (a) {
-            annotations_by_compound_id[a.compound_id] = a;
-        });
-        return annotations_by_compound_id;
     }
     function is_main_annotations_file(safe_user_name) {
         return safe_user_name === "";
@@ -832,17 +872,20 @@
         }
         if (is_toggle_label_priority(action)) {
             var label_str = action.toggle_label_priority;
-            var priority_labels = state.labels.priority_labels;
-            toggle_set_entry(priority_labels, label_str);
-            var priority = priority_labels.has(label_str);
-            var label = __assign(__assign({}, state.labels.labels_by_id[label_str]), { priority: priority });
-            var labels_by_id = __assign(__assign({}, state.labels.labels_by_id), (_a = {}, _a[label_str] = label, _a));
-            var label_ids_list_to_display = get_label_ids_list_to_display(labels_by_id);
-            var labels_state = __assign(__assign({}, state.labels), { priority_labels: priority_labels,
-                labels_by_id: labels_by_id,
-                label_ids_list_to_display: label_ids_list_to_display });
-            state = __assign(__assign({}, state), { labels: labels_state });
-            store_priority_labels(Array.from(priority_labels));
+            var label = state.labels.labels_by_id[label_str];
+            if (label) {
+                var priority_labels = state.labels.priority_labels;
+                toggle_set_entry(priority_labels, label_str);
+                var priority = priority_labels.has(label_str);
+                label = __assign(__assign({}, label), { priority: priority });
+                var labels_by_id = __assign(__assign({}, state.labels.labels_by_id), (_a = {}, _a[label_str] = label, _a));
+                var label_ids_list_to_display = get_label_ids_list_to_display(labels_by_id);
+                var labels_state = __assign(__assign({}, state.labels), { priority_labels: priority_labels,
+                    labels_by_id: labels_by_id,
+                    label_ids_list_to_display: label_ids_list_to_display });
+                state = __assign(__assign({}, state), { labels: labels_state });
+                store_priority_labels(Array.from(priority_labels));
+            }
         }
         return state;
     }
@@ -908,13 +951,30 @@
         finished_rendering_pdf: finished_rendering_pdf,
     };
 
+    var LoadingStatus;
+    (function (LoadingStatus) {
+        LoadingStatus["not_ready"] = "not ready";
+        LoadingStatus["resolving"] = "resolving";
+        LoadingStatus["resolved"] = "resolved";
+        LoadingStatus["downloaded"] = "downloaded";
+        LoadingStatus["errored"] = "errored";
+    })(LoadingStatus || (LoadingStatus = {}));
+    var LoadingStage;
+    (function (LoadingStage) {
+        LoadingStage["analysing_location_path"] = "analysing_location_path";
+        LoadingStage["resolve_naming_authority_url"] = "resolve_naming_authority_url";
+        LoadingStage["resolve_vault_url"] = "resolve_vault_url";
+        LoadingStage["resolve_pdf_file_url"] = "resolve_pdf_file_url";
+        LoadingStage["pdf_file"] = "pdf_file";
+    })(LoadingStage || (LoadingStage = {}));
+
     function loading_reducer(state, action) {
         if (is_update_loading_status(action)) {
             var loading = __assign(__assign({}, state.loading_pdf), { status: action.status, loading_stage: action.stage });
             state = __assign(__assign({}, state), { loading_pdf: loading });
         }
         if (is_error_during_loading(action)) {
-            var loading = __assign(__assign({}, state.loading_pdf), { status: "errored", loading_stage: action.error_stage, loading_error_type: action.error_type });
+            var loading = __assign(__assign({}, state.loading_pdf), { status: LoadingStatus.errored, loading_stage: action.error_stage, loading_error_type: action.error_type });
             state = __assign(__assign({}, state), { loading_pdf: loading });
         }
         if (is_set_vault_config(action)) {
@@ -922,11 +982,11 @@
             state = __assign(__assign({}, state), { loading_pdf: loading });
         }
         if (is_resolved_relative_file_path(action)) {
-            var loading = __assign(__assign({}, state.loading_pdf), { status: "resolved", resolved_relative_file_path: action.relative_file_path });
+            var loading = __assign(__assign({}, state.loading_pdf), { status: LoadingStatus.resolved, resolved_relative_file_path: action.resolved_relative_file_path });
             state = __assign(__assign({}, state), { loading_pdf: loading });
         }
         if (is_start_rendering_pdf(action)) {
-            state = update_substate(state, "loading_pdf", "status", "downloaded");
+            state = update_substate(state, "loading_pdf", "status", LoadingStatus.downloaded);
         }
         return state;
     }
@@ -1008,11 +1068,95 @@
         state = pdf_rendering_reducer(state, action);
         state = selected_annotations_reducer(state, action);
         state = user_reducer(state, action);
+        window.debug_state = state;
         return state;
     });
 
+    function parse_location_search() {
+        var query = window.location.search.substring(1);
+        var obj = {};
+        if (query) {
+            query.split("&").forEach(function (key_val) {
+                var index_of_equals = key_val.indexOf("=");
+                if (index_of_equals === -1)
+                    return;
+                var key = key_val.slice(0, index_of_equals);
+                var val = key_val.slice(index_of_equals + 1);
+                if (!key)
+                    return;
+                obj[decodeURIComponent(key)] = decodeURIComponent(val);
+            });
+        }
+        return obj;
+    }
+    function object_to_search_string(obj) {
+        var search = Object.keys(obj)
+            .filter(function (key) { return obj[key]; })
+            .map(function (key) {
+            var val = obj[key] || "";
+            return key + "=" + encodeURIComponent(val);
+        });
+        var search_string = (search.length ? "?" : "") + search.join("&");
+        return search_string;
+    }
+
+    var TEMPORARY_ANNOTATIONS_PARAM_KEY = "ta";
+    function deflate_temporary_annotations(annotations) {
+        return JSON.stringify(annotations.map(deflate_temporary_annotation));
+    }
+    function deflate_temporary_annotation(annotation) {
+        var colour = annotation.colour, comment = annotation.comment, height = annotation.height, id = annotation.id, labels = annotation.labels, left = annotation.left, page_number = annotation.page_number, text = annotation.text, top = annotation.top, width = annotation.width;
+        colour.replace(/ /g, "").trim();
+        var compressed_height = height.replace("px", "").trim();
+        var compressed_left = left.replace("px", "").trim();
+        var compressed_top = top.replace("px", "").trim();
+        var compressed_width = width.replace("px", "").trim();
+        return [
+            id,
+            page_number,
+            comment,
+            text,
+            labels,
+            compressed_left,
+            compressed_top,
+            compressed_width,
+            compressed_height,
+        ];
+    }
+    function inflate_temporary_annotations(temp_annotations) {
+        if (!temp_annotations)
+            return [];
+        try {
+            var annotations = JSON.parse(temp_annotations);
+            return annotations.map(function (deflated_annotation) {
+                var id = deflated_annotation[0], page_number = deflated_annotation[1], comment = deflated_annotation[2], text = deflated_annotation[3], labels = deflated_annotation[4], left = deflated_annotation[5], top = deflated_annotation[6], width = deflated_annotation[7], height = deflated_annotation[8];
+                return {
+                    id: id,
+                    page_number: page_number,
+                    comment: comment,
+                    text: text,
+                    labels: labels,
+                    colour: "rgba(200,200,255,0.6)",
+                    left: left + "px",
+                    top: top + "px",
+                    width: width + "px",
+                    height: height + "px",
+                    user_name: "",
+                    safe_user_name: "",
+                    compound_id: id,
+                    dirty: true,
+                    temporary: true,
+                };
+            });
+        }
+        catch (e) {
+            console.error("Error parsing temp_annotations: ", e);
+            return [];
+        }
+    }
+
     function get_starting_annotations_state() {
-        return {
+        var state = {
             status: "not ready",
             annotation_files_to_load: [""],
             annotation_files_loaded: [],
@@ -1023,11 +1167,20 @@
             annotations_by_compound_id: {},
             annotations_by_page_number: {},
         };
+        var temp_annotations = parse_location_search()[TEMPORARY_ANNOTATIONS_PARAM_KEY];
+        var new_maybe_annotations = inflate_temporary_annotations(temp_annotations);
+        state = __assign(__assign({}, state), prepare_new_annotations({
+            annotations_state: state,
+            new_maybe_annotations: new_maybe_annotations,
+            safe_user_name: "",
+            allow_overwrite: true,
+        }));
+        return state;
     }
 
     function get_starting_loading_state() {
         return {
-            status: "not ready",
+            status: LoadingStatus.not_ready,
             loading_stage: undefined,
             loading_error_type: undefined,
             vault_config_loaded: false,
@@ -1044,31 +1197,12 @@
         };
     }
 
-    function parse_location_search() {
-        var query = window.location.search.substring(1);
-        var obj = {};
-        if (query) {
-            query.split("&").forEach(function (key_var) {
-                var _a = key_var.split("="), key = _a[0], _var = _a[1];
-                obj[decodeURIComponent(key)] = decodeURIComponent(_var);
-            });
-        }
-        return obj;
-    }
-    function object_to_search_string(obj) {
-        var search = Object.keys(obj)
-            .filter(function (key) { return obj[key]; })
-            .map(function (key) { return key + "=" + (obj[key]); });
-        var search_string = (search.length ? "?" : "") + search.join("&");
-        return search_string;
-    }
-
     function parse_location_path() {
         var parts = window.location.pathname.split("/")
             .filter(function (p) { return !!p; });
-        var naming_authority_and_vault_ids = parts[parts.length - 2];
-        var _a = naming_authority_and_vault_ids.split("."), naming_authority = _a[0], vault_id = _a[1];
-        var file_id = parts[parts.length - 1];
+        var naming_authority_and_vault_ids = parts[1] || "";
+        var _a = naming_authority_and_vault_ids.split("."), _b = _a[0], naming_authority = _b === void 0 ? "" : _b, _c = _a[1], vault_id = _c === void 0 ? "" : _c;
+        var file_id = parts[2] || "";
         return {
             naming_authority: naming_authority,
             vault_id: vault_id,
@@ -1076,8 +1210,10 @@
         };
     }
     function get_starting_routing_state() {
+        var path_location = parse_location_path();
         var vars = parse_location_search();
-        return __assign(__assign({}, parse_location_path()), { relative_file_path: vars.relative_file_path });
+        var have_valid_path_location = !!path_location.naming_authority && !!path_location.vault_id && !!path_location.file_id;
+        return __assign(__assign({}, path_location), { relative_file_path: vars.relative_file_path, url: have_valid_path_location ? undefined : vars.url, doi: undefined });
     }
 
     function get_starting_selected_annotations_state() {
@@ -1227,10 +1363,14 @@
     }); };
     var connector$a = connect(map_state$a);
     function _DeleteButton(props) {
-        return a$1("button", { disabled: !props.selected_annotation_ids_owned_by_user, title: "Delete annotations", onClick: function () {
+        var disabled = !props.selected_annotation_ids_owned_by_user;
+        var fill = disabled ? "#aaa" : "#000";
+        return a$1("button", { disabled: disabled, title: "Delete annotations", onClick: function () {
                 var compound_ids = props.selected_annotation_ids_owned_by_user.split(",");
                 get_store().dispatch(ACTIONS.annotations.delete_annotations({ compound_ids: compound_ids }));
-            } }, "X");
+            } },
+            a$1("svg", { focusable: "false", "aria-hidden": "true", viewBox: "0 0 24 24", style: { width: 20, fill: fill } },
+                a$1("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })));
     }
     var DeleteButton = connector$a(_DeleteButton);
     function get_selected_annotation_ids_owned_by_user(state) {
@@ -1244,30 +1384,42 @@
     var store$2 = get_store();
     var map_state$9 = function (state, own_props) {
         var label = state.labels.labels_by_id[own_props.label_id];
-        return __assign(__assign({ label: label, disabled: is_disabled(state), is_used: state.labels.used_labels.has(label.value), display: matches_search_string(label, state.labels.search_string) }, is_checked_or_indeterminate(label, state)), { annotations_to_edit: get_all_selected_annotations(state), priority: state.labels.priority_labels.has(label.value) });
+        return __assign(__assign({ label: label, disabled: is_disabled(state), used_labels: state.labels.used_labels, priority_labels: state.labels.priority_labels, search_string: state.labels.search_string }, is_checked_or_indeterminate(label, state)), { annotations_to_edit: get_all_selected_annotations(state) });
     };
     var connector$9 = connect(map_state$9);
     function _LabelComponent(props) {
-        if (!props.display)
+        var label = props.label;
+        if (!label)
+            return null;
+        var is_used = props.used_labels.has(label.value);
+        var priority = props.priority_labels.has(label.value);
+        var display = matches_search_string(label, props.search_string);
+        if (!display)
             return null;
         function toggle_label() {
-            if (props.annotations_to_edit.length !== 1) {
+            var annotation_to_edit = props.annotations_to_edit[0];
+            if (!annotation_to_edit) {
+                console.warn("toggle_label requires an annotation");
+                return;
+            }
+            else if (props.annotations_to_edit.length > 1) {
                 console.warn("Should not be able to edit multiple annotations");
                 return;
             }
-            var annotation_to_edit = props.annotations_to_edit[0];
-            var labels = toggle_list_entry(annotation_to_edit.labels, props.label.value);
+            if (!label)
+                return;
+            var labels = toggle_list_entry(annotation_to_edit.labels, label.value);
             var new_annotation = __assign(__assign({}, annotation_to_edit), { labels: labels });
             store$2.dispatch(ACTIONS.annotations.edit_annotation({ annotation: new_annotation }));
         }
-        var class_name = "label " + (props.is_used ? "used_label" : "") + " " + (props.priority ? "priority" : "");
+        var class_name = "label " + (is_used ? "used_label" : "") + " " + (priority ? "priority" : "");
         return a$1("div", { className: class_name, onClick: function () { return toggle_label(); } },
             a$1("input", { type: "checkbox", className: "label_checkbox", disabled: props.disabled, checked: props.checked, ref: function (e) { return e && (e.indeterminate = props.indeterminate); }, onChange: function (e) { e.stopPropagation(); toggle_label(); } }),
-            props.label.display_text,
+            label.display_text,
             a$1("span", { className: "priority_label", onClick: function (e) {
                     e.stopPropagation();
-                    store$2.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: props.label.value }));
-                }, dangerouslySetInnerHTML: { __html: props.priority ? "&starf;" : "&star;" } }));
+                    store$2.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: label.value }));
+                }, dangerouslySetInnerHTML: { __html: priority ? "&starf;" : "&star;" } }));
     }
     var LabelComponent = connector$9(_LabelComponent);
     function is_disabled(state) {
@@ -1284,7 +1436,7 @@
         return label.lower_case_value.includes(search_string.toLowerCase());
     }
     function is_checked_or_indeterminate(label, state) {
-        var count = state.labels.labels_used_by_selected_annotations[label.value] || 0;
+        var count = state.labels.labels_used_by_selected_annotations[(label === null || label === void 0 ? void 0 : label.value) || ""] || 0;
         var checked = count > 0;
         var indeterminate = checked && count !== state.selected_annotations.selected_compound_ids.length;
         return { checked: checked, indeterminate: indeterminate };
@@ -1331,6 +1483,7 @@
     var connector$6 = connect(map_state$6);
     function _LoadingProgress(props) {
         var _a = l(true), visibility = _a[0], set_visibility = _a[1];
+        var _b = l(""), url = _b[0], set_url = _b[1];
         if (!visibility)
             return null;
         var loading_status = props.loading_status, rendering_status = props.rendering_status, max_pages = props.max_pages, page_number = props.page_number;
@@ -1354,15 +1507,28 @@
                 "%");
         }
         var stage = props.stage, error_during_loading__type = props.error_during_loading__type, naming_authority = props.naming_authority, vault_id = props.vault_id, file_id = props.file_id;
-        var error_message = "";
+        if (error_during_loading__type === "422") {
+            if (stage === LoadingStage.analysing_location_path) {
+                return a$1("div", null,
+                    "Enter a URL of a PDF to annotate...",
+                    a$1("p", null,
+                        a$1("input", { type: "text", placeholder: "Enter a URL", onInput: function (e) { return set_url(e.currentTarget.value); }, onBlur: function (e) { return set_url(e.currentTarget.value); } })),
+                    a$1("p", null,
+                        a$1("button", { disabled: !url, onClick: function () {
+                                var safe_url = url.includes("&") ? encodeURIComponent(url) : url;
+                                document.location.href = "/r/?url=" + safe_url;
+                            } }, "Load PDF")));
+            }
+        }
+        var error_message = "Unknown error";
         if (error_during_loading__type === "404") {
-            if (stage === "resolve_naming_authority_url") {
+            if (stage === LoadingStage.resolve_naming_authority_url) {
                 error_message = "naming authority \"" + naming_authority + "\" not found";
             }
-            else if (stage === "resolve_vault_url") {
+            else if (stage === LoadingStage.resolve_vault_url) {
                 error_message = "vault id \"" + vault_id + "\" not found";
             }
-            else if (stage === "resolve_pdf_file_url") {
+            else if (stage === LoadingStage.resolve_pdf_file_url) {
                 error_message = "No relative file path found for file id \"" + file_id + "\"";
             }
         }
@@ -1432,26 +1598,32 @@
         var left;
         var top;
         canvas.onmousedown = function (e) {
+            var _a, _b;
             editing_on_this_canvas = true;
             var position = get_element_position(canvas);
             left = position.left;
             top = position.top;
-            var x = e.clientX - left + document.body.scrollLeft;
+            var pages_container_scroll_left = (_b = (_a = document.getElementById("pages_container")) === null || _a === void 0 ? void 0 : _a.scrollLeft) !== null && _b !== void 0 ? _b : 0;
+            var x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left;
             var y = e.clientY - top + document.body.scrollTop;
             mouse_down_handler({ x: x, y: y });
         };
         canvas.onmousemove = function (e) {
+            var _a, _b;
             if (!editing_on_this_canvas)
                 return;
-            var x = e.clientX - left + document.body.scrollLeft;
+            var pages_container_scroll_left = (_b = (_a = document.getElementById("pages_container")) === null || _a === void 0 ? void 0 : _a.scrollLeft) !== null && _b !== void 0 ? _b : 0;
+            var x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left;
             var y = e.clientY - top + document.body.scrollTop;
             mouse_moved_handler({ x: x, y: y });
         };
         canvas.onmouseup = function (e) {
+            var _a, _b;
             if (!editing_on_this_canvas)
                 return;
             editing_on_this_canvas = false;
-            var x = e.clientX - left + document.body.scrollLeft;
+            var pages_container_scroll_left = (_b = (_a = document.getElementById("pages_container")) === null || _a === void 0 ? void 0 : _a.scrollLeft) !== null && _b !== void 0 ? _b : 0;
+            var x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left;
             var y = e.clientY - top + document.body.scrollTop;
             var partial_annotation = mouse_up_handler({ x: x, y: y });
             if (partial_annotation) {
@@ -1646,7 +1818,10 @@
     function scroll_to_annotations_on_pdf(selected_compound_ids) {
         if (an_annotation_in_view(selected_compound_ids))
             return;
-        return scroll_to_annotation(selected_compound_ids[0]);
+        var an_id = selected_compound_ids[0];
+        if (!an_id)
+            return;
+        return scroll_to_annotation(an_id);
     }
     function an_annotation_in_view(selected_compound_ids) {
         var one_in_view = false;
@@ -1730,19 +1905,19 @@
     var connector$3 = connect(map_state$3);
     function _AnnotationDetails(props) {
         var annotations = props.annotations, safe_user_name = props.safe_user_name;
-        if (annotations.length === 0) {
+        var annotation = annotations[0];
+        if (!annotation) {
             return a$1("div", null, "No annotations selected");
         }
         else if (annotations.length > 1) {
             return a$1("div", null, "Multiple annotations selected");
         }
         else {
-            var annotation_1 = annotations[0];
             var on_change = function (changes) {
-                var edited_annotation = __assign(__assign({}, annotation_1), changes);
+                var edited_annotation = __assign(__assign({}, annotation), changes);
                 get_store().dispatch(ACTIONS.annotations.edit_annotation({ annotation: edited_annotation }));
             };
-            return a$1(AnnotationDetailsForm, { disabled: annotation_1.safe_user_name !== safe_user_name, text: annotation_1.text, comment: annotation_1.comment, on_change: on_change });
+            return a$1(AnnotationDetailsForm, { disabled: annotation.safe_user_name !== safe_user_name, text: annotation.text, comment: annotation.comment, on_change: on_change });
         }
     }
     var AnnotationDetails = connector$3(_AnnotationDetails);
@@ -1769,6 +1944,9 @@
     var AuthorInfo = connector$2(_AuthorInfo);
 
     function get_url_to_file(state) {
+        var url = state.routing.url;
+        if (url)
+            return url;
         var resolved_relative_file_path = state.loading_pdf.resolved_relative_file_path;
         if (!resolved_relative_file_path)
             return "";
@@ -1798,6 +1976,9 @@
             return "" + publish_root_path + resolved_relative_file_path + user + ".annotations";
         }
     }
+    new Set([
+        LoadingStatus.resolved, LoadingStatus.downloaded, LoadingStatus.errored
+    ]);
     function get_url_to_write_file_annotations(state) {
         if (!state.running_locally)
             return "";
@@ -1861,30 +2042,45 @@
     }
     var AutoSave = connector$1(_AutoSave);
 
+    var NoPermaLinkReason;
+    (function (NoPermaLinkReason) {
+        NoPermaLinkReason[NoPermaLinkReason["loading_from_url"] = 0] = "loading_from_url";
+        NoPermaLinkReason[NoPermaLinkReason["no_pdf_specified"] = 1] = "no_pdf_specified";
+        NoPermaLinkReason[NoPermaLinkReason["pdf_not_added_to_central_resolver"] = 2] = "pdf_not_added_to_central_resolver";
+    })(NoPermaLinkReason || (NoPermaLinkReason = {}));
     var get_anot8_perma_link = function (_a) {
         var routing = _a.routing;
-        var naming_authority = routing.naming_authority, vault_id = routing.vault_id, file_id = routing.file_id;
+        var naming_authority = routing.naming_authority, vault_id = routing.vault_id, file_id = routing.file_id, url = routing.url;
         var anot8_perma_link = "";
-        if (naming_authority !== "-1" && vault_id !== "-1" && file_id !== "-1") {
+        var no_perma_link_reason = undefined;
+        if (!naming_authority || !vault_id || !file_id) {
+            no_perma_link_reason = url ? NoPermaLinkReason.loading_from_url : NoPermaLinkReason.no_pdf_specified;
+        }
+        else if (naming_authority === "-1" || vault_id === "-1" || file_id === "-1") {
+            no_perma_link_reason = NoPermaLinkReason.pdf_not_added_to_central_resolver;
+        }
+        else {
             anot8_perma_link = "https://anot8.org/r/" + naming_authority + "." + vault_id + "/" + file_id;
         }
-        return anot8_perma_link;
+        return { anot8_perma_link: anot8_perma_link, no_perma_link_reason: no_perma_link_reason };
     };
 
-    var map_state = function (state) { return ({
-        url_to_file: get_url_to_file(state),
-        anot8_perma_link: get_anot8_perma_link(state),
-    }); };
+    var map_state = function (state) { return (__assign({ url_to_file: get_url_to_file(state) }, get_anot8_perma_link(state))); };
     var connector = connect(map_state);
     function _TopInfoPanel(props) {
-        var url_to_file = props.url_to_file, anot8_perma_link = props.anot8_perma_link;
+        var url_to_file = props.url_to_file, anot8_perma_link = props.anot8_perma_link, no_perma_link_reason = props.no_perma_link_reason;
         if (!url_to_file)
             return null;
+        var reason = no_perma_link_reason === NoPermaLinkReason.loading_from_url ? "loading from URL"
+            : "-1 present in part of link";
         var perma_link_elements = anot8_perma_link
             ? [a$1("br", null), a$1("a", { href: anot8_perma_link },
                     "PermaLink: ",
                     anot8_perma_link)]
-            : [a$1("br", null), a$1("span", { style: "color: grey; font-size: small;" }, "PermaLink not available (-1 present in part of link)")];
+            : [a$1("br", null), a$1("span", { style: "color: grey; font-size: small;" },
+                    "PermaLink not available (",
+                    reason,
+                    ")")];
         return a$1("div", null,
             a$1("a", { href: url_to_file },
                 "Showing PDF from: ",
@@ -1902,7 +2098,14 @@
         var state = store.getState();
         var url_to_file = get_url_to_file(state);
         return new Promise(function (resolve) {
-            pdfjsLib.getDocument(url_to_file).promise.then(function (pdf) { return resolve(pdf); });
+            pdfjsLib.getDocument(url_to_file).promise
+                .then(function (pdf) { return resolve(pdf); })
+                .catch(function (e) {
+                var proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file;
+                pdfjsLib.getDocument(proxy_url_to_file).promise
+                    .then(function (pdf) { return resolve(pdf); })
+                    .catch(function (e) { debugger; });
+            });
         });
     }
     function fetch_annotation_files(store) {
@@ -1911,13 +2114,24 @@
             annotations_file.annotation_user_names.forEach(function (user_name) {
                 fetch_annotation_file({ store: store, user_name: user_name });
             });
+        })
+            .catch(function (e) {
+            if (e === FetchAnnotationFileError.no_file_annotations_url)
+                return;
+            console.error("fetch_annotation_files error: ", e);
         });
     }
+    var FetchAnnotationFileError;
+    (function (FetchAnnotationFileError) {
+        FetchAnnotationFileError[FetchAnnotationFileError["no_file_annotations_url"] = 0] = "no_file_annotations_url";
+    })(FetchAnnotationFileError || (FetchAnnotationFileError = {}));
     function fetch_annotation_file(_a) {
         var store = _a.store, user_name = _a.user_name;
         var safe_user_name = get_safe_user_name(user_name);
         var state = store.getState();
         var file_annotations_url = get_url_to_file_annotations({ state: state, safe_user_name: safe_user_name });
+        if (!file_annotations_url)
+            return Promise.reject(FetchAnnotationFileError.no_file_annotations_url);
         return fetch(file_annotations_url)
             .then(function (resp) { return resp.json(); })
             .then(function (annotations_file) {
@@ -1926,49 +2140,89 @@
         });
     }
 
-    function resolve_relative_file_path() {
-        var store = get_store();
-        var state = store.getState();
-        var naming_authority_lookup_url = get_naming_authority_lookup_url(state);
-        store.dispatch(ACTIONS.loading.update_loading_status({ status: "resolving", stage: "resolve_naming_authority_url" }));
-        return fetch(naming_authority_lookup_url)
-            .then(function (resp) { return resp.json(); })
-            .then(function (naming_authority_lookup) {
-            var naming_authority = state.routing.naming_authority;
-            var vaults_map_url = naming_authority_lookup[naming_authority];
-            if (!vaults_map_url) {
-                var msg = "No naming_authority " + naming_authority + " in naming_authority_lookup";
-                console.error(msg, naming_authority_lookup);
-                store.dispatch(ACTIONS.loading.error_during_loading({ error_stage: "resolve_naming_authority_url", error_type: "404" }));
-                return Promise.reject();
-            }
-            store.dispatch(ACTIONS.loading.update_loading_status({ status: "resolving", stage: "resolve_vault_url" }));
-            return fetch(vaults_map_url);
-        })
-            .then(function (resp) { return resp.json(); })
-            .then(function (vaults_map) {
-            var vault_id = state.routing.vault_id;
-            var vault_config_url = vaults_map[vault_id];
-            if (!vault_config_url) {
-                console.error("No vault_id " + vault_id + " in vaults_map", vaults_map);
-                store.dispatch(ACTIONS.loading.error_during_loading({ error_stage: "resolve_vault_url", error_type: "404" }));
-                return Promise.reject();
-            }
-            store.dispatch(ACTIONS.loading.update_loading_status({ status: "resolving", stage: "resolve_pdf_file_url" }));
-            return fetch(vault_config_url);
-        })
-            .then(function (resp) { return resp.json(); })
-            .then(function (config) {
-            store.dispatch(ACTIONS.loading.set_vault_config({ config: config }));
-            var id_to_relative_file_name = config.DO_NOT_EDIT_auto_generated_fields.id_to_relative_file_name;
-            var file_id = state.routing.file_id;
-            var relative_file_path = id_to_relative_file_name[file_id] || state.routing.relative_file_path;
-            if (!relative_file_path) {
-                console.error("No relative_file_path for file_id " + file_id + " ", id_to_relative_file_name);
-                store.dispatch(ACTIONS.loading.error_during_loading({ error_stage: "resolve_pdf_file_url", error_type: "404" }));
-                return Promise.reject();
-            }
-            store.dispatch(ACTIONS.loading.resolved_relative_file_path({ status: "resolved", relative_file_path: relative_file_path }));
+    function resolve_relative_file_path_or_url() {
+        return __awaiter(this, void 0, void 0, function () {
+            var store, state, _a, url, naming_authority, vault_id, file_id, relative_file_path, naming_authority_lookup_url, resp, naming_authority_lookup, vaults_map_url, msg, resp2, vaults_map, vault_config_url, resp3, config, id_to_relative_file_name, resolved_relative_file_path;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        store = get_store();
+                        state = store.getState();
+                        _a = state.routing, url = _a.url, naming_authority = _a.naming_authority, vault_id = _a.vault_id, file_id = _a.file_id, relative_file_path = _a.relative_file_path;
+                        if (url)
+                            return [2];
+                        if (!naming_authority || !vault_id || !file_id) {
+                            store.dispatch(ACTIONS.loading.error_during_loading({
+                                error_stage: LoadingStage.analysing_location_path,
+                                error_type: "422",
+                            }));
+                            return [2, Promise.reject()];
+                        }
+                        naming_authority_lookup_url = get_naming_authority_lookup_url(state);
+                        store.dispatch(ACTIONS.loading.update_loading_status({
+                            status: LoadingStatus.resolving,
+                            stage: LoadingStage.resolve_naming_authority_url,
+                        }));
+                        return [4, fetch(naming_authority_lookup_url)];
+                    case 1:
+                        resp = _b.sent();
+                        return [4, resp.json()];
+                    case 2:
+                        naming_authority_lookup = _b.sent();
+                        vaults_map_url = naming_authority_lookup[naming_authority];
+                        if (!vaults_map_url) {
+                            msg = "No naming_authority " + naming_authority + " in naming_authority_lookup";
+                            console.error(msg, naming_authority_lookup);
+                            store.dispatch(ACTIONS.loading.error_during_loading({
+                                error_stage: LoadingStage.resolve_naming_authority_url,
+                                error_type: "404",
+                            }));
+                            return [2, Promise.reject()];
+                        }
+                        store.dispatch(ACTIONS.loading.update_loading_status({
+                            status: LoadingStatus.resolving,
+                            stage: LoadingStage.resolve_vault_url,
+                        }));
+                        return [4, fetch(vaults_map_url)];
+                    case 3:
+                        resp2 = _b.sent();
+                        return [4, resp2.json()];
+                    case 4:
+                        vaults_map = _b.sent();
+                        vault_config_url = vaults_map[vault_id];
+                        if (!vault_config_url) {
+                            console.error("No vault_id " + vault_id + " in vaults_map", vaults_map);
+                            store.dispatch(ACTIONS.loading.error_during_loading({
+                                error_stage: LoadingStage.resolve_vault_url,
+                                error_type: "404",
+                            }));
+                            return [2, Promise.reject()];
+                        }
+                        store.dispatch(ACTIONS.loading.update_loading_status({
+                            status: LoadingStatus.resolving,
+                            stage: LoadingStage.resolve_pdf_file_url,
+                        }));
+                        return [4, fetch(vault_config_url)];
+                    case 5:
+                        resp3 = _b.sent();
+                        return [4, resp3.json()];
+                    case 6:
+                        config = _b.sent();
+                        store.dispatch(ACTIONS.loading.set_vault_config({ config: config }));
+                        id_to_relative_file_name = config.DO_NOT_EDIT_auto_generated_fields.id_to_relative_file_name;
+                        resolved_relative_file_path = id_to_relative_file_name[file_id] || relative_file_path;
+                        if (!resolved_relative_file_path) {
+                            console.error("No resolved_relative_file_path for file_id " + file_id + " ", id_to_relative_file_name);
+                            store.dispatch(ACTIONS.loading.error_during_loading({
+                                error_stage: LoadingStage.resolve_pdf_file_url,
+                                error_type: "404",
+                            }));
+                            return [2, Promise.reject()];
+                        }
+                        store.dispatch(ACTIONS.loading.resolved_relative_file_path({ status: "resolved", resolved_relative_file_path: resolved_relative_file_path }));
+                        return [2];
+                }
+            });
         });
     }
     function get_naming_authority_lookup_url(state) {
@@ -1981,7 +2235,7 @@
     }
 
     function load_files() {
-        return resolve_relative_file_path()
+        return resolve_relative_file_path_or_url()
             .then(function () { return fetch_files(); });
     }
 
@@ -1996,8 +2250,8 @@
             if (state.annotations.status === "saving" || state.annotations.status === "error")
                 return;
             var dirty = current_annotations.find(function (_a) {
-                var dirty = _a.dirty;
-                return dirty;
+                var dirty = _a.dirty, temporary = _a.temporary;
+                return dirty && !temporary;
             });
             if (!dirty) {
                 annotations = current_annotations;
@@ -2097,20 +2351,39 @@
 
     function update_page_location(store) {
         var selected_compound_ids = [];
+        var all_annotations = [];
         store.subscribe(function () {
             var state = store.getState();
             var current_selected_compound_ids = state.selected_annotations.selected_compound_ids;
-            if (selected_compound_ids === current_selected_compound_ids)
+            var current_all_annotations = state.annotations.all_annotations;
+            if (selected_compound_ids === current_selected_compound_ids
+                && all_annotations === current_all_annotations)
                 return;
             selected_compound_ids = current_selected_compound_ids;
+            all_annotations = current_all_annotations;
             var obj = parse_location_search();
             delete obj["h"];
             delete obj["highlighted_annotation_ids"];
             if (selected_compound_ids.length) {
                 obj["h"] = selected_compound_ids.join(",");
             }
+            var _a = state.routing, naming_authority = _a.naming_authority, vault_id = _a.vault_id, file_id = _a.file_id;
+            if (obj["url"] && naming_authority && vault_id && file_id) {
+                delete obj["url"];
+            }
+            var temp_annotations = state.annotations.all_annotations.filter(function (_a) {
+                var temporary = _a.temporary;
+                return temporary;
+            });
+            delete obj[TEMPORARY_ANNOTATIONS_PARAM_KEY];
+            if (temp_annotations.length) {
+                var temp_annotations_string = deflate_temporary_annotations(temp_annotations);
+                obj[TEMPORARY_ANNOTATIONS_PARAM_KEY] = temp_annotations_string;
+            }
             var search_string = object_to_search_string(obj);
             var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname + search_string;
+            if (new_url === window.location.toString())
+                return;
             if (window.history.pushState) {
                 window.history.pushState({ path: new_url }, "", new_url);
             }
@@ -2146,7 +2419,13 @@
     update_labels_used_by_selected_annotations(store);
     var pages_container_el = document.getElementById("pages_container");
     load_files()
-        .then(function (pdf) { return render_pdf(pdf, pages_container_el); });
+        .then(function (pdf) { return render_pdf(pdf, pages_container_el); })
+        .catch(function (e) {
+        var state = store.getState();
+        if (state.loading_pdf.loading_error_type === "422")
+            return;
+        console.error("Erroring during loading files: ", e);
+    });
     var programmatic_styles_el = document.getElementById("programmatic_styles");
     set_up_programmatic_styles(programmatic_styles_el, store);
     var loading_progress_el = document.getElementById("loading_progress");

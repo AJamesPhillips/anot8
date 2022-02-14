@@ -59,7 +59,7 @@ Edit the `labels` attribute to be a list of strings.   e.g.
     export FLASK_APP=src/server/annotator.py && flask run --port=5003
 
 
-## Feature examples for local server
+## Local server features
 
 ### Show all annotation vaults
 
@@ -78,10 +78,10 @@ http://localhost:5003/vault/1
 http://localhost:5003/r/1772.1/1
 
 1772 is the "naming authority id" of CCI on anot8.org \
-.1 is the vault id \
-1 is the file id
+1 (of ".1") is the vault id \
+1 (which is trailing) is the file id
 
-The naming authority id is only needed for anot8.org permalinks.  And file id is not needed and the relative_file_path can be used instead, for example:
+The naming authority id is only needed for anot8.org permalinks.  And file id is not needed if the relative_file_path is used instead, for example:
 
 http://localhost:5003/r/-1.1/-1?relative_file_path=example_pdfs/visible_directory/example_1.pdf
 
@@ -126,26 +126,31 @@ The render_pdf.html file can use the anot8.org naming authority server (i.e. how
 This will work when running locally or from anot8.org.
 
 
-## Feature examples for central resolving server
+## Anot8.org (central resolving server) features
 
 ### Permalinks
 
 To get permalinks which work for anyone you'll need to open a new issue here: https://github.com/CenterOfCI/anot8.org/issues/new?title=Request%20for%20perma%20link%20name%20id to get a naming id and have it added to the anot8.org resolver.
 
-TODO: update, this example URL already works
-~~Once set up the following anot8.org URLs should work:~~
+Once set up the following type of anot8.org URLs (with a naming authority id and file id as well as their vault id) should work, e.g.:
 
-~~https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0~~
+https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0
+
+
+### Non-permanent annotator
+
+You can visit https://anot8.org/r and set the url of the PDF to load.  Once it loads you can annotate it.  The annotations are impermanent and will be lost if you clear your browser storage or change to a different computer.
+You can however copy the resulting URL and send it to anyone else for whom it will load the PDF and annotate it with your annotations.  Due to the limitations of URL length it's best to plan on not sharing more than 10 annotations this way.
+
+If the website serving the PDF does not allow your browser to load it directly, then anot8 will fallback to using a proxy server.  Currently this is a demo server running at: https://cors-anywhere.herokuapp.com/ which you will need to access and request access for a period of time.  Once you do this, try reloading your page and the PDF should now be loaded correctly.
+
+At the moment it is only possible to save your annotations when running the server locally.  If [there is interest](https://github.com/centerofci/anot8/issues/6) then we can look at persisting annotations in a database.
 
 
 ### Redirect from anot8.org to local
 
 TODO ~~You can visit anot8.org/resolver and follow the instructions to allow it to find your local server.  It will store the information in that browsers local storage.  Redirecting to local will be faster in terms of download speed and will also allow you to annotation your (local) files.~~
 
-
-### Annotating files
-
-At the moment this is only possible when running the server locally.
 
 
 ## Dev

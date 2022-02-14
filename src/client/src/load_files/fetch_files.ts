@@ -15,7 +15,7 @@ export function fetch_files ()
 {
     const store = get_store()
 
-    // fetch_annotation_files(store)
+    fetch_annotation_files(store)
     return fetch_pdf(store)
 }
 
@@ -38,6 +38,7 @@ function fetch_pdf (store: Store<State>)
             const proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file
             pdfjsLib.getDocument(proxy_url_to_file).promise
                 .then(pdf => resolve(pdf))
+                .catch(e => { debugger }) // leave in debugger for now
         })
     })
 }
