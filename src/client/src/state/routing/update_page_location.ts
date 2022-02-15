@@ -32,10 +32,11 @@ export function update_page_location (store: Store<State>)
         }
 
         const { naming_authority, vault_id, file_id } = state.routing
-        if (obj["url"] && naming_authority && vault_id && file_id)
+        if (naming_authority && vault_id && file_id)
         {
-            // Clean up parameters by removing url if there is a path specifying the file to load
+            // Clean up parameters by removing url or doi if there is a path specifying the file to load
             delete obj["url"]
+            delete obj["doi"]
         }
 
         const temp_annotations = state.annotations.all_annotations.filter(({ temporary }) => temporary)
