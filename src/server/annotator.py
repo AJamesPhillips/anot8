@@ -61,6 +61,8 @@ def index ():
 
     html += html_list_of_vaults(vault_configs_by_id)
 
+    html += """<p>Or <a href="/r/">specify a PDF's URL</a></p>"""
+
     return html
 
 
@@ -261,6 +263,15 @@ def update_annotations (vault_config, annotations_relative_file_path):
     write_annotations_file(annotations_file_path, meta_data)
 
     return json.dumps(meta_data, ensure_ascii=False)
+
+
+
+@app.route("/dev/anot8_homepage")
+def dev_anot8_homepage ():
+    with open(dir_path + "/../anot8.org/public/index.html", "r", encoding="utf8") as f:
+        html = f.read()
+
+    return html
 
 
 

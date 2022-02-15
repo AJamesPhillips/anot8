@@ -1,6 +1,18 @@
 <html>
 <head>
-    <link href="/common.css" rel="stylesheet">
+    <style>
+        body
+        {
+            font-family: sans-serif;
+        }
+
+        .alpha
+        {
+            color: #A00;
+            vertical-align: super;
+            font-size: small;
+        }
+    </style>
 
 </head>
 <body>
@@ -21,10 +33,21 @@
     </div>
 
     <br />
+    <h4>Or <a href="/r/">specify a PDF's URL</a></h4>
+    <p>
+        Anot8 was built to work as a local server for annotating your PDFs.  It now supports loading any PDF <a href="/r/">by a URL</a>.
+    </p>
+
+    <br />
     <h4>Auto redirect</h4>
     <div id="auto_redirect_options">
 
     </div>
+    <p>
+        This allows you to use perma links like
+        <a href="https://anot8.org/r/1772.1/1">anot8.org/r/1772.1/1</a>
+        in your internal documents, and have all your team access the PDFs and annotations from a local server (faster) or password protected public server (privacy).
+    </p>
 
 <script>
     const auto_redirect_options_el = document.getElementById("auto_redirect_options")
@@ -35,7 +58,7 @@
 
         if (auto_redirect_to_different_server)
         {
-            auto_redirect_options_el.innerText = "Auto redirect set to: " + auto_redirect_to_different_server
+            auto_redirect_options_el.innerHTML = "Auto redirect set to: " + auto_redirect_to_different_server + " &nbsp;"
 
             const button_clear_auto_redirect = document.createElement("input")
             button_clear_auto_redirect.type = "button"

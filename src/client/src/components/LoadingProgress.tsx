@@ -1,5 +1,5 @@
 import { h } from "preact"
-import { useState } from "preact/hooks"
+import { useRef, useState } from "preact/hooks"
 import { LoadingStage, State } from "../state/state"
 import { connect } from "../utils/preact-redux-simple/connect"
 
@@ -30,6 +30,7 @@ function _LoadingProgress (props: Props)
 {
     const [visibility, set_visibility] = useState(true)
     const [url, set_url] = useState("")
+    const initial_render = useRef(true)
     if (!visibility) return null
 
     const { loading_status, rendering_status, max_pages, page_number } = props
@@ -76,6 +77,12 @@ function _LoadingProgress (props: Props)
                         placeholder="Enter a URL"
                         onInput={e => set_url(e.currentTarget.value)}
                         onBlur={e => set_url(e.currentTarget.value)}
+                        ref={e =>
+                        {
+                            if (!initial_render.current) return
+                            initial_render.current = false
+                            setTimeout(() => e && e.focus(), 0)
+                        }}
                     />
                 </p>
 
