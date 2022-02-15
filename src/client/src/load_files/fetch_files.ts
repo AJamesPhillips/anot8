@@ -4,7 +4,7 @@ declare const pdfjsLib: typeof PDFJS
 
 import { ACTIONS } from "../state/actions"
 import { get_url_to_file, get_url_to_file_annotations } from "../state/loading/getters"
-import { State } from "../state/state"
+import { LoadingStage, State } from "../state/state"
 import { get_store } from "../state/store"
 import { AnnotationsFile } from "../state/interfaces"
 import { get_safe_user_name } from "../state/user/utils"
@@ -38,7 +38,13 @@ function fetch_pdf (store: Store<State>)
             const proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file
             pdfjsLib.getDocument(proxy_url_to_file).promise
                 .then(pdf => resolve(pdf))
-                .catch(e => { debugger }) // leave in debugger for now
+                .catch((error: PDFJS.UnexpectedResponseException) =>
+                {
+                    store.dispatch(ACTIONS.loading.error_during_loading({
+                        error_stage: LoadingStage.fetch_pdf_by_proxy,
+                        error_type: error?.status ? (error?.status.toString()) : "other",
+                    }))
+                })
         })
     })
 }

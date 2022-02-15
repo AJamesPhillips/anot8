@@ -31,6 +31,32 @@
             width: 70%;
         }
 
+        .set_pdf_url_or_doi .section
+        {
+            overflow: hidden;
+            transition: all 0.5s ease 0s;
+            background-color: rgb(252, 252, 252);
+            margin: 20px auto;
+            border-radius: 5px;
+            width: 50%;
+            padding: 20px;
+            font-size: initial;
+            /* transform: rotate3d(1, 0, 0, 0deg); */
+        }
+
+        .set_pdf_url_or_doi .section.pre_hidden
+        {
+            /* transform: rotate3d(1, 0, 0, 90deg); */
+            max-height: 0px;
+            padding: 0px;
+        }
+        .set_pdf_url_or_doi .section.post_hidden
+        {
+            /* transform: rotate3d(1, 0, 0, -90deg); */
+            max-height: 0px;
+            padding: 0px;
+        }
+
         #pages_container
         {
             float: left;

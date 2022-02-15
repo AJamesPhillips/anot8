@@ -1,3 +1,4 @@
+import { UnexpectedResponseException } from "pdfjs-dist"
 import { Annotation, MaybeAnnotation } from "./interfaces"
 
 
@@ -67,9 +68,10 @@ export enum LoadingStage
     resolve_naming_authority_url = "resolve_naming_authority_url",
     resolve_vault_url = "resolve_vault_url",
     resolve_pdf_file_url = "resolve_pdf_file_url",
+    fetch_pdf_by_proxy = "fetch_pdf_by_proxy",
     pdf_file = "pdf_file",
 }
-export type LoadingErrorType = "404" | "422" | "other"
+export type LoadingErrorType = "404" | "422" | "403" | "other"
 export interface LoadingPDFState
 {
     status: LoadingStatus
