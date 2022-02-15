@@ -14,7 +14,7 @@ export function deflate_temporary_annotations (annotations: Annotation[])
 
 function deflate_temporary_annotation (annotation: Annotation)
 {
-    const { colour, comment, height, id, labels, left, page_number, text, top, width } = annotation
+    const { colour, comment, height, id, labels, left, page_number, text, top, width, } = annotation
 
     const compressed_colour = colour.replace(/ /g, "").trim()
     const compressed_height = height.replace("px", "").trim()
@@ -33,6 +33,8 @@ function deflate_temporary_annotation (annotation: Annotation)
         compressed_width,
         compressed_height,
         // compressed_colour,
+        // user_name, // we are ignoring the user name
+        // compound_id, // we are ignoring the compound id including the user name
     ]
 
     // const safe_comment = comment.replace(/-/g, "_-")
@@ -83,7 +85,7 @@ export function inflate_temporary_annotations (temp_annotations: string | undefi
 
                 user_name: "",
                 safe_user_name: "",
-                compound_id: id,
+                compound_id: `${id}`, // assume it is from the anonymous / root user
 
                 dirty: true,
                 temporary: true,
