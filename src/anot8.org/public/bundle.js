@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var n,u$1,i$1,t$1,o$1={},f$1=[],e$1=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;function c$1(n,l){for(var u in l)n[u]=l[u];return n}function s(n){var l=n.parentNode;l&&l.removeChild(n);}function a$1(n,l,u){var i,t,r,o=arguments,f={};for(r in l)"key"==r?i=l[r]:"ref"==r?t=l[r]:f[r]=l[r];if(arguments.length>3)for(u=[u],r=3;r<arguments.length;r++)u.push(o[r]);if(null!=u&&(f.children=u),"function"==typeof n&&null!=n.defaultProps)for(r in n.defaultProps)void 0===f[r]&&(f[r]=n.defaultProps[r]);return v$1(n,f,i,t,null)}function v$1(l,u,i,t,r){var o={type:l,props:u,key:i,ref:t,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:null==r?++n.__v:r};return null!=n.vnode&&n.vnode(o),o}function y(n){return n.children}function p$1(n,l){this.props=n,this.context=l;}function d(n,l){if(null==l)return n.__?d(n.__,n.__.__k.indexOf(n)+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return "function"==typeof n.type?d(n):null}function _(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return _(n)}}function k(l){(!l.__d&&(l.__d=!0)&&u$1.push(l)&&!m$1.__r++||t$1!==n.debounceRendering)&&((t$1=n.debounceRendering)||i$1)(m$1);}function m$1(){for(var n;m$1.__r=u$1.length;)n=u$1.sort(function(n,l){return n.__v.__b-l.__v.__b}),u$1=[],n.some(function(n){var l,u,i,t,r,o;n.__d&&(r=(t=(l=n).__v).__e,(o=l.__P)&&(u=[],(i=c$1({},t)).__v=t.__v+1,T(o,t,i,l.__n,void 0!==o.ownerSVGElement,null!=t.__h?[r]:null,u,null==r?d(t):r,t.__h),j$1(u,t),t.__e!=r&&_(t)));});}function b$1(n,l,u,i,t,r,e,c,s,a){var h,p,_,k,m,b,w,A=i&&i.__k||f$1,P=A.length;for(u.__k=[],h=0;h<l.length;h++)if(null!=(k=u.__k[h]=null==(k=l[h])||"boolean"==typeof k?null:"string"==typeof k||"number"==typeof k?v$1(null,k,null,null,k):Array.isArray(k)?v$1(y,{children:k},null,null,null):k.__b>0?v$1(k.type,k.props,k.key,null,k.__v):k)){if(k.__=u,k.__b=u.__b+1,null===(_=A[h])||_&&k.key==_.key&&k.type===_.type)A[h]=void 0;else for(p=0;p<P;p++){if((_=A[p])&&k.key==_.key&&k.type===_.type){A[p]=void 0;break}_=null;}T(n,k,_=_||o$1,t,r,e,c,s,a),m=k.__e,(p=k.ref)&&_.ref!=p&&(w||(w=[]),_.ref&&w.push(_.ref,null,k),w.push(p,k.__c||m,k)),null!=m?(null==b&&(b=m),"function"==typeof k.type&&null!=k.__k&&k.__k===_.__k?k.__d=s=g$1(k,s,n):s=x$1(n,k,_,A,m,s),a||"option"!==u.type?"function"==typeof u.type&&(u.__d=s):n.value=""):s&&_.__e==s&&s.parentNode!=n&&(s=d(_));}for(u.__e=b,h=P;h--;)null!=A[h]&&("function"==typeof u.type&&null!=A[h].__e&&A[h].__e==u.__d&&(u.__d=d(i,h+1)),L(A[h],A[h]));if(w)for(h=0;h<w.length;h++)I(w[h],w[++h],w[++h]);}function g$1(n,l,u){var i,t;for(i=0;i<n.__k.length;i++)(t=n.__k[i])&&(t.__=n,l="function"==typeof t.type?g$1(t,l,u):x$1(u,t,t,n.__k,t.__e,l));return l}function x$1(n,l,u,i,t,r){var o,f,e;if(void 0!==l.__d)o=l.__d,l.__d=void 0;else if(null==u||t!=r||null==t.parentNode)n:if(null==r||r.parentNode!==n)n.appendChild(t),o=null;else {for(f=r,e=0;(f=f.nextSibling)&&e<i.length;e+=2)if(f==t)break n;n.insertBefore(t,r),o=r;}return void 0!==o?o:t.nextSibling}function A(n,l,u,i,t){var r;for(r in u)"children"===r||"key"===r||r in l||C(n,r,null,u[r],i);for(r in l)t&&"function"!=typeof l[r]||"children"===r||"key"===r||"value"===r||"checked"===r||u[r]===l[r]||C(n,r,l[r],u[r],i);}function P(n,l,u){"-"===l[0]?n.setProperty(l,u):n[l]=null==u?"":"number"!=typeof u||e$1.test(l)?u:u+"px";}function C(n,l,u,i,t){var r;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else {if("string"==typeof i&&(n.style.cssText=i=""),i)for(l in i)u&&l in u||P(n.style,l,"");if(u)for(l in u)i&&u[l]===i[l]||P(n.style,l,u[l]);}else if("o"===l[0]&&"n"===l[1])r=l!==(l=l.replace(/Capture$/,"")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+r]=u,u?i||n.addEventListener(l,r?H:$,r):n.removeEventListener(l,r?H:$,r);else if("dangerouslySetInnerHTML"!==l){if(t)l=l.replace(/xlink[H:h]/,"h").replace(/sName$/,"s");else if("href"!==l&&"list"!==l&&"form"!==l&&"download"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null!=u&&(!1!==u||"a"===l[0]&&"r"===l[1])?n.setAttribute(l,u):n.removeAttribute(l));}}function $(l){this.l[l.type+!1](n.event?n.event(l):l);}function H(l){this.l[l.type+!0](n.event?n.event(l):l);}function T(l,u,i,t,r,o,f,e,s){var a,v,h,d,_,k,m,g,w,x,A,P=u.type;if(void 0!==u.constructor)return null;null!=i.__h&&(s=i.__h,e=u.__e=i.__e,u.__h=null,o=[e]),(a=n.__b)&&a(u);try{n:if("function"==typeof P){if(g=u.props,w=(a=P.contextType)&&t[a.__c],x=a?w?w.props.value:a.__:t,i.__c?m=(v=u.__c=i.__c).__=v.__E:("prototype"in P&&P.prototype.render?u.__c=v=new P(g,x):(u.__c=v=new p$1(g,x),v.constructor=P,v.render=M),w&&w.sub(v),v.props=g,v.state||(v.state={}),v.context=x,v.__n=t,h=v.__d=!0,v.__h=[]),null==v.__s&&(v.__s=v.state),null!=P.getDerivedStateFromProps&&(v.__s==v.state&&(v.__s=c$1({},v.__s)),c$1(v.__s,P.getDerivedStateFromProps(g,v.__s))),d=v.props,_=v.state,h)null==P.getDerivedStateFromProps&&null!=v.componentWillMount&&v.componentWillMount(),null!=v.componentDidMount&&v.__h.push(v.componentDidMount);else {if(null==P.getDerivedStateFromProps&&g!==d&&null!=v.componentWillReceiveProps&&v.componentWillReceiveProps(g,x),!v.__e&&null!=v.shouldComponentUpdate&&!1===v.shouldComponentUpdate(g,v.__s,x)||u.__v===i.__v){v.props=g,v.state=v.__s,u.__v!==i.__v&&(v.__d=!1),v.__v=u,u.__e=i.__e,u.__k=i.__k,v.__h.length&&f.push(v);break n}null!=v.componentWillUpdate&&v.componentWillUpdate(g,v.__s,x),null!=v.componentDidUpdate&&v.__h.push(function(){v.componentDidUpdate(d,_,k);});}v.context=x,v.props=g,v.state=v.__s,(a=n.__r)&&a(u),v.__d=!1,v.__v=u,v.__P=l,a=v.render(v.props,v.state,v.context),v.state=v.__s,null!=v.getChildContext&&(t=c$1(c$1({},t),v.getChildContext())),h||null==v.getSnapshotBeforeUpdate||(k=v.getSnapshotBeforeUpdate(d,_)),A=null!=a&&a.type===y&&null==a.key?a.props.children:a,b$1(l,Array.isArray(A)?A:[A],u,i,t,r,o,f,e,s),v.base=u.__e,u.__h=null,v.__h.length&&f.push(v),m&&(v.__E=v.__=null),v.__e=!1;}else null==o&&u.__v===i.__v?(u.__k=i.__k,u.__e=i.__e):u.__e=z(i.__e,u,i,t,r,o,f,s);(a=n.diffed)&&a(u);}catch(l){u.__v=null,(s||null!=o)&&(u.__e=e,u.__h=!!s,o[o.indexOf(e)]=null),n.__e(l,u,i);}}function j$1(l,u){n.__c&&n.__c(u,l),l.some(function(u){try{l=u.__h,u.__h=[],l.some(function(n){n.call(u);});}catch(l){n.__e(l,u.__v);}});}function z(n,l,u,i,t,r,e,c){var a,v,h,y,p=u.props,d=l.props,_=l.type,k=0;if("svg"===_&&(t=!0),null!=r)for(;k<r.length;k++)if((a=r[k])&&(a===n||(_?a.localName==_:3==a.nodeType))){n=a,r[k]=null;break}if(null==n){if(null===_)return document.createTextNode(d);n=t?document.createElementNS("http://www.w3.org/2000/svg",_):document.createElement(_,d.is&&d),r=null,c=!1;}if(null===_)p===d||c&&n.data===d||(n.data=d);else {if(r=r&&f$1.slice.call(n.childNodes),v=(p=u.props||o$1).dangerouslySetInnerHTML,h=d.dangerouslySetInnerHTML,!c){if(null!=r)for(p={},y=0;y<n.attributes.length;y++)p[n.attributes[y].name]=n.attributes[y].value;(h||v)&&(h&&(v&&h.__html==v.__html||h.__html===n.innerHTML)||(n.innerHTML=h&&h.__html||""));}if(A(n,d,p,t,c),h)l.__k=[];else if(k=l.props.children,b$1(n,Array.isArray(k)?k:[k],l,u,i,t&&"foreignObject"!==_,r,e,n.firstChild,c),null!=r)for(k=r.length;k--;)null!=r[k]&&s(r[k]);c||("value"in d&&void 0!==(k=d.value)&&(k!==n.value||"progress"===_&&!k)&&C(n,"value",k,p.value,!1),"checked"in d&&void 0!==(k=d.checked)&&k!==n.checked&&C(n,"checked",k,p.checked,!1));}return n}function I(l,u,i){try{"function"==typeof l?l(u):l.current=u;}catch(l){n.__e(l,i);}}function L(l,u,i){var t,r,o;if(n.unmount&&n.unmount(l),(t=l.ref)&&(t.current&&t.current!==l.__e||I(t,null,u)),i||"function"==typeof l.type||(i=null!=(r=l.__e)),l.__e=l.__d=void 0,null!=(t=l.__c)){if(t.componentWillUnmount)try{t.componentWillUnmount();}catch(l){n.__e(l,u);}t.base=t.__P=null;}if(t=l.__k)for(o=0;o<t.length;o++)t[o]&&L(t[o],u,i);null!=r&&s(r);}function M(n,l,u){return this.constructor(n,u)}function N(l,u,i){var t,r,e;n.__&&n.__(l,u),r=(t="function"==typeof i)?null:i&&i.__k||u.__k,e=[],T(u,l=(!t&&i||u).__k=a$1(y,null,[l]),r||o$1,o$1,void 0!==u.ownerSVGElement,!t&&i?[i]:r?null:u.firstChild?f$1.slice.call(u.childNodes):null,e,!t&&i?i:r?r.__e:u.firstChild,t),j$1(e,l);}n={__e:function(n,l){for(var u,i,t;l=l.__;)if((u=l.__c)&&!u.__)try{if((i=u.constructor)&&null!=i.getDerivedStateFromError&&(u.setState(i.getDerivedStateFromError(n)),t=u.__d),null!=u.componentDidCatch&&(u.componentDidCatch(n),t=u.__d),t)return u.__E=u}catch(l){n=l;}throw n},__v:0},p$1.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=c$1({},this.state),"function"==typeof n&&(n=n(c$1({},u),this.props)),n&&c$1(u,n),null!=n&&this.__v&&(l&&this.__h.push(l),k(this));},p$1.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),k(this));},p$1.prototype.render=y,u$1=[],i$1="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,m$1.__r=0,0;
+    var n,u$1,i$1,t$1,o$1={},f$1=[],e$1=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;function c$1(n,l){for(var u in l)n[u]=l[u];return n}function s$1(n){var l=n.parentNode;l&&l.removeChild(n);}function a$1(n,l,u){var i,t,r,o=arguments,f={};for(r in l)"key"==r?i=l[r]:"ref"==r?t=l[r]:f[r]=l[r];if(arguments.length>3)for(u=[u],r=3;r<arguments.length;r++)u.push(o[r]);if(null!=u&&(f.children=u),"function"==typeof n&&null!=n.defaultProps)for(r in n.defaultProps)void 0===f[r]&&(f[r]=n.defaultProps[r]);return v$1(n,f,i,t,null)}function v$1(l,u,i,t,r){var o={type:l,props:u,key:i,ref:t,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:null==r?++n.__v:r};return null!=n.vnode&&n.vnode(o),o}function y$1(n){return n.children}function p$1(n,l){this.props=n,this.context=l;}function d$1(n,l){if(null==l)return n.__?d$1(n.__,n.__.__k.indexOf(n)+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return "function"==typeof n.type?d$1(n):null}function _(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return _(n)}}function k$1(l){(!l.__d&&(l.__d=!0)&&u$1.push(l)&&!m$1.__r++||t$1!==n.debounceRendering)&&((t$1=n.debounceRendering)||i$1)(m$1);}function m$1(){for(var n;m$1.__r=u$1.length;)n=u$1.sort(function(n,l){return n.__v.__b-l.__v.__b}),u$1=[],n.some(function(n){var l,u,i,t,r,o;n.__d&&(r=(t=(l=n).__v).__e,(o=l.__P)&&(u=[],(i=c$1({},t)).__v=t.__v+1,T(o,t,i,l.__n,void 0!==o.ownerSVGElement,null!=t.__h?[r]:null,u,null==r?d$1(t):r,t.__h),j$1(u,t),t.__e!=r&&_(t)));});}function b$1(n,l,u,i,t,r,e,c,s,a){var h,p,_,k,m,b,w,A=i&&i.__k||f$1,P=A.length;for(u.__k=[],h=0;h<l.length;h++)if(null!=(k=u.__k[h]=null==(k=l[h])||"boolean"==typeof k?null:"string"==typeof k||"number"==typeof k?v$1(null,k,null,null,k):Array.isArray(k)?v$1(y$1,{children:k},null,null,null):k.__b>0?v$1(k.type,k.props,k.key,null,k.__v):k)){if(k.__=u,k.__b=u.__b+1,null===(_=A[h])||_&&k.key==_.key&&k.type===_.type)A[h]=void 0;else for(p=0;p<P;p++){if((_=A[p])&&k.key==_.key&&k.type===_.type){A[p]=void 0;break}_=null;}T(n,k,_=_||o$1,t,r,e,c,s,a),m=k.__e,(p=k.ref)&&_.ref!=p&&(w||(w=[]),_.ref&&w.push(_.ref,null,k),w.push(p,k.__c||m,k)),null!=m?(null==b&&(b=m),"function"==typeof k.type&&null!=k.__k&&k.__k===_.__k?k.__d=s=g$1(k,s,n):s=x$1(n,k,_,A,m,s),a||"option"!==u.type?"function"==typeof u.type&&(u.__d=s):n.value=""):s&&_.__e==s&&s.parentNode!=n&&(s=d$1(_));}for(u.__e=b,h=P;h--;)null!=A[h]&&("function"==typeof u.type&&null!=A[h].__e&&A[h].__e==u.__d&&(u.__d=d$1(i,h+1)),L(A[h],A[h]));if(w)for(h=0;h<w.length;h++)I(w[h],w[++h],w[++h]);}function g$1(n,l,u){var i,t;for(i=0;i<n.__k.length;i++)(t=n.__k[i])&&(t.__=n,l="function"==typeof t.type?g$1(t,l,u):x$1(u,t,t,n.__k,t.__e,l));return l}function x$1(n,l,u,i,t,r){var o,f,e;if(void 0!==l.__d)o=l.__d,l.__d=void 0;else if(null==u||t!=r||null==t.parentNode)n:if(null==r||r.parentNode!==n)n.appendChild(t),o=null;else {for(f=r,e=0;(f=f.nextSibling)&&e<i.length;e+=2)if(f==t)break n;n.insertBefore(t,r),o=r;}return void 0!==o?o:t.nextSibling}function A(n,l,u,i,t){var r;for(r in u)"children"===r||"key"===r||r in l||C(n,r,null,u[r],i);for(r in l)t&&"function"!=typeof l[r]||"children"===r||"key"===r||"value"===r||"checked"===r||u[r]===l[r]||C(n,r,l[r],u[r],i);}function P(n,l,u){"-"===l[0]?n.setProperty(l,u):n[l]=null==u?"":"number"!=typeof u||e$1.test(l)?u:u+"px";}function C(n,l,u,i,t){var r;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else {if("string"==typeof i&&(n.style.cssText=i=""),i)for(l in i)u&&l in u||P(n.style,l,"");if(u)for(l in u)i&&u[l]===i[l]||P(n.style,l,u[l]);}else if("o"===l[0]&&"n"===l[1])r=l!==(l=l.replace(/Capture$/,"")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+r]=u,u?i||n.addEventListener(l,r?H:$,r):n.removeEventListener(l,r?H:$,r);else if("dangerouslySetInnerHTML"!==l){if(t)l=l.replace(/xlink[H:h]/,"h").replace(/sName$/,"s");else if("href"!==l&&"list"!==l&&"form"!==l&&"download"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null!=u&&(!1!==u||"a"===l[0]&&"r"===l[1])?n.setAttribute(l,u):n.removeAttribute(l));}}function $(l){this.l[l.type+!1](n.event?n.event(l):l);}function H(l){this.l[l.type+!0](n.event?n.event(l):l);}function T(l,u,i,t,r,o,f,e,s){var a,v,h,d,_,k,m,g,w,x,A,P=u.type;if(void 0!==u.constructor)return null;null!=i.__h&&(s=i.__h,e=u.__e=i.__e,u.__h=null,o=[e]),(a=n.__b)&&a(u);try{n:if("function"==typeof P){if(g=u.props,w=(a=P.contextType)&&t[a.__c],x=a?w?w.props.value:a.__:t,i.__c?m=(v=u.__c=i.__c).__=v.__E:("prototype"in P&&P.prototype.render?u.__c=v=new P(g,x):(u.__c=v=new p$1(g,x),v.constructor=P,v.render=M),w&&w.sub(v),v.props=g,v.state||(v.state={}),v.context=x,v.__n=t,h=v.__d=!0,v.__h=[]),null==v.__s&&(v.__s=v.state),null!=P.getDerivedStateFromProps&&(v.__s==v.state&&(v.__s=c$1({},v.__s)),c$1(v.__s,P.getDerivedStateFromProps(g,v.__s))),d=v.props,_=v.state,h)null==P.getDerivedStateFromProps&&null!=v.componentWillMount&&v.componentWillMount(),null!=v.componentDidMount&&v.__h.push(v.componentDidMount);else {if(null==P.getDerivedStateFromProps&&g!==d&&null!=v.componentWillReceiveProps&&v.componentWillReceiveProps(g,x),!v.__e&&null!=v.shouldComponentUpdate&&!1===v.shouldComponentUpdate(g,v.__s,x)||u.__v===i.__v){v.props=g,v.state=v.__s,u.__v!==i.__v&&(v.__d=!1),v.__v=u,u.__e=i.__e,u.__k=i.__k,v.__h.length&&f.push(v);break n}null!=v.componentWillUpdate&&v.componentWillUpdate(g,v.__s,x),null!=v.componentDidUpdate&&v.__h.push(function(){v.componentDidUpdate(d,_,k);});}v.context=x,v.props=g,v.state=v.__s,(a=n.__r)&&a(u),v.__d=!1,v.__v=u,v.__P=l,a=v.render(v.props,v.state,v.context),v.state=v.__s,null!=v.getChildContext&&(t=c$1(c$1({},t),v.getChildContext())),h||null==v.getSnapshotBeforeUpdate||(k=v.getSnapshotBeforeUpdate(d,_)),A=null!=a&&a.type===y$1&&null==a.key?a.props.children:a,b$1(l,Array.isArray(A)?A:[A],u,i,t,r,o,f,e,s),v.base=u.__e,u.__h=null,v.__h.length&&f.push(v),m&&(v.__E=v.__=null),v.__e=!1;}else null==o&&u.__v===i.__v?(u.__k=i.__k,u.__e=i.__e):u.__e=z(i.__e,u,i,t,r,o,f,s);(a=n.diffed)&&a(u);}catch(l){u.__v=null,(s||null!=o)&&(u.__e=e,u.__h=!!s,o[o.indexOf(e)]=null),n.__e(l,u,i);}}function j$1(l,u){n.__c&&n.__c(u,l),l.some(function(u){try{l=u.__h,u.__h=[],l.some(function(n){n.call(u);});}catch(l){n.__e(l,u.__v);}});}function z(n,l,u,i,t,r,e,c){var a,v,h,y,p=u.props,d=l.props,_=l.type,k=0;if("svg"===_&&(t=!0),null!=r)for(;k<r.length;k++)if((a=r[k])&&(a===n||(_?a.localName==_:3==a.nodeType))){n=a,r[k]=null;break}if(null==n){if(null===_)return document.createTextNode(d);n=t?document.createElementNS("http://www.w3.org/2000/svg",_):document.createElement(_,d.is&&d),r=null,c=!1;}if(null===_)p===d||c&&n.data===d||(n.data=d);else {if(r=r&&f$1.slice.call(n.childNodes),v=(p=u.props||o$1).dangerouslySetInnerHTML,h=d.dangerouslySetInnerHTML,!c){if(null!=r)for(p={},y=0;y<n.attributes.length;y++)p[n.attributes[y].name]=n.attributes[y].value;(h||v)&&(h&&(v&&h.__html==v.__html||h.__html===n.innerHTML)||(n.innerHTML=h&&h.__html||""));}if(A(n,d,p,t,c),h)l.__k=[];else if(k=l.props.children,b$1(n,Array.isArray(k)?k:[k],l,u,i,t&&"foreignObject"!==_,r,e,n.firstChild,c),null!=r)for(k=r.length;k--;)null!=r[k]&&s$1(r[k]);c||("value"in d&&void 0!==(k=d.value)&&(k!==n.value||"progress"===_&&!k)&&C(n,"value",k,p.value,!1),"checked"in d&&void 0!==(k=d.checked)&&k!==n.checked&&C(n,"checked",k,p.checked,!1));}return n}function I(l,u,i){try{"function"==typeof l?l(u):l.current=u;}catch(l){n.__e(l,i);}}function L(l,u,i){var t,r,o;if(n.unmount&&n.unmount(l),(t=l.ref)&&(t.current&&t.current!==l.__e||I(t,null,u)),i||"function"==typeof l.type||(i=null!=(r=l.__e)),l.__e=l.__d=void 0,null!=(t=l.__c)){if(t.componentWillUnmount)try{t.componentWillUnmount();}catch(l){n.__e(l,u);}t.base=t.__P=null;}if(t=l.__k)for(o=0;o<t.length;o++)t[o]&&L(t[o],u,i);null!=r&&s$1(r);}function M(n,l,u){return this.constructor(n,u)}function N(l,u,i){var t,r,e;n.__&&n.__(l,u),r=(t="function"==typeof i)?null:i&&i.__k||u.__k,e=[],T(u,l=(!t&&i||u).__k=a$1(y$1,null,[l]),r||o$1,o$1,void 0!==u.ownerSVGElement,!t&&i?[i]:r?null:u.firstChild?f$1.slice.call(u.childNodes):null,e,!t&&i?i:r?r.__e:u.firstChild,t),j$1(e,l);}n={__e:function(n,l){for(var u,i,t;l=l.__;)if((u=l.__c)&&!u.__)try{if((i=u.constructor)&&null!=i.getDerivedStateFromError&&(u.setState(i.getDerivedStateFromError(n)),t=u.__d),null!=u.componentDidCatch&&(u.componentDidCatch(n),t=u.__d),t)return u.__E=u}catch(l){n=l;}throw n},__v:0},p$1.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=c$1({},this.state),"function"==typeof n&&(n=n(c$1({},u),this.props)),n&&c$1(u,n),null!=n&&this.__v&&(l&&this.__h.push(l),k$1(this));},p$1.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),k$1(this));},p$1.prototype.render=y$1,u$1=[],i$1="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,m$1.__r=0,0;
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -808,10 +808,11 @@
         toggle_label_priority: toggle_label_priority,
     };
 
+    var LOCAL_STORAGE_HIGHLIGHTING_USED_LABELS_KEY = "highlighting_used_labels";
     function get_starting_labels_state() {
         return {
             labels_by_id: {},
-            highlighting_used_labels: get_item_boolean("highlighting_used_labels", true),
+            highlighting_used_labels: get_item_boolean(LOCAL_STORAGE_HIGHLIGHTING_USED_LABELS_KEY, true),
             used_labels: new Set(),
             priority_labels: get_priority_labels(),
             hide_label_roots: get_label_roots_to_hide(),
@@ -821,10 +822,11 @@
         };
     }
     function store_setting_highlighting_used_labels(value) {
-        localStorage.setItem("highlighting_used_labels", value ? "1" : "0");
+        localStorage.setItem(LOCAL_STORAGE_HIGHLIGHTING_USED_LABELS_KEY, value ? "1" : "0");
     }
+    var LOCAL_STORAGE_PRIORITY_LABELS_KEY = "priority_labels";
     function store_priority_labels(labels) {
-        localStorage.setItem("priority_labels", JSON.stringify(labels));
+        localStorage.setItem(LOCAL_STORAGE_PRIORITY_LABELS_KEY, JSON.stringify(labels));
     }
     function get_item_boolean(item, defalt) {
         var value = localStorage.getItem(item);
@@ -834,7 +836,7 @@
     }
     function get_priority_labels() {
         try {
-            return new Set(JSON.parse(localStorage.getItem("priority_labels") || "[]"));
+            return new Set(JSON.parse(localStorage.getItem(LOCAL_STORAGE_PRIORITY_LABELS_KEY) || "[]"));
         }
         catch (_a) {
             return new Set();
@@ -965,6 +967,7 @@
         LoadingStage["resolve_naming_authority_url"] = "resolve_naming_authority_url";
         LoadingStage["resolve_vault_url"] = "resolve_vault_url";
         LoadingStage["resolve_pdf_file_url"] = "resolve_pdf_file_url";
+        LoadingStage["fetch_pdf_by_proxy"] = "fetch_pdf_by_proxy";
         LoadingStage["pdf_file"] = "pdf_file";
     })(LoadingStage || (LoadingStage = {}));
 
@@ -1143,7 +1146,7 @@
                     height: height + "px",
                     user_name: "",
                     safe_user_name: "",
-                    compound_id: id,
+                    compound_id: "" + id,
                     dirty: true,
                     temporary: true,
                 };
@@ -1327,7 +1330,7 @@
             dispatch(ACTIONS.selected_annotations.toggle_annotation_highlight({ compound_id: compound_id }));
         };
         return a$1("div", { style: { backgroundColor: colour }, className: className, onClick: on_click },
-            dirty && a$1("span", { style: { backgroundColor: "yellow" } }, "\u26A0"),
+            dirty && a$1("span", { className: "warning_unsaved", title: "Annotation not saved" }, "\u26A0"),
             text,
             a$1("br", null),
             a$1("br", null),
@@ -1349,19 +1352,19 @@
             a$1("div", { style: { clear: "both" } }));
     }
 
-    var map_state$b = function (state) { return ({
+    var map_state$c = function (state) { return ({
         annotations: state.annotations.all_annotations
     }); };
-    var connector$b = connect(map_state$b);
+    var connector$c = connect(map_state$c);
     function _AnnotationsList(props) {
         return a$1("div", null, props.annotations.map(function (a) { return a$1(AnnotationListEntry, { key: a.compound_id, annotation: a }); }));
     }
-    var AnnotationsList = connector$b(_AnnotationsList);
+    var AnnotationsList = connector$c(_AnnotationsList);
 
-    var map_state$a = function (state) { return ({
+    var map_state$b = function (state) { return ({
         selected_annotation_ids_owned_by_user: get_selected_annotation_ids_owned_by_user(state),
     }); };
-    var connector$a = connect(map_state$a);
+    var connector$b = connect(map_state$b);
     function _DeleteButton(props) {
         var disabled = !props.selected_annotation_ids_owned_by_user;
         var fill = disabled ? "#aaa" : "#000";
@@ -1372,7 +1375,7 @@
             a$1("svg", { focusable: "false", "aria-hidden": "true", viewBox: "0 0 24 24", style: { width: 20, fill: fill } },
                 a$1("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })));
     }
-    var DeleteButton = connector$a(_DeleteButton);
+    var DeleteButton = connector$b(_DeleteButton);
     function get_selected_annotation_ids_owned_by_user(state) {
         var safe_user_name = state.user.safe_user_name;
         var ids = get_all_selected_annotations(state)
@@ -1382,11 +1385,11 @@
     }
 
     var store$2 = get_store();
-    var map_state$9 = function (state, own_props) {
+    var map_state$a = function (state, own_props) {
         var label = state.labels.labels_by_id[own_props.label_id];
         return __assign(__assign({ label: label, disabled: is_disabled(state), used_labels: state.labels.used_labels, priority_labels: state.labels.priority_labels, search_string: state.labels.search_string }, is_checked_or_indeterminate(label, state)), { annotations_to_edit: get_all_selected_annotations(state) });
     };
-    var connector$9 = connect(map_state$9);
+    var connector$a = connect(map_state$a);
     function _LabelComponent(props) {
         var label = props.label;
         if (!label)
@@ -1413,22 +1416,32 @@
             store$2.dispatch(ACTIONS.annotations.edit_annotation({ annotation: new_annotation }));
         }
         var class_name = "label " + (is_used ? "used_label" : "") + " " + (priority ? "priority" : "");
-        return a$1("div", { className: class_name, onClick: function () { return toggle_label(); } },
-            a$1("input", { type: "checkbox", className: "label_checkbox", disabled: props.disabled, checked: props.checked, ref: function (e) { return e && (e.indeterminate = props.indeterminate); }, onChange: function (e) { e.stopPropagation(); toggle_label(); } }),
+        return a$1("div", { className: class_name, onClick: function () { return toggle_label(); }, title: props.disabled },
+            a$1("input", { type: "checkbox", className: "label_checkbox", disabled: !!props.disabled, checked: props.checked, ref: function (e) { return e && (e.indeterminate = props.indeterminate); }, onChange: function (e) { e.stopPropagation(); toggle_label(); } }),
             label.display_text,
             a$1("span", { className: "priority_label", onClick: function (e) {
                     e.stopPropagation();
                     store$2.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: label.value }));
                 }, dangerouslySetInnerHTML: { __html: priority ? "&starf;" : "&star;" } }));
     }
-    var LabelComponent = connector$9(_LabelComponent);
+    var LabelComponent = connector$a(_LabelComponent);
     function is_disabled(state) {
-        return (state.selected_annotations.selected_compound_ids.length !== 1
-            || !!get_all_selected_annotations(state)
-                .find(function (_a) {
-                var safe_user_name = _a.safe_user_name;
-                return safe_user_name !== state.user.safe_user_name;
-            }));
+        var all_selected_annotations = get_all_selected_annotations(state);
+        var an_annotation = all_selected_annotations[0];
+        if (!an_annotation)
+            return "Please select an annotation";
+        if (all_selected_annotations.length > 1)
+            return "Editing labels of multiple annotations is not yet supported.  Please select only one annotation.";
+        if (!state.running_locally && !an_annotation.temporary)
+            return "Please run the local anot8 server to edit this label.";
+        var annotation_by_a_different_user = all_selected_annotations
+            .find(function (_a) {
+            var safe_user_name = _a.safe_user_name;
+            return safe_user_name !== state.user.safe_user_name;
+        });
+        if (annotation_by_a_different_user)
+            return "Can only edit your own annotations.  You are: \"" + state.user.user_name + "\", this annotation was edited by: \"" + annotation_by_a_different_user.user_name + "\"";
+        return "";
     }
     function matches_search_string(label, search_string) {
         if (!search_string)
@@ -1442,22 +1455,33 @@
         return { checked: checked, indeterminate: indeterminate };
     }
 
-    var map_state$8 = function (state) { return ({
+    var map_state$9 = function (state) { return ({
         label_ids_list_to_display: state.labels.label_ids_list_to_display,
     }); };
-    var connector$8 = connect(map_state$8);
+    var connector$9 = connect(map_state$9);
     function _LabelsList(props) {
         return a$1("div", { id: "labels_list_container" }, props.label_ids_list_to_display.map(function (label_id) { return a$1(LabelComponent, { key: label_id, label_id: label_id }); }));
     }
-    var LabelsList = connector$8(_LabelsList);
+    var LabelsList = connector$9(_LabelsList);
 
-    var map_state$7 = function (state) { return ({
+    var map_state$8 = function (state) { return ({
+        have_any_labels: Object.keys(state.labels.labels_by_id).length > 0,
         highlighting_used_labels: state.labels.highlighting_used_labels,
         search_string: state.labels.search_string,
+        running_locally: state.running_locally,
+        is_from_url: !!state.routing.url,
     }); };
-    var connector$7 = connect(map_state$7);
+    var connector$8 = connect(map_state$8);
     var store$1 = get_store();
     function _Labels(props) {
+        if (!props.have_any_labels) {
+            var title = props.is_from_url
+                ? "A vault of PDFs also specifies the labels so when a PDF is loaded by a URL there is no vault and no labels"
+                : (props.running_locally
+                    ? "Add labels to your vault config json file"
+                    : "Editing a vault is not yet supported on anot8.org, must manually edit vault locally.");
+            return a$1("div", { style: { color: "grey", fontSize: "small", cursor: "default" }, title: title }, "No vault labels");
+        }
         return a$1("div", { className: props.highlighting_used_labels ? "highlight_used_labels" : "" },
             a$1("h3", null, "List of labels:"),
             a$1("input", { id: "labels_search", type: "text", placeholder: "Search labels...", value: props.search_string, onKeyUp: function (e) { return store$1.dispatch(ACTIONS.labels.set_search_string({ search: e.currentTarget.value })); } }),
@@ -1465,9 +1489,159 @@
             a$1("input", { id: "labels_used_toggle", type: "checkbox", checked: props.highlighting_used_labels, onChange: function (e) { return store$1.dispatch(ACTIONS.labels.set_highlighting_used_labels({ highlighting: e.currentTarget.checked })); } }),
             a$1(LabelsList, null));
     }
-    var Labels = connector$7(_Labels);
+    var Labels = connector$8(_Labels);
 
-    var t,u,r,o=0,i=[],c=n.__b,f=n.__r,e=n.diffed,a=n.__c,v=n.unmount;function m(t,r){n.__h&&n.__h(u,t,o||r),o=0;var i=u.__H||(u.__H={__:[],__h:[]});return t>=i.__.length&&i.__.push({}),i.__[t]}function l(n){return o=1,p(w,n)}function p(n,r,o){var i=m(t++,2);return i.t=n,i.__c||(i.__=[o?o(r):w(void 0,r),function(n){var t=i.t(i.__[0],n);i.__[0]!==t&&(i.__=[t,i.__[1]],i.__c.setState({}));}],i.__c=u),i.__}function x(){i.forEach(function(t){if(t.__P)try{t.__H.__h.forEach(g),t.__H.__h.forEach(j),t.__H.__h=[];}catch(u){t.__H.__h=[],n.__e(u,t.__v);}}),i=[];}n.__b=function(n){u=null,c&&c(n);},n.__r=function(n){f&&f(n),t=0;var r=(u=n.__c).__H;r&&(r.__h.forEach(g),r.__h.forEach(j),r.__h=[]);},n.diffed=function(t){e&&e(t);var o=t.__c;o&&o.__H&&o.__H.__h.length&&(1!==i.push(o)&&r===n.requestAnimationFrame||((r=n.requestAnimationFrame)||function(n){var t,u=function(){clearTimeout(r),b&&cancelAnimationFrame(t),setTimeout(n);},r=setTimeout(u,100);b&&(t=requestAnimationFrame(u));})(x)),u=void 0;},n.__c=function(t,u){u.some(function(t){try{t.__h.forEach(g),t.__h=t.__h.filter(function(n){return !n.__||j(n)});}catch(r){u.some(function(n){n.__h&&(n.__h=[]);}),u=[],n.__e(r,t.__v);}}),a&&a(t,u);},n.unmount=function(t){v&&v(t);var u=t.__c;if(u&&u.__H)try{u.__H.__.forEach(g);}catch(t){n.__e(t,u.__v);}};var b="function"==typeof requestAnimationFrame;function g(n){var t=u;"function"==typeof n.__c&&n.__c(),u=t;}function j(n){var t=u;n.__c=n.__(),u=t;}function w(n,t){return "function"==typeof t?t(n):t}
+    var t,u,r,o=0,i=[],c=n.__b,f=n.__r,e=n.diffed,a=n.__c,v=n.unmount;function m(t,r){n.__h&&n.__h(u,t,o||r),o=0;var i=u.__H||(u.__H={__:[],__h:[]});return t>=i.__.length&&i.__.push({}),i.__[t]}function l(n){return o=1,p(w,n)}function p(n,r,o){var i=m(t++,2);return i.t=n,i.__c||(i.__=[o?o(r):w(void 0,r),function(n){var t=i.t(i.__[0],n);i.__[0]!==t&&(i.__=[t,i.__[1]],i.__c.setState({}));}],i.__c=u),i.__}function y(r,o){var i=m(t++,3);!n.__s&&k(i.__H,o)&&(i.__=r,i.__H=o,u.__H.__h.push(i));}function s(n){return o=5,d(function(){return {current:n}},[])}function d(n,u){var r=m(t++,7);return k(r.__H,u)&&(r.__=n(),r.__H=u,r.__h=n),r.__}function x(){i.forEach(function(t){if(t.__P)try{t.__H.__h.forEach(g),t.__H.__h.forEach(j),t.__H.__h=[];}catch(u){t.__H.__h=[],n.__e(u,t.__v);}}),i=[];}n.__b=function(n){u=null,c&&c(n);},n.__r=function(n){f&&f(n),t=0;var r=(u=n.__c).__H;r&&(r.__h.forEach(g),r.__h.forEach(j),r.__h=[]);},n.diffed=function(t){e&&e(t);var o=t.__c;o&&o.__H&&o.__H.__h.length&&(1!==i.push(o)&&r===n.requestAnimationFrame||((r=n.requestAnimationFrame)||function(n){var t,u=function(){clearTimeout(r),b&&cancelAnimationFrame(t),setTimeout(n);},r=setTimeout(u,100);b&&(t=requestAnimationFrame(u));})(x)),u=void 0;},n.__c=function(t,u){u.some(function(t){try{t.__h.forEach(g),t.__h=t.__h.filter(function(n){return !n.__||j(n)});}catch(r){u.some(function(n){n.__h&&(n.__h=[]);}),u=[],n.__e(r,t.__v);}}),a&&a(t,u);},n.unmount=function(t){v&&v(t);var u=t.__c;if(u&&u.__H)try{u.__H.__.forEach(g);}catch(t){n.__e(t,u.__v);}};var b="function"==typeof requestAnimationFrame;function g(n){var t=u;"function"==typeof n.__c&&n.__c(),u=t;}function j(n){var t=u;n.__c=n.__(),u=t;}function k(n,t){return !n||n.length!==t.length||t.some(function(t,u){return t!==n[u]})}function w(n,t){return "function"==typeof t?t(n):t}
+
+    var map_state$7 = function (state) { return ({}); };
+    var connector$7 = connect(map_state$7);
+    var DisplayPhase;
+    (function (DisplayPhase) {
+        DisplayPhase[DisplayPhase["_1_waiting_for_doi_or_url"] = 1] = "_1_waiting_for_doi_or_url";
+        DisplayPhase[DisplayPhase["_2_waiting_for_unpaywall_email_address"] = 2] = "_2_waiting_for_unpaywall_email_address";
+        DisplayPhase[DisplayPhase["_3_searching_by_doi"] = 3] = "_3_searching_by_doi";
+        DisplayPhase[DisplayPhase["_4_have_doi_search_response"] = 4] = "_4_have_doi_search_response";
+    })(DisplayPhase || (DisplayPhase = {}));
+    function _SetPDF_URL_or_DOI(props) {
+        var _a = l(""), url_or_doi = _a[0], set_url_or_doi = _a[1];
+        var is_doi = !!(/^(10\.\d{4,5}\/[\S]+[^;,.\s])$/.exec(url_or_doi));
+        var initial_render = s(true);
+        var _b = l(DisplayPhase._1_waiting_for_doi_or_url), display_phase = _b[0], set_display_phase = _b[1];
+        var _c = l(get_unpaywall_email_address()), unpaywall_email_address = _c[0], _set_unpaywall_email_address = _c[1];
+        var _d = l(undefined), unpaywall_json = _d[0], set_unpaywall_json = _d[1];
+        y(function () {
+            if (!url_or_doi)
+                set_display_phase(DisplayPhase._1_waiting_for_doi_or_url);
+        }, [url_or_doi]);
+        function load_pdf(url, doi) {
+            var safe_url = url.includes("&") ? encodeURIComponent(url) : url;
+            var new_location = "url=" + safe_url;
+            if (doi)
+                new_location = "doi=" + doi + "&" + new_location;
+            new_location = "/r/?" + new_location;
+            document.location.href = new_location;
+        }
+        function set_unpaywall_email_address(email_address) {
+            _set_unpaywall_email_address(email_address);
+            localStorage.setItem(LOCAL_STORAGE_UNPAYWALL_EMAIL_ADDRESS_KEY, email_address);
+        }
+        function search_unpaywall() {
+            return __awaiter(this, void 0, void 0, function () {
+                var start_search, response, json, delay;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            set_display_phase(DisplayPhase._3_searching_by_doi);
+                            start_search = performance.now();
+                            return [4, fetch("https://api.unpaywall.org/v2/" + url_or_doi + "?email=" + unpaywall_email_address)];
+                        case 1:
+                            response = _a.sent();
+                            return [4, response.json()];
+                        case 2:
+                            json = _a.sent();
+                            delay = Math.max(2000 - (performance.now() - start_search), 0);
+                            setTimeout(function () {
+                                set_unpaywall_json(json);
+                                set_display_phase(DisplayPhase._4_have_doi_search_response);
+                            }, delay);
+                            return [2];
+                    }
+                });
+            });
+        }
+        var found_pdf_via_unpaywall = !!(unpaywall_json === null || unpaywall_json === void 0 ? void 0 : unpaywall_json.best_oa_location.url_for_pdf);
+        function display_phase_to_class(dp) {
+            if (dp < display_phase)
+                return "section pre_hidden";
+            if (dp === display_phase)
+                return "section";
+            return "section post_hidden";
+        }
+        return a$1("div", { className: "set_pdf_url_or_doi" },
+            "Enter a URL or DOI of a PDF to annotate...",
+            a$1("p", null,
+                a$1("input", { type: "text", placeholder: "Enter a URL or DOI", onInput: function (e) { return set_url_or_doi(e.currentTarget.value); }, onBlur: function (e) { return set_url_or_doi(e.currentTarget.value); }, ref: function (e) {
+                        if (!initial_render.current)
+                            return;
+                        initial_render.current = false;
+                        setTimeout(function () { return e && e.focus(); }, 0);
+                    } })),
+            a$1("p", { className: display_phase_to_class(DisplayPhase._1_waiting_for_doi_or_url) },
+                a$1("button", { disabled: !url_or_doi || is_doi, title: is_doi ? "Is a DOI not a URL" : "", onClick: function () { return load_pdf(url_or_doi); } }, "Load PDF"),
+                "\u00A0",
+                a$1("button", { disabled: !is_doi, title: is_doi ? "Is a URL not a DOI" : "", onClick: function () {
+                        if (!unpaywall_email_address) {
+                            set_display_phase(DisplayPhase._2_waiting_for_unpaywall_email_address);
+                            return;
+                        }
+                        search_unpaywall();
+                    } }, "Search unpaywall.org"),
+                a$1("br", null),
+                a$1("br", null),
+                a$1("div", { style: { color: "grey", cursor: "pointer" }, onClick: function () {
+                        set_display_phase(DisplayPhase._2_waiting_for_unpaywall_email_address);
+                    } },
+                    a$1("span", { style: { color: "blue" } }, "Edit"),
+                    " email address")),
+            a$1("p", { className: display_phase_to_class(DisplayPhase._2_waiting_for_unpaywall_email_address) },
+                "Unpaywall ",
+                a$1("a", { href: "https://unpaywall.org/products/api" }, "needs an email address"),
+                " to prevent abuse of their search function.",
+                a$1("br", null),
+                a$1("br", null),
+                a$1("input", { type: "text", style: { width: 200 }, placeholder: "Enter an email address for Unpaywall", value: unpaywall_email_address, onInput: function (e) { return set_unpaywall_email_address(e.currentTarget.value); }, onBlur: function (e) { return set_unpaywall_email_address(e.currentTarget.value); }, ref: function (e) {
+                        if (display_phase !== DisplayPhase._2_waiting_for_unpaywall_email_address)
+                            return;
+                        setTimeout(function () { return e && e.focus(); }, 0);
+                    } }),
+                a$1("br", null),
+                a$1("br", null),
+                a$1("button", { disabled: !is_doi || !unpaywall_email_address, onClick: function () { return search_unpaywall(); } }, "Search Unpaywall.org")),
+            a$1("p", { className: display_phase_to_class(DisplayPhase._3_searching_by_doi), style: {
+                    maxHeight: display_phase === DisplayPhase._3_searching_by_doi ? 100 : 0,
+                    padding: display_phase === DisplayPhase._3_searching_by_doi ? 20 : 0,
+                } },
+                "Searching Unpaywall using \"",
+                unpaywall_email_address,
+                "\"...",
+                a$1("br", null),
+                a$1("br", null),
+                a$1("div", { style: { color: "grey", cursor: "pointer" }, onClick: function () {
+                        set_display_phase(DisplayPhase._2_waiting_for_unpaywall_email_address);
+                    } },
+                    a$1("span", { style: { color: "blue" } }, "Edit"),
+                    " email address")),
+            a$1("p", { className: display_phase_to_class(DisplayPhase._4_have_doi_search_response) },
+                found_pdf_via_unpaywall ? "Success" : "Error",
+                a$1("br", null),
+                a$1("br", null),
+                a$1("div", { style: { color: found_pdf_via_unpaywall ? "black" : "#A00", cursor: "pointer" } }, unpaywall_json === null || unpaywall_json === void 0 ? void 0 :
+                    unpaywall_json.message,
+                    describe_article(unpaywall_json)),
+                a$1("br", null),
+                a$1("br", null),
+                a$1("button", { onClick: function () {
+                        found_pdf_via_unpaywall
+                            ? load_pdf(unpaywall_json === null || unpaywall_json === void 0 ? void 0 : unpaywall_json.best_oa_location.url_for_pdf, url_or_doi)
+                            : search_unpaywall();
+                    } }, found_pdf_via_unpaywall ? "Load PDF in Anot8" : "Search Unpaywall.org")));
+    }
+    var SetPDF_URL_or_DOI = connector$7(_SetPDF_URL_or_DOI);
+    var LOCAL_STORAGE_UNPAYWALL_EMAIL_ADDRESS_KEY = "unpaywall_email_address";
+    function get_unpaywall_email_address() {
+        return localStorage.getItem(LOCAL_STORAGE_UNPAYWALL_EMAIL_ADDRESS_KEY) || "";
+    }
+    function describe_article(unpaywall_json) {
+        if (!unpaywall_json)
+            return "";
+        var title = unpaywall_json.title, published_date = unpaywall_json.published_date, journal_name = unpaywall_json.journal_name;
+        var article_description = title;
+        if (published_date)
+            article_description += (" - " + published_date);
+        if (journal_name)
+            article_description += (" in " + journal_name);
+        return article_description;
+    }
 
     var map_state$6 = function (state) { return ({
         loading_status: state.loading_pdf.status,
@@ -1483,7 +1657,6 @@
     var connector$6 = connect(map_state$6);
     function _LoadingProgress(props) {
         var _a = l(true), visibility = _a[0], set_visibility = _a[1];
-        var _b = l(""), url = _b[0], set_url = _b[1];
         if (!visibility)
             return null;
         var loading_status = props.loading_status, rendering_status = props.rendering_status, max_pages = props.max_pages, page_number = props.page_number;
@@ -1509,15 +1682,7 @@
         var stage = props.stage, error_during_loading__type = props.error_during_loading__type, naming_authority = props.naming_authority, vault_id = props.vault_id, file_id = props.file_id;
         if (error_during_loading__type === "422") {
             if (stage === LoadingStage.analysing_location_path) {
-                return a$1("div", null,
-                    "Enter a URL of a PDF to annotate...",
-                    a$1("p", null,
-                        a$1("input", { type: "text", placeholder: "Enter a URL", onInput: function (e) { return set_url(e.currentTarget.value); }, onBlur: function (e) { return set_url(e.currentTarget.value); } })),
-                    a$1("p", null,
-                        a$1("button", { disabled: !url, onClick: function () {
-                                var safe_url = url.includes("&") ? encodeURIComponent(url) : url;
-                                document.location.href = "/r/?url=" + safe_url;
-                            } }, "Load PDF")));
+                return a$1(SetPDF_URL_or_DOI, null);
             }
         }
         var error_message = "Unknown error";
@@ -1531,6 +1696,14 @@
             else if (stage === LoadingStage.resolve_pdf_file_url) {
                 error_message = "No relative file path found for file id \"" + file_id + "\"";
             }
+        }
+        if (error_during_loading__type === "403" && stage === LoadingStage.fetch_pdf_by_proxy) {
+            error_message = a$1("div", null,
+                "Anot8 is using a donated proxy that requires you to periodically activate it.  Please click \"Request temporary access to the demo server\" on: ",
+                a$1("a", { href: "https://cors-anywhere.herokuapp.com/corsdemo", target: "_blank" }, "https://cors-anywhere.herokuapp.com/corsdemo"),
+                " and then try refreshing this page.",
+                a$1("br", null),
+                a$1("br", null));
         }
         return a$1("div", null,
             "Error: ",
@@ -1890,21 +2063,23 @@
     function AnnotationDetailsForm(props) {
         var _a = l(props.text), text = _a[0], set_text = _a[1];
         var _b = l(props.comment), comment = _b[0], set_comment = _b[1];
-        return a$1("div", null,
+        return a$1("div", { title: props.disabled },
             "Text: ",
-            a$1("input", { disabled: props.disabled, type: "text", id: "annotation_text", value: props.text, onChange: function (e) { return set_text(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }),
+            a$1("input", { disabled: !!props.disabled, type: "text", id: "annotation_text", value: props.text, onChange: function (e) { return set_text(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }),
             a$1("br", null),
             "Comment: ",
-            a$1("input", { disabled: props.disabled, type: "text", id: "annotation_comment", value: props.comment, onChange: function (e) { return set_comment(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }));
+            a$1("input", { disabled: !!props.disabled, type: "text", id: "annotation_comment", value: props.comment, onChange: function (e) { return set_comment(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }));
     }
 
     var map_state$3 = function (state, own_props) { return ({
         annotations: get_all_selected_annotations(state),
+        user_name: state.user.user_name,
         safe_user_name: state.user.safe_user_name,
+        running_locally: state.running_locally,
     }); };
     var connector$3 = connect(map_state$3);
     function _AnnotationDetails(props) {
-        var annotations = props.annotations, safe_user_name = props.safe_user_name;
+        var annotations = props.annotations, user_name = props.user_name, safe_user_name = props.safe_user_name;
         var annotation = annotations[0];
         if (!annotation) {
             return a$1("div", null, "No annotations selected");
@@ -1917,7 +2092,14 @@
                 var edited_annotation = __assign(__assign({}, annotation), changes);
                 get_store().dispatch(ACTIONS.annotations.edit_annotation({ annotation: edited_annotation }));
             };
-            return a$1(AnnotationDetailsForm, { disabled: annotation.safe_user_name !== safe_user_name, text: annotation.text, comment: annotation.comment, on_change: on_change });
+            var disabled = "";
+            if (!props.running_locally && !annotation.temporary) {
+                disabled = "To edit this annotation please run the local anot8 server.";
+            }
+            if (annotation.safe_user_name !== safe_user_name) {
+                disabled += "  Can only edit your own annotations.  You are: \"" + user_name + "\", this annotation was edited by: \"" + annotation.user_name + "\"";
+            }
+            return a$1(AnnotationDetailsForm, { disabled: disabled, text: annotation.text, comment: annotation.comment, on_change: on_change });
         }
     }
     var AnnotationDetails = connector$3(_AnnotationDetails);
@@ -2104,7 +2286,12 @@
                 var proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file;
                 pdfjsLib.getDocument(proxy_url_to_file).promise
                     .then(function (pdf) { return resolve(pdf); })
-                    .catch(function (e) { debugger; });
+                    .catch(function (error) {
+                    store.dispatch(ACTIONS.loading.error_during_loading({
+                        error_stage: LoadingStage.fetch_pdf_by_proxy,
+                        error_type: (error === null || error === void 0 ? void 0 : error.status) ? (error === null || error === void 0 ? void 0 : error.status.toString()) : "other",
+                    }));
+                });
             });
         });
     }
