@@ -167,7 +167,9 @@ function _SetPDF_URL_or_DOI (props: Props)
                     set_display_phase(DisplayPhase._2_waiting_for_unpaywall_email_address)
                 }}
             >
-                <span style={{ color: "blue" }}>Edit</span> email address
+                <span style={{ fontSize: "small" }}>
+                    <span style={{ color: "blue" }}>Edit</span> email address (for Unpaywall)
+                </span>
             </div>
         </p>
 
@@ -229,7 +231,9 @@ function _SetPDF_URL_or_DOI (props: Props)
                     set_display_phase(DisplayPhase._2_waiting_for_unpaywall_email_address)
                 }}
             >
-                <span style={{ color: "blue" }}>Edit</span> email address
+                <span style={{ fontSize: "small" }}>
+                    <span style={{ color: "blue" }}>Edit</span> email address (for Unpaywall)
+                </span>
             </div>
         </p>
 

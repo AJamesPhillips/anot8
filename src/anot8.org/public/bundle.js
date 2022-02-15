@@ -1581,8 +1581,9 @@
                 a$1("div", { style: { color: "grey", cursor: "pointer" }, onClick: function () {
                         set_display_phase(DisplayPhase._2_waiting_for_unpaywall_email_address);
                     } },
-                    a$1("span", { style: { color: "blue" } }, "Edit"),
-                    " email address")),
+                    a$1("span", { style: { fontSize: "small" } },
+                        a$1("span", { style: { color: "blue" } }, "Edit"),
+                        " email address (for Unpaywall)"))),
             a$1("p", { className: display_phase_to_class(DisplayPhase._2_waiting_for_unpaywall_email_address) },
                 "Unpaywall ",
                 a$1("a", { href: "https://unpaywall.org/products/api" }, "needs an email address"),
@@ -1609,8 +1610,9 @@
                 a$1("div", { style: { color: "grey", cursor: "pointer" }, onClick: function () {
                         set_display_phase(DisplayPhase._2_waiting_for_unpaywall_email_address);
                     } },
-                    a$1("span", { style: { color: "blue" } }, "Edit"),
-                    " email address")),
+                    a$1("span", { style: { fontSize: "small" } },
+                        a$1("span", { style: { color: "blue" } }, "Edit"),
+                        " email address (for Unpaywall)"))),
             a$1("p", { className: display_phase_to_class(DisplayPhase._4_have_doi_search_response) },
                 found_pdf_via_unpaywall ? "Success" : "Error",
                 a$1("br", null),

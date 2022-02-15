@@ -4,6 +4,15 @@
         body
         {
             font-family: sans-serif;
+            padding: 30px 60px;
+            width: 50%;
+        }
+
+        @media screen and (max-width: 800px) {
+            body {
+                padding: 10px 20px;
+                width: initial;
+            }
         }
 
         .alpha
@@ -19,7 +28,7 @@
     <h1>Annotations Server <span class="alpha">Alpha</span></h1>
 
     <div>
-        <h4>Welcome</h4>
+        <h3>Welcome</h3>
     </div>
 
     <div>
@@ -28,18 +37,23 @@
 
     <br />
     <div>
-        <h4>Example</h4>
+        <h3>Example</h3>
         <a href="https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0">https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0</a>
     </div>
 
     <br />
-    <h4>Or <a href="/r/">specify a PDF's URL</a></h4>
+    <h3>Or <a href="/r/">specify a PDF's URL or DOI</a></h3>
     <p>
-        Anot8 was built to work as a local server for annotating your PDFs.  It now supports loading any PDF <a href="/r/">by a URL</a>.
+        Anot8 was built to work as a local server for annotating your PDFs, however it now also supports loading any PDF <a href="/r/">by a URL</a> and searching <a href="https://Unpaywall.org">Unpaywall.org</a> by DOI for free copies of articles.
+    </p>
+
+    <b>"Temporary" annotations</b>
+    <p>
+        It also allows you to add, edit and delete "temporary" annotations that are only stored in the URL of the page.  This means Anot8 never stores your private data, and you have no dependence on Anot8 or our server, but can still embed links to other annotated documents in to your own documents for others to use.
     </p>
 
     <br />
-    <h4>Auto redirect</h4>
+    <h3>Auto redirect</h3>
     <div id="auto_redirect_options">
 
     </div>
