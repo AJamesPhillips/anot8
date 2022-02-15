@@ -2557,8 +2557,9 @@
                 obj["h"] = selected_compound_ids.join(",");
             }
             var _a = state.routing, naming_authority = _a.naming_authority, vault_id = _a.vault_id, file_id = _a.file_id;
-            if (obj["url"] && naming_authority && vault_id && file_id) {
+            if (naming_authority && vault_id && file_id) {
                 delete obj["url"];
+                delete obj["doi"];
             }
             var temp_annotations = state.annotations.all_annotations.filter(function (_a) {
                 var temporary = _a.temporary;
