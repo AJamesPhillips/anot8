@@ -15,7 +15,9 @@ interface OwnProps {}
 
 const map_state = (state: State, own_props: OwnProps) => ({
     annotations: get_all_selected_annotations(state),
+    user_name: state.user.user_name,
     safe_user_name: state.user.safe_user_name,
+    running_locally: state.running_locally,
 })
 type Props = ReturnType<typeof map_state>
 const connector = connect(map_state)
@@ -24,7 +26,7 @@ const connector = connect(map_state)
 
 function _AnnotationDetails (props: Props)
 {
-    const { annotations, safe_user_name } = props
+    const { annotations, user_name, safe_user_name } = props
 
     const annotation = annotations[0]
 
@@ -47,8 +49,19 @@ function _AnnotationDetails (props: Props)
             get_store().dispatch(ACTIONS.annotations.edit_annotation({ annotation: edited_annotation }))
         }
 
+        let disabled = ""
+        if (!props.running_locally && !annotation.temporary)
+        {
+            disabled = "To edit this annotation please run the local anot8 server."
+        }
+
+        if (annotation.safe_user_name !== safe_user_name)
+        {
+            disabled += `  Can only edit your own annotations.  You are: "${user_name}", this annotation was edited by: "${annotation.user_name}"`
+        }
+
         return <AnnotationDetailsForm
-            disabled={annotation.safe_user_name !== safe_user_name}
+            disabled={disabled}
             text={annotation.text}
             comment={annotation.comment}
             on_change={on_change}

@@ -76,11 +76,12 @@ function _LabelComponent (props: Props)
     return <div
         className={class_name}
         onClick={() => toggle_label()}
+        title={props.disabled}
     >
         <input
             type="checkbox"
             className="label_checkbox"
-            disabled={props.disabled}
+            disabled={!!props.disabled}
             checked={props.checked}
             ref={e => e && (e.indeterminate = props.indeterminate)}
             onChange={e => {e.stopPropagation(); toggle_label()}}
@@ -103,17 +104,29 @@ export const LabelComponent = connector(_LabelComponent)
 
 
 
-function is_disabled(state: State): boolean {
-    return (
-        state.selected_annotations.selected_compound_ids.length !== 1
-        || !!get_all_selected_annotations(state)
-            .find(({ safe_user_name }) => safe_user_name !== state.user.safe_user_name)
-    )
+function is_disabled (state: State): string
+{
+    const all_selected_annotations = get_all_selected_annotations(state)
+    const an_annotation = all_selected_annotations[0]
+
+    if (!an_annotation) return "Please select an annotation"
+
+    if (all_selected_annotations.length > 1) return "Editing labels of multiple annotations is not yet supported.  Please select only one annotation."
+
+    if (!state.running_locally && !an_annotation.temporary) return "Please run the local anot8 server to edit this label."
+
+    const annotation_by_a_different_user = all_selected_annotations
+        .find(({ safe_user_name }) => safe_user_name !== state.user.safe_user_name)
+
+    if (annotation_by_a_different_user) return `Can only edit your own annotations.  You are: "${state.user.user_name}", this annotation was edited by: "${annotation_by_a_different_user.user_name}"`
+
+    return ""
 }
 
 
 
-function matches_search_string (label: Label, search_string: string) {
+function matches_search_string (label: Label, search_string: string)
+{
     if (!search_string) return true
 
     return label.lower_case_value.includes(search_string.toLowerCase())
@@ -121,7 +134,8 @@ function matches_search_string (label: Label, search_string: string) {
 
 
 
-function is_checked_or_indeterminate (label: Label | undefined, state: State) {
+function is_checked_or_indeterminate (label: Label | undefined, state: State)
+{
     const count = state.labels.labels_used_by_selected_annotations[label?.value || ""] || 0
 
     const checked = count > 0

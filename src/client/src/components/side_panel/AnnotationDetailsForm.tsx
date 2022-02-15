@@ -7,7 +7,7 @@ import { Annotation } from "../../state/interfaces"
 
 interface Props
 {
-    disabled: boolean
+    disabled: string
     text: string
     comment: string
     on_change: (changes: Partial<Annotation>) => void
@@ -17,9 +17,9 @@ export function AnnotationDetailsForm (props: Props)
     const [text, set_text] = useState(props.text)
     const [comment, set_comment] = useState(props.comment)
 
-    return <div>
+    return <div title={props.disabled}>
         Text: <input
-            disabled={props.disabled}
+            disabled={!!props.disabled}
             type="text"
             id="annotation_text"
             value={props.text}
@@ -28,7 +28,7 @@ export function AnnotationDetailsForm (props: Props)
         />
         <br/>
         Comment: <input
-            disabled={props.disabled}
+            disabled={!!props.disabled}
             type="text"
             id="annotation_comment"
             value={props.comment}
