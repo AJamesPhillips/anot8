@@ -25,7 +25,7 @@ export function AnnotationListEntry (props: OwnProps)
         className={className}
         onClick={on_click}
     >
-        {dirty && <span style={{ backgroundColor: "yellow" }}>⚠</span>}
+        {dirty && <span className="warning_unsaved" title="Annotation not saved">⚠</span>}
         {text}
         <br /><br />
         <div style={{ float: "left" }}>
