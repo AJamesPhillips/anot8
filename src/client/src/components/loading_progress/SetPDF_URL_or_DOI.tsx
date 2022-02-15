@@ -9,6 +9,7 @@ interface OwnProps {}
 
 
 const map_state = (state: State) => ({
+    doi: state.routing.doi,
 })
 type Props = ReturnType<typeof map_state> & OwnProps
 const connector = connect(map_state)
@@ -42,7 +43,9 @@ type UnpaywallJSONResponse = UnpaywallJSONSuccessResponse & UnpaywallJSONErrorRe
 
 function _SetPDF_URL_or_DOI (props: Props)
 {
-    const [url_or_doi, set_url_or_doi] = useState("")
+    // If there's a `doi` param, then populate the form with that
+    const initial_url_or_doi = props.doi || ""
+    const [url_or_doi, set_url_or_doi] = useState(initial_url_or_doi)
     const is_doi = !!(/^(10\.\d{4,5}\/[\S]+[^;,.\s])$/.exec(url_or_doi))
     const initial_render = useRef(true)
 
@@ -114,6 +117,7 @@ function _SetPDF_URL_or_DOI (props: Props)
             <input
                 type="text"
                 placeholder="Enter a URL or DOI"
+                value={url_or_doi}
                 onInput={e => set_url_or_doi(e.currentTarget.value)}
                 onBlur={e => set_url_or_doi(e.currentTarget.value)}
                 ref={e =>

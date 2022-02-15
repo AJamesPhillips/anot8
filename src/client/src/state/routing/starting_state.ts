@@ -32,6 +32,6 @@ export function get_starting_routing_state (): RoutingState
         ...path_location,
         relative_file_path: vars.relative_file_path,
         url: have_valid_path_location ? undefined : vars.url,
-        doi: undefined, //vars.doi,
+        doi: vars.doi,
     }
 }
