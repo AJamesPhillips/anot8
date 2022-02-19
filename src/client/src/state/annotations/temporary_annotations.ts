@@ -1,4 +1,5 @@
 import { Annotation } from "../interfaces"
+import { get_compound_id } from "./utils"
 
 
 
@@ -85,7 +86,8 @@ export function inflate_temporary_annotations (temp_annotations: string | undefi
 
                 user_name: "",
                 safe_user_name: "",
-                compound_id: `${id}`, // assume it is from the anonymous / root user
+                // assume it is from the anonymous / root user
+                compound_id: get_compound_id({ id, safe_user_name: "" }),
 
                 dirty: true,
                 temporary: true,

@@ -84,18 +84,20 @@ function _LabelComponent (props: Props)
             disabled={!!props.disabled}
             checked={props.checked}
             ref={e => e && (e.indeterminate = props.indeterminate)}
-            onChange={e => {e.stopPropagation(); toggle_label()}}
+            onChange={e => e.stopPropagation()}
         />
 
         {label.display_text}
 
         <span
             className="priority_label"
-            onClick={e => {
+            onClick={e =>
+            {
                 e.stopPropagation()
+                e.stopImmediatePropagation() // otherwise we also toggle the label
                 store.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: label.value }))
             }}
-            dangerouslySetInnerHTML={{__html: priority ? "&starf;" : "&star;" }}
+            dangerouslySetInnerHTML={{ __html: priority ? "&starf;" : "&star;" }}
         />
     </div>
 }

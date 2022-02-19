@@ -8,6 +8,7 @@ import { LoadingStage, State } from "../state/state"
 import { get_store } from "../state/store"
 import { AnnotationsFile } from "../state/interfaces"
 import { get_safe_user_name } from "../state/user/utils"
+import { santise_annotations_file } from "../utils/santise_annotations_file"
 
 
 
@@ -91,6 +92,7 @@ function fetch_annotation_file ({ store, user_name }: FetchAnnotationFileArgs)
     .then(resp => resp.json())
     .then((annotations_file: AnnotationsFile) =>
     {
+        annotations_file = santise_annotations_file(annotations_file)
         store.dispatch(ACTIONS.annotations.got_annotations_file({ annotations_file, user_name }))
 
         return annotations_file

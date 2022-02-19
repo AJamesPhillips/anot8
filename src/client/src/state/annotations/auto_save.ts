@@ -1,4 +1,5 @@
 import { Store } from "redux"
+import { santise_annotations_file } from "../../utils/santise_annotations_file"
 import { ACTIONS } from "../actions"
 
 import { AnnotationsFile, MaybeAnnotation } from "../interfaces"
@@ -50,6 +51,7 @@ export function auto_save (store: Store<State>)
         post_annotations_to_server(store, current_annotations, user_name)
         .then(annotations_file =>
         {
+            annotations_file = santise_annotations_file(annotations_file)
             store.dispatch(ACTIONS.annotations.got_replacement_annotations_file({ annotations_file, user_name }))
         })
         .catch(err =>

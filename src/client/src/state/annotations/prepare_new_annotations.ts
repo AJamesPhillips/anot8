@@ -1,5 +1,10 @@
 import { MaybeAnnotation, Annotation } from "../interfaces"
-import { State, AnnotationsBySafeUserName, AnnotationsByPageNumber, AnnotationsByCompoundId, AnnotationsState } from "../state"
+import {
+    AnnotationsBySafeUserName,
+    AnnotationsByPageNumber,
+    AnnotationsByCompoundId,
+    AnnotationsState,
+} from "../state"
 import { get_all_annotations } from "./getters"
 import { is_not_deleted } from "./utils"
 
@@ -22,7 +27,7 @@ export function prepare_new_annotations (args: PrepareNewAnnotationsArgs)
         new_annotations: new_maybe_annotations,
         safe_user_name,
         // allow_merge,
-        // allow_overwrite,
+        allow_overwrite,
     })
 
     const all_annotations = get_all_annotations(annotations_by_safe_user_name)
@@ -51,7 +56,7 @@ interface AddNewAnnotationsBySafeUserNameArgs
     new_annotations: MaybeAnnotation[]
     safe_user_name: string
     // allow_merge: boolean
-    // allow_overwrite: boolean
+    allow_overwrite: boolean
 }
 function add_new_annotations_by_safe_user_name (args: AddNewAnnotationsBySafeUserNameArgs): AnnotationsBySafeUserName
 {
@@ -59,12 +64,12 @@ function add_new_annotations_by_safe_user_name (args: AddNewAnnotationsBySafeUse
         annotations_by_safe_user_name,
         safe_user_name,
         // allow_merge,
-        // allow_overwrite,
+        allow_overwrite,
     } = args
     let { new_annotations } = args
 
     const existing_annotations = annotations_by_safe_user_name[safe_user_name] || []
-    new_annotations = [...existing_annotations, ...new_annotations]
+    new_annotations = allow_overwrite ? new_annotations : [...existing_annotations, ...new_annotations]
 
     return {
         ...annotations_by_safe_user_name,
