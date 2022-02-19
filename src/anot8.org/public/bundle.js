@@ -519,7 +519,7 @@
     }
     function get_compound_id(_a) {
         var id = _a.id, safe_user_name = _a.safe_user_name;
-        return safe_user_name ? id + "-" + (safe_user_name || "") : id.toString();
+        return safe_user_name ? id + "-" + safe_user_name : id.toString();
     }
 
     function get_all_annotations(annotations_by_safe_user_name) {
@@ -561,6 +561,7 @@
             annotations_by_safe_user_name: annotations_state.annotations_by_safe_user_name,
             new_annotations: new_maybe_annotations,
             safe_user_name: safe_user_name,
+            allow_overwrite: allow_overwrite,
         });
         var all_annotations = get_all_annotations(annotations_by_safe_user_name);
         var new_annotations = new_maybe_annotations.filter(is_not_deleted);
@@ -577,10 +578,10 @@
     }
     function add_new_annotations_by_safe_user_name(args) {
         var _a;
-        var annotations_by_safe_user_name = args.annotations_by_safe_user_name, safe_user_name = args.safe_user_name;
+        var annotations_by_safe_user_name = args.annotations_by_safe_user_name, safe_user_name = args.safe_user_name, allow_overwrite = args.allow_overwrite;
         var new_annotations = args.new_annotations;
         var existing_annotations = annotations_by_safe_user_name[safe_user_name] || [];
-        new_annotations = __spreadArray(__spreadArray([], existing_annotations), new_annotations);
+        new_annotations = allow_overwrite ? new_annotations : __spreadArray(__spreadArray([], existing_annotations), new_annotations);
         return __assign(__assign({}, annotations_by_safe_user_name), (_a = {}, _a[safe_user_name] = new_annotations, _a));
     }
     function get_annotations_by_page_number(all_annotations) {
@@ -1146,7 +1147,7 @@
                     height: height + "px",
                     user_name: "",
                     safe_user_name: "",
-                    compound_id: "" + id,
+                    compound_id: get_compound_id({ id: id, safe_user_name: "" }),
                     dirty: true,
                     temporary: true,
                 };
@@ -1216,7 +1217,7 @@
         var path_location = parse_location_path();
         var vars = parse_location_search();
         var have_valid_path_location = !!path_location.naming_authority && !!path_location.vault_id && !!path_location.file_id;
-        return __assign(__assign({}, path_location), { relative_file_path: vars.relative_file_path, url: have_valid_path_location ? undefined : vars.url, doi: undefined });
+        return __assign(__assign({}, path_location), { relative_file_path: vars.relative_file_path, url: have_valid_path_location ? undefined : vars.url, doi: vars.doi });
     }
 
     function get_starting_selected_annotations_state() {
@@ -1417,10 +1418,11 @@
         }
         var class_name = "label " + (is_used ? "used_label" : "") + " " + (priority ? "priority" : "");
         return a$1("div", { className: class_name, onClick: function () { return toggle_label(); }, title: props.disabled },
-            a$1("input", { type: "checkbox", className: "label_checkbox", disabled: !!props.disabled, checked: props.checked, ref: function (e) { return e && (e.indeterminate = props.indeterminate); }, onChange: function (e) { e.stopPropagation(); toggle_label(); } }),
+            a$1("input", { type: "checkbox", className: "label_checkbox", disabled: !!props.disabled, checked: props.checked, ref: function (e) { return e && (e.indeterminate = props.indeterminate); }, onChange: function (e) { return e.stopPropagation(); } }),
             label.display_text,
             a$1("span", { className: "priority_label", onClick: function (e) {
                     e.stopPropagation();
+                    e.stopImmediatePropagation();
                     store$2.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: label.value }));
                 }, dangerouslySetInnerHTML: { __html: priority ? "&starf;" : "&star;" } }));
     }
@@ -1493,7 +1495,9 @@
 
     var t,u,r,o=0,i=[],c=n.__b,f=n.__r,e=n.diffed,a=n.__c,v=n.unmount;function m(t,r){n.__h&&n.__h(u,t,o||r),o=0;var i=u.__H||(u.__H={__:[],__h:[]});return t>=i.__.length&&i.__.push({}),i.__[t]}function l(n){return o=1,p(w,n)}function p(n,r,o){var i=m(t++,2);return i.t=n,i.__c||(i.__=[o?o(r):w(void 0,r),function(n){var t=i.t(i.__[0],n);i.__[0]!==t&&(i.__=[t,i.__[1]],i.__c.setState({}));}],i.__c=u),i.__}function y(r,o){var i=m(t++,3);!n.__s&&k(i.__H,o)&&(i.__=r,i.__H=o,u.__H.__h.push(i));}function s(n){return o=5,d(function(){return {current:n}},[])}function d(n,u){var r=m(t++,7);return k(r.__H,u)&&(r.__=n(),r.__H=u,r.__h=n),r.__}function x(){i.forEach(function(t){if(t.__P)try{t.__H.__h.forEach(g),t.__H.__h.forEach(j),t.__H.__h=[];}catch(u){t.__H.__h=[],n.__e(u,t.__v);}}),i=[];}n.__b=function(n){u=null,c&&c(n);},n.__r=function(n){f&&f(n),t=0;var r=(u=n.__c).__H;r&&(r.__h.forEach(g),r.__h.forEach(j),r.__h=[]);},n.diffed=function(t){e&&e(t);var o=t.__c;o&&o.__H&&o.__H.__h.length&&(1!==i.push(o)&&r===n.requestAnimationFrame||((r=n.requestAnimationFrame)||function(n){var t,u=function(){clearTimeout(r),b&&cancelAnimationFrame(t),setTimeout(n);},r=setTimeout(u,100);b&&(t=requestAnimationFrame(u));})(x)),u=void 0;},n.__c=function(t,u){u.some(function(t){try{t.__h.forEach(g),t.__h=t.__h.filter(function(n){return !n.__||j(n)});}catch(r){u.some(function(n){n.__h&&(n.__h=[]);}),u=[],n.__e(r,t.__v);}}),a&&a(t,u);},n.unmount=function(t){v&&v(t);var u=t.__c;if(u&&u.__H)try{u.__H.__.forEach(g);}catch(t){n.__e(t,u.__v);}};var b="function"==typeof requestAnimationFrame;function g(n){var t=u;"function"==typeof n.__c&&n.__c(),u=t;}function j(n){var t=u;n.__c=n.__(),u=t;}function k(n,t){return !n||n.length!==t.length||t.some(function(t,u){return t!==n[u]})}function w(n,t){return "function"==typeof t?t(n):t}
 
-    var map_state$7 = function (state) { return ({}); };
+    var map_state$7 = function (state) { return ({
+        doi: state.routing.doi,
+    }); };
     var connector$7 = connect(map_state$7);
     var DisplayPhase;
     (function (DisplayPhase) {
@@ -1503,7 +1507,8 @@
         DisplayPhase[DisplayPhase["_4_have_doi_search_response"] = 4] = "_4_have_doi_search_response";
     })(DisplayPhase || (DisplayPhase = {}));
     function _SetPDF_URL_or_DOI(props) {
-        var _a = l(""), url_or_doi = _a[0], set_url_or_doi = _a[1];
+        var initial_url_or_doi = props.doi || "";
+        var _a = l(initial_url_or_doi), url_or_doi = _a[0], set_url_or_doi = _a[1];
         var is_doi = !!(/^(10\.\d{4,5}\/[\S]+[^;,.\s])$/.exec(url_or_doi));
         var initial_render = s(true);
         var _b = l(DisplayPhase._1_waiting_for_doi_or_url), display_phase = _b[0], set_display_phase = _b[1];
@@ -1560,7 +1565,7 @@
         return a$1("div", { className: "set_pdf_url_or_doi" },
             "Enter a URL or DOI of a PDF to annotate...",
             a$1("p", null,
-                a$1("input", { type: "text", placeholder: "Enter a URL or DOI", onInput: function (e) { return set_url_or_doi(e.currentTarget.value); }, onBlur: function (e) { return set_url_or_doi(e.currentTarget.value); }, ref: function (e) {
+                a$1("input", { type: "text", placeholder: "Enter a URL or DOI", value: url_or_doi, onInput: function (e) { return set_url_or_doi(e.currentTarget.value); }, onBlur: function (e) { return set_url_or_doi(e.currentTarget.value); }, ref: function (e) {
                         if (!initial_render.current)
                             return;
                         initial_render.current = false;
@@ -2273,6 +2278,13 @@
     }
     var TopInfoPanel = connector(_TopInfoPanel);
 
+    function santise_annotations_file(annotations_file) {
+        return __assign(__assign({}, annotations_file), { annotations: annotations_file.annotations.map(sanitise_annotation) });
+    }
+    function sanitise_annotation(annotation) {
+        return __assign(__assign({}, annotation), { compound_id: "" + annotation.compound_id });
+    }
+
     function fetch_files() {
         var store = get_store();
         fetch_annotation_files(store);
@@ -2324,6 +2336,7 @@
         return fetch(file_annotations_url)
             .then(function (resp) { return resp.json(); })
             .then(function (annotations_file) {
+            annotations_file = santise_annotations_file(annotations_file);
             store.dispatch(ACTIONS.annotations.got_annotations_file({ annotations_file: annotations_file, user_name: user_name }));
             return annotations_file;
         });
@@ -2459,6 +2472,7 @@
             store.dispatch(ACTIONS.annotations.progress_saving_annotations({ status: "saving" }));
             post_annotations_to_server(store, current_annotations, user_name)
                 .then(function (annotations_file) {
+                annotations_file = santise_annotations_file(annotations_file);
                 store.dispatch(ACTIONS.annotations.got_replacement_annotations_file({ annotations_file: annotations_file, user_name: user_name }));
             })
                 .catch(function (err) {
