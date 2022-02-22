@@ -6,7 +6,7 @@ import { ACTIONS } from "../../state/actions"
 import { State } from "../../state/state"
 import { get_store } from "../../state/store"
 import { add_annotations_to_PDF_page } from "../annotations_on_pdf/annotations_on_pdf"
-import { add_canvas_mouse_event_handlers } from "./add_canvas_mouse_event_handlers"
+import { add_canvas_pointer_event_handlers } from "./add_canvas_mouse_event_handlers"
 
 
 
@@ -51,7 +51,7 @@ function render_pdf_page ({ pdf, pages_container_el, page_number, store }: Rende
         page.render(render_context)
         .promise.then(() =>
         {
-            add_canvas_mouse_event_handlers({ store, canvas, annotations_container_el, page_number })
+            add_canvas_pointer_event_handlers({ store, canvas, annotations_container_el, page_number })
             add_annotations_to_PDF_page({ annotations_container_el, page_number })
             store.dispatch(ACTIONS.pdf_rendering.rendered_page({ page_number }))
 

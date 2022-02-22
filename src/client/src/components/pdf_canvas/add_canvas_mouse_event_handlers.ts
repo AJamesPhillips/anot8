@@ -10,26 +10,26 @@ import { create_empty_annotation_el } from "../annotations_on_pdf/AnnotationOnPD
 
 
 
-interface AddCanvasMouseEventHandlersArgs
+interface AddCanvasPointerEventHandlersArgs
 {
     store: Store<State>
     canvas: HTMLCanvasElement
     annotations_container_el: HTMLElement
     page_number: number
 }
-export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_container_el, page_number }: AddCanvasMouseEventHandlersArgs)
+export function add_canvas_pointer_event_handlers ({ store, canvas, annotations_container_el, page_number }: AddCanvasPointerEventHandlersArgs)
 {
     const {
-        mouse_down_handler,
-        mouse_moved_handler,
-        mouse_up_handler,
-    } = create_mouse_handlers({ annotations_container_el, page_number })
+        pointer_down_handler,
+        pointer_moved_handler,
+        pointer_up_handler,
+    } = create_pointer_handlers({ annotations_container_el, page_number })
 
     let editing_on_this_canvas = false
     let left: number
     let top: number
 
-    canvas.onmousedown = function (e)
+    canvas.onpointerdown = function (e)
     {
         editing_on_this_canvas = true
 
@@ -42,10 +42,10 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
         const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
         const y = e.clientY - top + document.body.scrollTop
 
-        mouse_down_handler({ x, y })
+        pointer_down_handler({ x, y })
     }
 
-    canvas.onmousemove = function (e)
+    canvas.onpointermove = function (e)
     {
         if (!editing_on_this_canvas) return
 
@@ -53,10 +53,10 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
 
         const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
         const y = e.clientY - top + document.body.scrollTop
-        mouse_moved_handler({ x, y })
+        pointer_moved_handler({ x, y })
     }
 
-    canvas.onmouseup = function (e)
+    canvas.onpointerup = function (e)
     {
         if (!editing_on_this_canvas) return
         editing_on_this_canvas = false
@@ -65,7 +65,7 @@ export function add_canvas_mouse_event_handlers ({ store, canvas, annotations_co
 
         const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
         const y = e.clientY - top + document.body.scrollTop
-        const partial_annotation = mouse_up_handler({ x, y })
+        const partial_annotation = pointer_up_handler({ x, y })
 
         if (partial_annotation)
         {
@@ -85,12 +85,12 @@ interface Point
 
 
 
-interface CreateMouseHandlersArgs
+interface CreatePointerHandlersArgs
 {
     annotations_container_el: HTMLElement
     page_number: number
 }
-function create_mouse_handlers ({ annotations_container_el, page_number }: CreateMouseHandlersArgs)
+function create_pointer_handlers ({ annotations_container_el, page_number }: CreatePointerHandlersArgs)
 {
     let highlight_start_x: number
     let highlight_start_y: number
@@ -109,7 +109,7 @@ function create_mouse_handlers ({ annotations_container_el, page_number }: Creat
         temp_annotation_el = undefined
     }
 
-    function mouse_down_handler ({ x, y }: Point)
+    function pointer_down_handler ({ x, y }: Point)
     {
         reset()
 
@@ -121,7 +121,7 @@ function create_mouse_handlers ({ annotations_container_el, page_number }: Creat
     }
 
 
-    function mouse_moved_handler ({ x, y }: Point)
+    function pointer_moved_handler ({ x, y }: Point)
     {
         highlight_end_x = x
         highlight_end_y = y
@@ -132,7 +132,7 @@ function create_mouse_handlers ({ annotations_container_el, page_number }: Creat
     }
 
 
-    function mouse_up_handler ({ x, y }: Point): Annotation | undefined
+    function pointer_up_handler ({ x, y }: Point): Annotation | undefined
     {
         highlight_end_x = x
         highlight_end_y = y
@@ -206,9 +206,9 @@ function create_mouse_handlers ({ annotations_container_el, page_number }: Creat
 
 
     return {
-        mouse_down_handler,
-        mouse_moved_handler,
-        mouse_up_handler,
+        pointer_down_handler,
+        pointer_moved_handler,
+        pointer_up_handler,
     }
 }
 
