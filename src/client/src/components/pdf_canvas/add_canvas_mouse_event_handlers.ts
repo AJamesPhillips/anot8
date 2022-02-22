@@ -17,6 +17,14 @@ interface AddCanvasPointerEventHandlersArgs
     annotations_container_el: HTMLElement
     page_number: number
 }
+
+enum PointerInteraction
+{
+    none,
+    editing,
+    moving,
+}
+
 export function add_canvas_pointer_event_handlers ({ store, canvas, annotations_container_el, page_number }: AddCanvasPointerEventHandlersArgs)
 {
     const {
@@ -25,13 +33,19 @@ export function add_canvas_pointer_event_handlers ({ store, canvas, annotations_
         pointer_up_handler,
     } = create_pointer_handlers({ annotations_container_el, page_number })
 
-    let editing_on_this_canvas = false
+    let pointer_interaction_on_this_canvas = PointerInteraction.none
     let left: number
     let top: number
 
+    let down_at_x: number
+
     canvas.onpointerdown = function (e)
     {
-        editing_on_this_canvas = true
+        const left_button = e.button === 0
+        const middle_button = e.button === 1
+
+        pointer_interaction_on_this_canvas = left_button ? PointerInteraction.editing
+            : (middle_button ? PointerInteraction.moving : PointerInteraction.none)
 
         const position = get_element_position(canvas)
         left = position.left
@@ -40,6 +54,7 @@ export function add_canvas_pointer_event_handlers ({ store, canvas, annotations_
         const pages_container_scroll_left = document.getElementById("pages_container")?.scrollLeft ?? 0
 
         const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
+        down_at_x = x
         const y = e.clientY - top + document.body.scrollTop
 
         pointer_down_handler({ x, y })
@@ -47,19 +62,34 @@ export function add_canvas_pointer_event_handlers ({ store, canvas, annotations_
 
     canvas.onpointermove = function (e)
     {
-        if (!editing_on_this_canvas) return
+        if (pointer_interaction_on_this_canvas === PointerInteraction.none) return
 
-        const pages_container_scroll_left = document.getElementById("pages_container")?.scrollLeft ?? 0
+        const pages_container_el = document.getElementById("pages_container")
 
-        const x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left
+        let x = e.clientX - left + document.body.scrollLeft
+
+        if (pointer_interaction_on_this_canvas === PointerInteraction.moving)
+        {
+            const scroll_left = down_at_x - x
+            pages_container_el?.scroll({ left: scroll_left })
+            return
+        }
+
+        const pages_container_scroll_left = pages_container_el?.scrollLeft ?? 0
+        x += pages_container_scroll_left
+
         const y = e.clientY - top + document.body.scrollTop
         pointer_moved_handler({ x, y })
     }
 
     canvas.onpointerup = function (e)
     {
-        if (!editing_on_this_canvas) return
-        editing_on_this_canvas = false
+        if (pointer_interaction_on_this_canvas === PointerInteraction.none) return
+
+        const was_editing = pointer_interaction_on_this_canvas === PointerInteraction.editing
+        pointer_interaction_on_this_canvas = PointerInteraction.none
+
+        if (!was_editing) return
 
         const pages_container_scroll_left = document.getElementById("pages_container")?.scrollLeft ?? 0
 
