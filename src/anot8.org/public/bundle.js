@@ -1771,48 +1771,69 @@
         return { top: top, left: left };
     }
 
-    function add_canvas_mouse_event_handlers(_a) {
+    var PointerInteraction;
+    (function (PointerInteraction) {
+        PointerInteraction[PointerInteraction["none"] = 0] = "none";
+        PointerInteraction[PointerInteraction["editing"] = 1] = "editing";
+        PointerInteraction[PointerInteraction["moving"] = 2] = "moving";
+    })(PointerInteraction || (PointerInteraction = {}));
+    function add_canvas_pointer_event_handlers(_a) {
         var store = _a.store, canvas = _a.canvas, annotations_container_el = _a.annotations_container_el, page_number = _a.page_number;
-        var _b = create_mouse_handlers({ annotations_container_el: annotations_container_el, page_number: page_number }), mouse_down_handler = _b.mouse_down_handler, mouse_moved_handler = _b.mouse_moved_handler, mouse_up_handler = _b.mouse_up_handler;
-        var editing_on_this_canvas = false;
+        var _b = create_pointer_handlers({ annotations_container_el: annotations_container_el, page_number: page_number }), pointer_down_handler = _b.pointer_down_handler, pointer_moved_handler = _b.pointer_moved_handler, pointer_up_handler = _b.pointer_up_handler;
+        var pointer_interaction_on_this_canvas = PointerInteraction.none;
         var left;
         var top;
-        canvas.onmousedown = function (e) {
+        var down_at_x;
+        canvas.onpointerdown = function (e) {
             var _a, _b;
-            editing_on_this_canvas = true;
+            var left_button = e.button === 0;
+            var middle_button = e.button === 1;
+            pointer_interaction_on_this_canvas = left_button ? PointerInteraction.editing
+                : (middle_button ? PointerInteraction.moving : PointerInteraction.none);
             var position = get_element_position(canvas);
             left = position.left;
             top = position.top;
             var pages_container_scroll_left = (_b = (_a = document.getElementById("pages_container")) === null || _a === void 0 ? void 0 : _a.scrollLeft) !== null && _b !== void 0 ? _b : 0;
             var x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left;
+            down_at_x = x;
             var y = e.clientY - top + document.body.scrollTop;
-            mouse_down_handler({ x: x, y: y });
+            pointer_down_handler({ x: x, y: y });
         };
-        canvas.onmousemove = function (e) {
+        canvas.onpointermove = function (e) {
+            var _a;
+            if (pointer_interaction_on_this_canvas === PointerInteraction.none)
+                return;
+            var pages_container_el = document.getElementById("pages_container");
+            var x = e.clientX - left + document.body.scrollLeft;
+            if (pointer_interaction_on_this_canvas === PointerInteraction.moving) {
+                var scroll_left = down_at_x - x;
+                pages_container_el === null || pages_container_el === void 0 ? void 0 : pages_container_el.scroll({ left: scroll_left });
+                return;
+            }
+            var pages_container_scroll_left = (_a = pages_container_el === null || pages_container_el === void 0 ? void 0 : pages_container_el.scrollLeft) !== null && _a !== void 0 ? _a : 0;
+            x += pages_container_scroll_left;
+            var y = e.clientY - top + document.body.scrollTop;
+            pointer_moved_handler({ x: x, y: y });
+        };
+        canvas.onpointerup = function (e) {
             var _a, _b;
-            if (!editing_on_this_canvas)
+            if (pointer_interaction_on_this_canvas === PointerInteraction.none)
+                return;
+            var was_editing = pointer_interaction_on_this_canvas === PointerInteraction.editing;
+            pointer_interaction_on_this_canvas = PointerInteraction.none;
+            if (!was_editing)
                 return;
             var pages_container_scroll_left = (_b = (_a = document.getElementById("pages_container")) === null || _a === void 0 ? void 0 : _a.scrollLeft) !== null && _b !== void 0 ? _b : 0;
             var x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left;
             var y = e.clientY - top + document.body.scrollTop;
-            mouse_moved_handler({ x: x, y: y });
-        };
-        canvas.onmouseup = function (e) {
-            var _a, _b;
-            if (!editing_on_this_canvas)
-                return;
-            editing_on_this_canvas = false;
-            var pages_container_scroll_left = (_b = (_a = document.getElementById("pages_container")) === null || _a === void 0 ? void 0 : _a.scrollLeft) !== null && _b !== void 0 ? _b : 0;
-            var x = e.clientX - left + document.body.scrollLeft + pages_container_scroll_left;
-            var y = e.clientY - top + document.body.scrollTop;
-            var partial_annotation = mouse_up_handler({ x: x, y: y });
+            var partial_annotation = pointer_up_handler({ x: x, y: y });
             if (partial_annotation) {
                 var new_annotation = complete_annotation(store.getState(), partial_annotation);
                 store.dispatch(ACTIONS.annotations.create_annotation({ new_annotation: new_annotation }));
             }
         };
     }
-    function create_mouse_handlers(_a) {
+    function create_pointer_handlers(_a) {
         var annotations_container_el = _a.annotations_container_el, page_number = _a.page_number;
         var highlight_start_x;
         var highlight_start_y;
@@ -1828,7 +1849,7 @@
             highlight_end_y = 0;
             temp_annotation_el = undefined;
         }
-        function mouse_down_handler(_a) {
+        function pointer_down_handler(_a) {
             var x = _a.x, y = _a.y;
             reset();
             temp_annotation_el = create_empty_annotation_el({ annotations_container_el: annotations_container_el });
@@ -1836,7 +1857,7 @@
             highlight_start_y = highlight_end_y = y;
             update_temp_annotation_el();
         }
-        function mouse_moved_handler(_a) {
+        function pointer_moved_handler(_a) {
             var x = _a.x, y = _a.y;
             highlight_end_x = x;
             highlight_end_y = y;
@@ -1845,7 +1866,7 @@
                 : temp_annotation_el.classList.add("invalid");
             update_temp_annotation_el();
         }
-        function mouse_up_handler(_a) {
+        function pointer_up_handler(_a) {
             var x = _a.x, y = _a.y;
             highlight_end_x = x;
             highlight_end_y = y;
@@ -1893,9 +1914,9 @@
         }
         function str(num) { return num.toString(); }
         return {
-            mouse_down_handler: mouse_down_handler,
-            mouse_moved_handler: mouse_moved_handler,
-            mouse_up_handler: mouse_up_handler,
+            pointer_down_handler: pointer_down_handler,
+            pointer_moved_handler: pointer_moved_handler,
+            pointer_up_handler: pointer_up_handler,
         };
     }
     function complete_annotation(state, annotation) {
@@ -1930,7 +1951,7 @@
             add_page_number({ pages_container_el: pages_container_el, page_number: page_number });
             page.render(render_context)
                 .promise.then(function () {
-                add_canvas_mouse_event_handlers({ store: store, canvas: canvas, annotations_container_el: annotations_container_el, page_number: page_number });
+                add_canvas_pointer_event_handlers({ store: store, canvas: canvas, annotations_container_el: annotations_container_el, page_number: page_number });
                 add_annotations_to_PDF_page({ annotations_container_el: annotations_container_el, page_number: page_number });
                 store.dispatch(ACTIONS.pdf_rendering.rendered_page({ page_number: page_number }));
                 if (page_number < pdf.numPages) {
