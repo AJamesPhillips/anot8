@@ -554,6 +554,18 @@
         })
             .filter(function (a) { return !!a; });
     }
+    function get_selected_annotation_ids_owned_by_user(state) {
+        var safe_user_name = state.user.safe_user_name;
+        var ids = get_all_selected_annotations(state)
+            .filter(function (a) { return a && a.safe_user_name === safe_user_name; })
+            .map(function (a) { return a.compound_id; });
+        return ids.join(",");
+    }
+    function get_all_annotation_ids_owned_by_user(state) {
+        var safe_user_name = state.user.safe_user_name;
+        return (state.annotations.annotations_by_safe_user_name[safe_user_name] || [])
+            .map(function (a) { return a.compound_id; });
+    }
 
     function prepare_new_annotations(args) {
         var annotations_state = args.annotations_state, new_maybe_annotations = args.new_maybe_annotations, safe_user_name = args.safe_user_name, allow_overwrite = args.allow_overwrite;
@@ -1353,44 +1365,21 @@
             a$1("div", { style: { clear: "both" } }));
     }
 
-    var map_state$c = function (state) { return ({
+    var map_state$e = function (state) { return ({
         annotations: state.annotations.all_annotations
     }); };
-    var connector$c = connect(map_state$c);
+    var connector$e = connect(map_state$e);
     function _AnnotationsList(props) {
         return a$1("div", null, props.annotations.map(function (a) { return a$1(AnnotationListEntry, { key: a.compound_id, annotation: a }); }));
     }
-    var AnnotationsList = connector$c(_AnnotationsList);
-
-    var map_state$b = function (state) { return ({
-        selected_annotation_ids_owned_by_user: get_selected_annotation_ids_owned_by_user(state),
-    }); };
-    var connector$b = connect(map_state$b);
-    function _DeleteButton(props) {
-        var disabled = !props.selected_annotation_ids_owned_by_user;
-        var fill = disabled ? "#aaa" : "#000";
-        return a$1("button", { disabled: disabled, title: "Delete annotations", onClick: function () {
-                var compound_ids = props.selected_annotation_ids_owned_by_user.split(",");
-                get_store().dispatch(ACTIONS.annotations.delete_annotations({ compound_ids: compound_ids }));
-            } },
-            a$1("svg", { focusable: "false", "aria-hidden": "true", viewBox: "0 0 24 24", style: { width: 20, fill: fill } },
-                a$1("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })));
-    }
-    var DeleteButton = connector$b(_DeleteButton);
-    function get_selected_annotation_ids_owned_by_user(state) {
-        var safe_user_name = state.user.safe_user_name;
-        var ids = get_all_selected_annotations(state)
-            .filter(function (a) { return a && a.safe_user_name === safe_user_name; })
-            .map(function (a) { return a.compound_id; });
-        return ids.join(",");
-    }
+    var AnnotationsList = connector$e(_AnnotationsList);
 
     var store$2 = get_store();
-    var map_state$a = function (state, own_props) {
+    var map_state$d = function (state, own_props) {
         var label = state.labels.labels_by_id[own_props.label_id];
         return __assign(__assign({ label: label, disabled: is_disabled(state), used_labels: state.labels.used_labels, priority_labels: state.labels.priority_labels, search_string: state.labels.search_string }, is_checked_or_indeterminate(label, state)), { annotations_to_edit: get_all_selected_annotations(state) });
     };
-    var connector$a = connect(map_state$a);
+    var connector$d = connect(map_state$d);
     function _LabelComponent(props) {
         var label = props.label;
         if (!label)
@@ -1426,7 +1415,7 @@
                     store$2.dispatch(ACTIONS.labels.toggle_label_priority({ toggle_label_priority: label.value }));
                 }, dangerouslySetInnerHTML: { __html: priority ? "&starf;" : "&star;" } }));
     }
-    var LabelComponent = connector$a(_LabelComponent);
+    var LabelComponent = connector$d(_LabelComponent);
     function is_disabled(state) {
         var all_selected_annotations = get_all_selected_annotations(state);
         var an_annotation = all_selected_annotations[0];
@@ -1457,23 +1446,23 @@
         return { checked: checked, indeterminate: indeterminate };
     }
 
-    var map_state$9 = function (state) { return ({
+    var map_state$c = function (state) { return ({
         label_ids_list_to_display: state.labels.label_ids_list_to_display,
     }); };
-    var connector$9 = connect(map_state$9);
+    var connector$c = connect(map_state$c);
     function _LabelsList(props) {
         return a$1("div", { id: "labels_list_container" }, props.label_ids_list_to_display.map(function (label_id) { return a$1(LabelComponent, { key: label_id, label_id: label_id }); }));
     }
-    var LabelsList = connector$9(_LabelsList);
+    var LabelsList = connector$c(_LabelsList);
 
-    var map_state$8 = function (state) { return ({
+    var map_state$b = function (state) { return ({
         have_any_labels: Object.keys(state.labels.labels_by_id).length > 0,
         highlighting_used_labels: state.labels.highlighting_used_labels,
         search_string: state.labels.search_string,
         running_locally: state.running_locally,
         is_from_url: !!state.routing.url,
     }); };
-    var connector$8 = connect(map_state$8);
+    var connector$b = connect(map_state$b);
     var store$1 = get_store();
     function _Labels(props) {
         if (!props.have_any_labels) {
@@ -1491,14 +1480,14 @@
             a$1("input", { id: "labels_used_toggle", type: "checkbox", checked: props.highlighting_used_labels, onChange: function (e) { return store$1.dispatch(ACTIONS.labels.set_highlighting_used_labels({ highlighting: e.currentTarget.checked })); } }),
             a$1(LabelsList, null));
     }
-    var Labels = connector$8(_Labels);
+    var Labels = connector$b(_Labels);
 
     var t,u,r,o=0,i=[],c=n.__b,f=n.__r,e=n.diffed,a=n.__c,v=n.unmount;function m(t,r){n.__h&&n.__h(u,t,o||r),o=0;var i=u.__H||(u.__H={__:[],__h:[]});return t>=i.__.length&&i.__.push({}),i.__[t]}function l(n){return o=1,p(w,n)}function p(n,r,o){var i=m(t++,2);return i.t=n,i.__c||(i.__=[o?o(r):w(void 0,r),function(n){var t=i.t(i.__[0],n);i.__[0]!==t&&(i.__=[t,i.__[1]],i.__c.setState({}));}],i.__c=u),i.__}function y(r,o){var i=m(t++,3);!n.__s&&k(i.__H,o)&&(i.__=r,i.__H=o,u.__H.__h.push(i));}function s(n){return o=5,d(function(){return {current:n}},[])}function d(n,u){var r=m(t++,7);return k(r.__H,u)&&(r.__=n(),r.__H=u,r.__h=n),r.__}function x(){i.forEach(function(t){if(t.__P)try{t.__H.__h.forEach(g),t.__H.__h.forEach(j),t.__H.__h=[];}catch(u){t.__H.__h=[],n.__e(u,t.__v);}}),i=[];}n.__b=function(n){u=null,c&&c(n);},n.__r=function(n){f&&f(n),t=0;var r=(u=n.__c).__H;r&&(r.__h.forEach(g),r.__h.forEach(j),r.__h=[]);},n.diffed=function(t){e&&e(t);var o=t.__c;o&&o.__H&&o.__H.__h.length&&(1!==i.push(o)&&r===n.requestAnimationFrame||((r=n.requestAnimationFrame)||function(n){var t,u=function(){clearTimeout(r),b&&cancelAnimationFrame(t),setTimeout(n);},r=setTimeout(u,100);b&&(t=requestAnimationFrame(u));})(x)),u=void 0;},n.__c=function(t,u){u.some(function(t){try{t.__h.forEach(g),t.__h=t.__h.filter(function(n){return !n.__||j(n)});}catch(r){u.some(function(n){n.__h&&(n.__h=[]);}),u=[],n.__e(r,t.__v);}}),a&&a(t,u);},n.unmount=function(t){v&&v(t);var u=t.__c;if(u&&u.__H)try{u.__H.__.forEach(g);}catch(t){n.__e(t,u.__v);}};var b="function"==typeof requestAnimationFrame;function g(n){var t=u;"function"==typeof n.__c&&n.__c(),u=t;}function j(n){var t=u;n.__c=n.__(),u=t;}function k(n,t){return !n||n.length!==t.length||t.some(function(t,u){return t!==n[u]})}function w(n,t){return "function"==typeof t?t(n):t}
 
-    var map_state$7 = function (state) { return ({
+    var map_state$a = function (state) { return ({
         doi: state.routing.doi,
     }); };
-    var connector$7 = connect(map_state$7);
+    var connector$a = connect(map_state$a);
     var DisplayPhase;
     (function (DisplayPhase) {
         DisplayPhase[DisplayPhase["_1_waiting_for_doi_or_url"] = 1] = "_1_waiting_for_doi_or_url";
@@ -1633,7 +1622,7 @@
                             : search_unpaywall();
                     } }, found_pdf_via_unpaywall ? "Load PDF in Anot8" : "Search Unpaywall.org")));
     }
-    var SetPDF_URL_or_DOI = connector$7(_SetPDF_URL_or_DOI);
+    var SetPDF_URL_or_DOI = connector$a(_SetPDF_URL_or_DOI);
     var LOCAL_STORAGE_UNPAYWALL_EMAIL_ADDRESS_KEY = "unpaywall_email_address";
     function get_unpaywall_email_address() {
         return localStorage.getItem(LOCAL_STORAGE_UNPAYWALL_EMAIL_ADDRESS_KEY) || "";
@@ -1650,7 +1639,7 @@
         return article_description;
     }
 
-    var map_state$6 = function (state) { return ({
+    var map_state$9 = function (state) { return ({
         loading_status: state.loading_pdf.status,
         stage: state.loading_pdf.loading_stage,
         error_during_loading__type: state.loading_pdf.loading_error_type,
@@ -1661,7 +1650,7 @@
         vault_id: state.routing.vault_id,
         file_id: state.routing.file_id,
     }); };
-    var connector$6 = connect(map_state$6);
+    var connector$9 = connect(map_state$9);
     function _LoadingProgress(props) {
         var _a = l(true), visibility = _a[0], set_visibility = _a[1];
         if (!visibility)
@@ -1716,12 +1705,12 @@
             "Error: ",
             error_message);
     }
-    var LoadingProgress = connector$6(_LoadingProgress);
+    var LoadingProgress = connector$9(_LoadingProgress);
 
-    var map_state$5 = function (state, own_props) { return ({
+    var map_state$8 = function (state, own_props) { return ({
         annotation: get_annotation_by_compound_id(state, own_props.compound_annotation_id)
     }); };
-    var connector$5 = connect(map_state$5);
+    var connector$8 = connect(map_state$8);
     function _AnnotationOnPDF(props) {
         var annotation = props.annotation;
         if (!annotation) {
@@ -1735,7 +1724,7 @@
         var style = { left: left, top: top, width: width, height: height, backgroundColor: backgroundColor };
         return a$1("div", { className: class_name, style: style, title: title, onClick: function () { return dispatch(ACTIONS.selected_annotations.toggle_annotation_highlight({ compound_id: compound_id })); } });
     }
-    var AnnotationOnPDF = connector$5(_AnnotationOnPDF);
+    var AnnotationOnPDF = connector$8(_AnnotationOnPDF);
     function create_empty_annotation_el(_a) {
         var annotations_container_el = _a.annotations_container_el;
         var annotation_el = document.createElement("div");
@@ -1744,15 +1733,15 @@
         return annotation_el;
     }
 
-    var map_state$4 = function (state, own_props) { return ({
+    var map_state$7 = function (state, own_props) { return ({
         annotation_ids: get_annotation_ids_for_page(state, own_props.page_number),
     }); };
-    var connector$4 = connect(map_state$4);
+    var connector$7 = connect(map_state$7);
     function _AnnotationsContainer(props) {
         var ids = props.annotation_ids.length ? props.annotation_ids.split(",") : [];
         return a$1("div", null, ids.map(function (id) { return a$1(AnnotationOnPDF, { key: id, compound_annotation_id: id }); }));
     }
-    var AnnotationsContainer = connector$4(_AnnotationsContainer);
+    var AnnotationsContainer = connector$7(_AnnotationsContainer);
 
     function add_annotations_to_PDF_page(args) {
         var annotations_container_el = args.annotations_container_el, page_number = args.page_number;
@@ -2099,13 +2088,13 @@
             a$1("input", { disabled: !!props.disabled, type: "text", id: "annotation_comment", value: props.comment, onChange: function (e) { return set_comment(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }));
     }
 
-    var map_state$3 = function (state, own_props) { return ({
+    var map_state$6 = function (state, own_props) { return ({
         annotations: get_all_selected_annotations(state),
         user_name: state.user.user_name,
         safe_user_name: state.user.safe_user_name,
         running_locally: state.running_locally,
     }); };
-    var connector$3 = connect(map_state$3);
+    var connector$6 = connect(map_state$6);
     function _AnnotationDetails(props) {
         var annotations = props.annotations, user_name = props.user_name, safe_user_name = props.safe_user_name;
         var annotation = annotations[0];
@@ -2130,12 +2119,12 @@
             return a$1(AnnotationDetailsForm, { disabled: disabled, text: annotation.text, comment: annotation.comment, on_change: on_change });
         }
     }
-    var AnnotationDetails = connector$3(_AnnotationDetails);
+    var AnnotationDetails = connector$6(_AnnotationDetails);
 
-    var map_state$2 = function (state) { return ({
+    var map_state$5 = function (state) { return ({
         user_name: state.user.user_name,
     }); };
-    var connector$2 = connect(map_state$2);
+    var connector$5 = connect(map_state$5);
     function _AuthorInfo(props) {
         var _a = l(false), editing = _a[0], set_editing = _a[1];
         var _b = l(props.user_name), user_name = _b[0], set_user_name = _b[1];
@@ -2151,7 +2140,7 @@
         }
         return a$1("div", { onClick: function () { return set_editing(true); } }, props.user_name || "Set user name");
     }
-    var AuthorInfo = connector$2(_AuthorInfo);
+    var AuthorInfo = connector$5(_AuthorInfo);
 
     function get_url_to_file(state) {
         var url = state.routing.url;
@@ -2204,7 +2193,7 @@
         return safe_user_name && ("." + safe_user_name);
     }
 
-    var map_state$1 = function (state) { return ({
+    var map_state$4 = function (state) { return ({
         ready: state.annotations.status !== "not ready",
         loading: state.annotations.status === "loading",
         saved: state.annotations.status === "saved",
@@ -2214,7 +2203,7 @@
         url_to_write_file_annotations: get_url_to_write_file_annotations(state),
         unsupported_schema_version: state.annotations.unsupported_schema_version,
     }); };
-    var connector$1 = connect(map_state$1);
+    var connector$4 = connect(map_state$4);
     function _AutoSave(props) {
         var ready = props.ready, loading = props.loading, saving = props.saving, saved = props.saved, errored = props.errored, annotations_count = props.annotations_count, url_to_write_file_annotations = props.url_to_write_file_annotations, unsupported_schema_version = props.unsupported_schema_version;
         if (!ready || loading)
@@ -2250,7 +2239,7 @@
                 ")");
         }
     }
-    var AutoSave = connector$1(_AutoSave);
+    var AutoSave = connector$4(_AutoSave);
 
     var NoPermaLinkReason;
     (function (NoPermaLinkReason) {
@@ -2275,8 +2264,8 @@
         return { anot8_perma_link: anot8_perma_link, no_perma_link_reason: no_perma_link_reason };
     };
 
-    var map_state = function (state) { return (__assign({ url_to_file: get_url_to_file(state) }, get_anot8_perma_link(state))); };
-    var connector = connect(map_state);
+    var map_state$3 = function (state) { return (__assign({ url_to_file: get_url_to_file(state) }, get_anot8_perma_link(state))); };
+    var connector$3 = connect(map_state$3);
     function _TopInfoPanel(props) {
         var url_to_file = props.url_to_file, anot8_perma_link = props.anot8_perma_link, no_perma_link_reason = props.no_perma_link_reason;
         if (!url_to_file)
@@ -2297,7 +2286,7 @@
                 url_to_file),
             perma_link_elements);
     }
-    var TopInfoPanel = connector(_TopInfoPanel);
+    var TopInfoPanel = connector$3(_TopInfoPanel);
 
     function santise_annotations_file(annotations_file) {
         return __assign(__assign({}, annotations_file), { annotations: annotations_file.annotations.map(sanitise_annotation) });
@@ -2636,6 +2625,86 @@
         });
     }
 
+    var map_state$2 = function (state) { return ({
+        any_selected_annotations: state.selected_annotations.selected_compound_ids.length > 0,
+    }); };
+    var connector$2 = connect(map_state$2);
+    function _ClearSelectionButton(props) {
+        var disabled = !props.any_selected_annotations;
+        var fill = disabled ? "#aaa" : "#000";
+        return a$1("div", null,
+            a$1("button", { disabled: disabled, title: "Clear all selected annotations", onClick: function () {
+                    get_store().dispatch(ACTIONS.selected_annotations.set_selected_ids({
+                        selected_compound_ids: [],
+                    }));
+                } },
+                a$1("svg", { focusable: "false", "aria-hidden": "true", viewBox: "0 0 24 24", style: { width: 20, fill: fill } },
+                    a$1("path", { d: "M3 2h18v2H3zm0 18h18v2H3zm0-6h3v2H3zm15 0h3v2H18zm-15-6h3v2H3zm15 0h3v2H18z M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" }))));
+    }
+    var ClearSelectionButton = connector$2(_ClearSelectionButton);
+
+    var map_state$1 = function (state) { return ({
+        selected_annotation_ids_owned_by_user: get_selected_annotation_ids_owned_by_user(state),
+    }); };
+    var connector$1 = connect(map_state$1);
+    function _DeleteButton(props) {
+        var _a = l(false), confirm_delete = _a[0], set_confirm_delete = _a[1];
+        var disabled = !props.selected_annotation_ids_owned_by_user;
+        var fill = disabled ? "#aaa" : (confirm_delete ? "#A00" : "#000");
+        return a$1("div", null,
+            a$1("button", { disabled: disabled, title: "Delete annotations", onClick: function () {
+                    if (!confirm_delete) {
+                        set_confirm_delete(true);
+                    }
+                    else {
+                        var compound_ids = props.selected_annotation_ids_owned_by_user.split(",");
+                        get_store().dispatch(ACTIONS.annotations.delete_annotations({ compound_ids: compound_ids }));
+                        set_confirm_delete(false);
+                    }
+                } },
+                a$1("svg", { focusable: "false", "aria-hidden": "true", viewBox: "0 0 24 24", style: { width: 20, fill: fill } },
+                    a$1("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })),
+                a$1("br", null),
+                confirm_delete && a$1("span", { style: { fontSize: 10, color: "#A00" } }, "CONFIRM")),
+            confirm_delete && a$1("p", null,
+                a$1("button", { disabled: disabled, title: "Cancel delete", onClick: function () {
+                        set_confirm_delete(false);
+                    }, style: { width: "100%" } },
+                    a$1("svg", { focusable: "false", "aria-hidden": "true", viewBox: "0 0 24 24", style: { width: 20, fill: "#000" } },
+                        a$1("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12 1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" })),
+                    a$1("br", null),
+                    a$1("span", { style: { fontSize: 10 } }, "CANCEL"))));
+    }
+    var DeleteButton = connector$1(_DeleteButton);
+
+    var map_state = function (state) { return ({
+        all_annotation_ids_owned_by_user: get_all_annotation_ids_owned_by_user(state),
+        selected_compound_ids: state.selected_annotations.selected_compound_ids,
+    }); };
+    var connector = connect(map_state);
+    function _SelectAllButton(props) {
+        var selected_compound_ids_set = new Set(props.selected_compound_ids);
+        var missing_annotation = props.all_annotation_ids_owned_by_user.find(function (id) { return !selected_compound_ids_set.has(id); });
+        var disabled = !missing_annotation;
+        var fill = disabled ? "#aaa" : "#000";
+        return a$1("div", null,
+            a$1("button", { disabled: disabled, title: "Select all of your annotations", onClick: function () {
+                    get_store().dispatch(ACTIONS.selected_annotations.set_selected_ids({
+                        selected_compound_ids: props.all_annotation_ids_owned_by_user,
+                    }));
+                } },
+                a$1("svg", { focusable: "false", "aria-hidden": "true", viewBox: "0 0 24 24", style: { width: 20, fill: fill } },
+                    a$1("path", { d: "M3 2h18v2H3zm0 18h18v2H3zm0-6h18v2H3zm0-6h18v2H3z" }))));
+    }
+    var SelectAllButton = connector(_SelectAllButton);
+
+    function AnnotationActions(props) {
+        return a$1("div", { style: { display: "flex", flexDirection: "column" } },
+            a$1(DeleteButton, null),
+            a$1(SelectAllButton, null),
+            a$1(ClearSelectionButton, null));
+    }
+
     var store = get_store();
     update_page_location(store);
     remove_non_existant_selected_annotation_ids(store);
@@ -2661,8 +2730,8 @@
     N(a$1(AutoSave, null), auto_save_el);
     var author_info_el = document.getElementById("author_info");
     N(a$1(AuthorInfo, null), author_info_el);
-    var delete_annotations_el = document.getElementById("delete_annotations");
-    N(a$1(DeleteButton, null), delete_annotations_el);
+    var annotation_actions_el = document.getElementById("annotation_actions");
+    N(a$1(AnnotationActions, null), annotation_actions_el);
     var annotations_list_el = document.getElementById("annotations_list");
     N(a$1(AnnotationsList, null), annotations_list_el);
     var annotation_details_el = document.getElementById("annotation_details");
