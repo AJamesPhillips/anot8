@@ -62,3 +62,25 @@ export function get_all_selected_annotations (state: State): Annotation[]
         // annotations will be missing before they have loaded
         .filter(a => !!a)
 }
+
+
+
+export function get_selected_annotation_ids_owned_by_user (state: State)
+{
+    const { safe_user_name } = state.user
+    const ids = get_all_selected_annotations(state)
+        .filter(a => a && a.safe_user_name === safe_user_name)
+        .map(a => a!.compound_id)
+
+    return ids.join(",")
+}
+
+
+
+export function get_all_annotation_ids_owned_by_user (state: State): string[]
+{
+    const { safe_user_name } = state.user
+
+    return (state.annotations.annotations_by_safe_user_name[safe_user_name] || [])
+        .map(a => a.compound_id)
+}

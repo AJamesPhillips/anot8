@@ -1,7 +1,6 @@
 import { h, render } from "preact"
 
 import { AnnotationsList } from "./components/side_panel/annotations_list/AnnotationsList"
-import { DeleteButton } from "./components/side_panel/DeleteButton"
 import { Labels } from "./components/side_panel/labels_list/Labels"
 import { LoadingProgress } from "./components/loading_progress/LoadingProgress"
 import { render_pdf } from "./components/pdf_canvas/render_pdf"
@@ -18,6 +17,7 @@ import { update_used_labels } from "./state/labels/update_used_labels"
 import { update_page_location } from "./state/routing/update_page_location"
 import { remove_non_existant_selected_annotation_ids } from "./state/selected_annotations/remove_non_existant_selected_annotation_ids"
 import { get_store } from "./state/store"
+import { AnnotationActions } from "./components/side_panel/AnnotationActions"
 
 
 
@@ -54,8 +54,8 @@ render(<AutoSave />, auto_save_el)
 const author_info_el = document.getElementById("author_info")!
 render(<AuthorInfo />, author_info_el)
 
-const delete_annotations_el = document.getElementById("delete_annotations")!
-render(<DeleteButton />, delete_annotations_el)
+const annotation_actions_el = document.getElementById("annotation_actions")!
+render(<AnnotationActions />, annotation_actions_el)
 
 const annotations_list_el = document.getElementById("annotations_list")!
 render(<AnnotationsList />, annotations_list_el)
