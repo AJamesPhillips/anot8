@@ -1,6 +1,6 @@
 import { Store } from "redux"
 import type * as PDFJS from "pdfjs-dist/types/src/pdf"
-declare const pdfjsLib: typeof PDFJS
+declare const pdfjsLib: typeof PDFJS | undefined
 
 import { ACTIONS } from "../state/actions"
 import { get_url_to_file, get_url_to_file_annotations } from "../state/loading/getters"
@@ -27,9 +27,11 @@ function fetch_pdf (store: Store<State>)
     const state = store.getState()
     const url_to_file = get_url_to_file(state)
 
-    return new Promise<PDFJS.PDFDocumentProxy>(resolve =>
+    return new Promise<PDFJS.PDFDocumentProxy>(async resolve =>
     {
-        pdfjsLib.getDocument(url_to_file).promise
+        const have_pdfjsLib = await wait_for_pdfjsLib(store)
+
+        have_pdfjsLib.getDocument(url_to_file).promise
         .then(pdf => resolve(pdf))
         .catch(e =>
         {
@@ -37,7 +39,7 @@ function fetch_pdf (store: Store<State>)
             // on requested resource.
             // Fall back to a proxy service
             const proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file
-            pdfjsLib.getDocument(proxy_url_to_file).promise
+            have_pdfjsLib.getDocument(proxy_url_to_file).promise
                 .then(pdf => resolve(pdf))
                 .catch((error: PDFJS.UnexpectedResponseException) =>
                 {
@@ -47,6 +49,41 @@ function fetch_pdf (store: Store<State>)
                     }))
                 })
         })
+    })
+}
+
+
+
+async function wait_for_pdfjsLib (store: Store<State>)
+{
+    const start = performance.now()
+
+    while (
+        !(window as any).pdfjsLib
+        // hacky type guard.  Remove this
+        || !pdfjsLib
+    )
+    {
+        await wait_for_ms(50)
+        console.log("Waiting for PDFJS lib")
+
+        if ((performance.now() - start) > (3 * 60 * 1000)) // 3 minutes
+        {
+            store.dispatch(ACTIONS.errors.set_error({ error: "PDFJS did not load quickly enough" }))
+            throw new Error("PDFJS did not load quickly enough")
+        }
+    }
+
+    return pdfjsLib
+}
+
+
+
+function wait_for_ms (ms: number)
+{
+    return new Promise<void>(resolve =>
+    {
+        setTimeout(() => resolve(), ms)
     })
 }
 

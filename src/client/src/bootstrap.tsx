@@ -18,10 +18,12 @@ import { update_page_location } from "./state/routing/update_page_location"
 import { remove_non_existant_selected_annotation_ids } from "./state/selected_annotations/remove_non_existant_selected_annotation_ids"
 import { get_store } from "./state/store"
 import { AnnotationActions } from "./components/side_panel/AnnotationActions"
+import { subscribe_to_page_error } from "./state/errors/subscribe_to_page_error"
 
 
 
 const store = get_store()
+subscribe_to_page_error(store)
 update_page_location(store)
 remove_non_existant_selected_annotation_ids(store)
 auto_save(store)

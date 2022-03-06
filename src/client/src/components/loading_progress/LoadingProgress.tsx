@@ -11,6 +11,8 @@ interface OwnProps {}
 
 const map_state = (state: State) => ({
     //
+    initialising_error: !!state.errors.error,
+    //
     loading_status: state.loading_pdf.status,
     stage: state.loading_pdf.loading_stage,
     error_during_loading__type: state.loading_pdf.loading_error_type,
@@ -32,7 +34,11 @@ function _LoadingProgress (props: Props)
     const [visibility, set_visibility] = useState(true)
     if (!visibility) return null
 
-    const { loading_status, rendering_status, max_pages, page_number } = props
+    const { initialising_error, loading_status, rendering_status, max_pages, page_number } = props
+
+    if (initialising_error) return <div>
+        Page error.  Please file a big report on <a href="https://github.com/centerofci/anot8/issues">GitHub</a>
+    </div>
 
     if (loading_status === "not ready" || loading_status === "resolving") return <div>Starting...</div>
 

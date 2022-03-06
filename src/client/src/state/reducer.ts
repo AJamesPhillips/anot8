@@ -1,6 +1,7 @@
 import { AnyAction, Reducer } from "redux"
 
 import { annotations_reducer } from "./annotations/reducer"
+import { errors_reducer } from "./errors/reducer"
 import { labels_reducer } from "./labels/reducer"
 import { loading_reducer } from "./loading/reducer"
 import { pdf_rendering_reducer } from "./pdf_rendering/reducer"
@@ -15,6 +16,7 @@ export const root_reducer: Reducer<State, any> = ((state: State, action: AnyActi
     const start = state
 
     state = annotations_reducer(state, action)
+    state = errors_reducer(state, action)
     state = labels_reducer(state, action)
     state = loading_reducer(state, action)
     state = pdf_rendering_reducer(state, action)

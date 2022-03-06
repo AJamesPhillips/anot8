@@ -31,6 +31,13 @@ export interface AnnotationsState
 
 
 
+export interface ErrorsState
+{
+    error: undefined | string | Event
+}
+
+
+
 export interface Label
 {
     value: string
@@ -125,6 +132,7 @@ export interface UserState
 export interface State
 {
     annotations: AnnotationsState
+    errors: ErrorsState
     labels: LabelsState
     loading_pdf: LoadingPDFState
     override_naming_authority_server_url: string
