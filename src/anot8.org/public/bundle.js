@@ -724,6 +724,25 @@
         return state.annotations.unsupported_schema_version || unsupported_schema_version;
     }
 
+    var set_error_type = "set_error";
+    var set_error = function (args) {
+        return __assign({ type: set_error_type }, args);
+    };
+    var is_set_error = function (action) {
+        return action.type === set_error_type;
+    };
+    var errors_actions = {
+        set_error: set_error,
+    };
+
+    function errors_reducer(state, action) {
+        if (is_set_error(action)) {
+            var error = action.error;
+            state = __assign(__assign({}, state), { errors: { error: error } });
+        }
+        return state;
+    }
+
     function toggle_set_entry(set, entry) {
         if (set.has(entry))
             set.delete(entry);
@@ -1079,6 +1098,7 @@
 
     var root_reducer = (function (state, action) {
         state = annotations_reducer(state, action);
+        state = errors_reducer(state, action);
         state = labels_reducer(state, action);
         state = loading_reducer(state, action);
         state = pdf_rendering_reducer(state, action);
@@ -1194,6 +1214,12 @@
         return state;
     }
 
+    function get_starting_errors_state() {
+        return {
+            error: undefined
+        };
+    }
+
     function get_starting_loading_state() {
         return {
             status: LoadingStatus.not_ready,
@@ -1260,6 +1286,7 @@
         var override_naming_authority_server_url = localStorage.getItem("override_naming_authority_server_url") || "";
         return {
             annotations: get_starting_annotations_state(),
+            errors: get_starting_errors_state(),
             labels: get_starting_labels_state(),
             loading_pdf: get_starting_loading_state(),
             override_naming_authority_server_url: override_naming_authority_server_url,
@@ -1329,6 +1356,7 @@
 
     var ACTIONS = {
         annotations: annotations_actions,
+        errors: errors_actions,
         labels: labels_actions,
         loading: loading_actions,
         pdf_rendering: pdf_rendering_actions,
@@ -1640,6 +1668,7 @@
     }
 
     var map_state$9 = function (state) { return ({
+        initialising_error: !!state.errors.error,
         loading_status: state.loading_pdf.status,
         stage: state.loading_pdf.loading_stage,
         error_during_loading__type: state.loading_pdf.loading_error_type,
@@ -1655,7 +1684,11 @@
         var _a = l(true), visibility = _a[0], set_visibility = _a[1];
         if (!visibility)
             return null;
-        var loading_status = props.loading_status, rendering_status = props.rendering_status, max_pages = props.max_pages, page_number = props.page_number;
+        var initialising_error = props.initialising_error, loading_status = props.loading_status, rendering_status = props.rendering_status, max_pages = props.max_pages, page_number = props.page_number;
+        if (initialising_error)
+            return a$1("div", null,
+                "Page error.  Please file a big report on ",
+                a$1("a", { href: "https://github.com/centerofci/anot8/issues" }, "GitHub"));
         if (loading_status === "not ready" || loading_status === "resolving")
             return a$1("div", null, "Starting...");
         if (loading_status === "resolved")
@@ -2301,22 +2334,62 @@
         return fetch_pdf(store);
     }
     function fetch_pdf(store) {
+        var _this = this;
         var state = store.getState();
         var url_to_file = get_url_to_file(state);
-        return new Promise(function (resolve) {
-            pdfjsLib.getDocument(url_to_file).promise
-                .then(function (pdf) { return resolve(pdf); })
-                .catch(function (e) {
-                var proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file;
-                pdfjsLib.getDocument(proxy_url_to_file).promise
-                    .then(function (pdf) { return resolve(pdf); })
-                    .catch(function (error) {
-                    store.dispatch(ACTIONS.loading.error_during_loading({
-                        error_stage: LoadingStage.fetch_pdf_by_proxy,
-                        error_type: (error === null || error === void 0 ? void 0 : error.status) ? (error === null || error === void 0 ? void 0 : error.status.toString()) : "other",
-                    }));
-                });
+        return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+            var have_pdfjsLib;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, wait_for_pdfjsLib(store)];
+                    case 1:
+                        have_pdfjsLib = _a.sent();
+                        have_pdfjsLib.getDocument(url_to_file).promise
+                            .then(function (pdf) { return resolve(pdf); })
+                            .catch(function (e) {
+                            var proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file;
+                            have_pdfjsLib.getDocument(proxy_url_to_file).promise
+                                .then(function (pdf) { return resolve(pdf); })
+                                .catch(function (error) {
+                                store.dispatch(ACTIONS.loading.error_during_loading({
+                                    error_stage: LoadingStage.fetch_pdf_by_proxy,
+                                    error_type: (error === null || error === void 0 ? void 0 : error.status) ? (error === null || error === void 0 ? void 0 : error.status.toString()) : "other",
+                                }));
+                            });
+                        });
+                        return [2];
+                }
             });
+        }); });
+    }
+    function wait_for_pdfjsLib(store) {
+        return __awaiter(this, void 0, void 0, function () {
+            var start;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        start = performance.now();
+                        _a.label = 1;
+                    case 1:
+                        if (!(!window.pdfjsLib
+                            || !pdfjsLib)) return [3, 3];
+                        return [4, wait_for_ms(50)];
+                    case 2:
+                        _a.sent();
+                        console.log("Waiting for PDFJS lib");
+                        if ((performance.now() - start) > (3 * 60 * 1000)) {
+                            store.dispatch(ACTIONS.errors.set_error({ error: "PDFJS did not load quickly enough" }));
+                            throw new Error("PDFJS did not load quickly enough");
+                        }
+                        return [3, 1];
+                    case 3: return [2, pdfjsLib];
+                }
+            });
+        });
+    }
+    function wait_for_ms(ms) {
+        return new Promise(function (resolve) {
+            setTimeout(function () { return resolve(); }, ms);
         });
     }
     function fetch_annotation_files(store) {
@@ -2705,7 +2778,14 @@
             a$1(ClearSelectionButton, null));
     }
 
+    function subscribe_to_page_error(store) {
+        window.onerror = function (error) {
+            store.dispatch(ACTIONS.errors.set_error({ error: error }));
+        };
+    }
+
     var store = get_store();
+    subscribe_to_page_error(store);
     update_page_location(store);
     remove_non_existant_selected_annotation_ids(store);
     auto_save(store);
