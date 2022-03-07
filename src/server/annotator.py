@@ -382,6 +382,39 @@ def bundle_js ():
 
 
 
+@app.route("/pdf.js")
+def pdf_js ():
+    with open(dir_path + "/../anot8.org/public/pdf.js", "r", encoding="utf8") as f:
+        js = f.read()
+
+    return js
+
+
+@app.route("/pdf.js.map")
+def pdf_js_map ():
+    with open(dir_path + "/../anot8.org/public/pdf.js.map", "r", encoding="utf8") as f:
+        js = f.read()
+
+    return js
+
+
+@app.route("/pdf.worker.js")
+def pdf_worker_js ():
+    with open(dir_path + "/../anot8.org/public/pdf.worker.js", "r", encoding="utf8") as f:
+        js = f.read()
+
+    return js
+
+
+@app.route("/pdf.worker.js.map")
+def pdf_worker_js_map ():
+    with open(dir_path + "/../anot8.org/public/pdf.worker.js.map", "r", encoding="utf8") as f:
+        js = f.read()
+
+    return js
+
+
+
 @app.route("/pdf.min.js")
 def pdf_min_js ():
     with open(dir_path + "/../anot8.org/public/pdf.min.js", "r", encoding="utf8") as f:

@@ -11,13 +11,6 @@
         }
     </script>
 
-    <!-- From https://cdnjs.com/libraries/pdf.js/2.12.313 -->
-    <script src="/pdf.min.js"></script>
-    <script src="/pdf.worker.min.js"></script>
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js" integrity="sha512-qa1o08MA0596eSNsnkRv5vuGloSKUhY09O31MY2OJpODjUVlaL0GOJJcyt7J7Z61FiEgHMgBkH04ZJ+vcuLs/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.worker.min.js" integrity="sha512-S9Dwzi4TCjPQkxlaXsqQLj2gXUjPZk4HBzE7zWU6Itc1r2RNmlBrVLH4EsYQrdnzLgvkN8P7l9SCru+2I4rZwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;</script>
     <style>
         body
         {
@@ -195,7 +188,24 @@
         </div>
     </div>
 
+
     <script src="/bundle.js"></script>
+
+
+    <!-- From https://cdnjs.com/libraries/pdf.js/2.12.313 -- >
+    <script src="/pdf.min.js"></script>
+    <script src="/pdf.worker.min.js"></script-->
+
+    <!-- From
+        https://github.com/mozilla/pdf.js/releases/tag/v2.13.216
+        https://github.com/mozilla/pdf.js/releases/download/v2.13.216/pdfjs-2.13.216-legacy-dist.zip
+    -->
+    <script src="/pdf.js"></script>
+    <script src="/pdf.worker.js"></script>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js" integrity="sha512-qa1o08MA0596eSNsnkRv5vuGloSKUhY09O31MY2OJpODjUVlaL0GOJJcyt7J7Z61FiEgHMgBkH04ZJ+vcuLs/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.worker.min.js" integrity="sha512-S9Dwzi4TCjPQkxlaXsqQLj2gXUjPZk4HBzE7zWU6Itc1r2RNmlBrVLH4EsYQrdnzLgvkN8P7l9SCru+2I4rZwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;</script>
 
 </body>
 </html>
