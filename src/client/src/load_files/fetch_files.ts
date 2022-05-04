@@ -38,7 +38,7 @@ function fetch_pdf (store: Store<State>)
             // Assume it has failed due to Same origin policy and lack of permissible CORS headers
             // on requested resource.
             // Fall back to a proxy service
-            const proxy_url_to_file = "https://cors-anywhere.herokuapp.com/" + url_to_file
+            const proxy_url_to_file = "https://anot8-cors-proxy.herokuapp.com/" + url_to_file
             have_pdfjsLib.getDocument(proxy_url_to_file).promise
                 .then(pdf => resolve(pdf))
                 .catch((error: PDFJS.UnexpectedResponseException) =>

@@ -142,7 +142,7 @@ https://anot8.org/r/1772.1/1?highlighted_annotation_ids=0
 You can visit https://anot8.org/r and set the url of the PDF to load.  Once it loads you can annotate it.  The annotations are impermanent and will be lost if you clear your browser storage or change to a different computer.
 You can however copy the resulting URL and send it to anyone else for whom it will load the PDF and annotate it with your annotations.  Due to the limitations of URL length it's best to plan on not sharing more than 10 annotations this way.
 
-If the website serving the PDF does not allow your browser to load it directly, then anot8 will fallback to using a proxy server.  Currently this is a demo server running at: https://cors-anywhere.herokuapp.com/ which you will need to access and request access for a period of time.  Once you do this, try reloading your page and the PDF should now be loaded correctly.
+If the website serving the PDF does not allow your browser to load it directly, then anot8 will fallback to using a proxy server.  This is not guarenteed to work.  If it still errors please [report it here](https://github.com/centerofci/anot8/issues/new).
 
 At the moment it is only possible to save your annotations when running the server locally.  If [there is interest](https://github.com/centerofci/anot8/issues/6) then we can look at persisting annotations in a database.
 

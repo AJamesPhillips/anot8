@@ -99,7 +99,7 @@ function _LoadingProgress (props: Props)
     if (error_during_loading__type === "403" && stage === LoadingStage.fetch_pdf_by_proxy)
     {
         error_message = <div>
-            Anot8 is using a donated proxy that requires you to periodically activate it.  Please click "Request temporary access to the demo server" on: <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">https://cors-anywhere.herokuapp.com/corsdemo</a> and then try refreshing this page.
+            Anot8 PDF proxy has encountered an error.  Please <a href="https://github.com/centerofci/anot8/issues/new?title=403%20error%20from%20PDF%20proxy">report it here</a>.
             <br />
             <br />
         </div>
