@@ -57,7 +57,8 @@ function _AnnotationDetails (props: Props)
 
         if (annotation.safe_user_name !== safe_user_name)
         {
-            disabled += `  Can only edit your own annotations.  You are: "${user_name}", this annotation was edited by: "${annotation.user_name}"`
+            if (disabled) disabled += "  "
+            disabled += `You can only edit your own annotations.  You are: "${user_name}", this annotation was created by: "${annotation.user_name}".  Change to this user to edit this annotation.`
         }
 
         return <AnnotationDetailsForm

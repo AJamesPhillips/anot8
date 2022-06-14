@@ -2122,10 +2122,10 @@
         var _b = l(props.comment), comment = _b[0], set_comment = _b[1];
         return a$1("div", { title: props.disabled },
             "Text: ",
-            a$1("input", { disabled: !!props.disabled, type: "text", id: "annotation_text", value: props.text, onChange: function (e) { return set_text(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }),
+            a$1("input", { disabled: !!props.disabled, className: props.disabled ? "disabled_input_text" : "", type: "text", id: "annotation_text", value: props.text, onChange: function (e) { return set_text(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }),
             a$1("br", null),
             "Comment: ",
-            a$1("input", { disabled: !!props.disabled, type: "text", id: "annotation_comment", value: props.comment, onChange: function (e) { return set_comment(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }));
+            a$1("input", { disabled: !!props.disabled, className: props.disabled ? "disabled_input_text" : "", type: "text", id: "annotation_comment", value: props.comment, onChange: function (e) { return set_comment(e.currentTarget.value); }, onBlur: function () { return props.on_change({ text: text, comment: comment }); } }));
     }
 
     var map_state$6 = function (state, own_props) { return ({
@@ -2154,7 +2154,9 @@
                 disabled = "To edit this annotation please run the local anot8 server.";
             }
             if (annotation.safe_user_name !== safe_user_name) {
-                disabled += "  Can only edit your own annotations.  You are: \"" + user_name + "\", this annotation was edited by: \"" + annotation.user_name + "\"";
+                if (disabled)
+                    disabled += "  ";
+                disabled += "You can only edit your own annotations.  You are: \"" + user_name + "\", this annotation was created by: \"" + annotation.user_name + "\".  Change to this user to edit this annotation.";
             }
             return a$1(AnnotationDetailsForm, { disabled: disabled, text: annotation.text, comment: annotation.comment, on_change: on_change });
         }

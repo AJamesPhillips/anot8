@@ -20,6 +20,7 @@ export function AnnotationDetailsForm (props: Props)
     return <div title={props.disabled}>
         Text: <input
             disabled={!!props.disabled}
+            className={props.disabled ? "disabled_input_text" : ""}
             type="text"
             id="annotation_text"
             value={props.text}
@@ -29,6 +30,7 @@ export function AnnotationDetailsForm (props: Props)
         <br/>
         Comment: <input
             disabled={!!props.disabled}
+            className={props.disabled ? "disabled_input_text" : ""}
             type="text"
             id="annotation_comment"
             value={props.comment}
