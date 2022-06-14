@@ -1170,7 +1170,7 @@
         try {
             var annotations = JSON.parse(temp_annotations);
             return annotations.map(function (deflated_annotation) {
-                var id = deflated_annotation[0], page_number = deflated_annotation[1], comment = deflated_annotation[2], text = deflated_annotation[3], labels = deflated_annotation[4], left = deflated_annotation[5], top = deflated_annotation[6], width = deflated_annotation[7], height = deflated_annotation[8], user_name = deflated_annotation[9];
+                var id = deflated_annotation[0], page_number = deflated_annotation[1], comment = deflated_annotation[2], text = deflated_annotation[3], labels = deflated_annotation[4], left = deflated_annotation[5], top = deflated_annotation[6], width = deflated_annotation[7], height = deflated_annotation[8], _a = deflated_annotation[9], user_name = _a === void 0 ? "" : _a;
                 var safe_user_name = get_safe_user_name(user_name);
                 return {
                     id: id,

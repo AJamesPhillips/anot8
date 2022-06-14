@@ -71,7 +71,7 @@ export function inflate_temporary_annotations (temp_annotations: string | undefi
                 width,
                 height,
                 // colour,
-                user_name,
+                user_name = "", // default to "" as it was not in previous versions of deflated annotations
             ] = deflated_annotation
 
             const safe_user_name = get_safe_user_name(user_name)
