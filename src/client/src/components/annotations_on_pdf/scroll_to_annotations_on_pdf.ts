@@ -45,7 +45,8 @@ function annotation_in_view (compound_id: string)
 function scroll_to_annotation (compound_id: string)
 {
     // console .log("Annotations not in view")
-    const el = document.getElementsByClassName(`annotation annotation_${compound_id}`)[0]
+    const class_name = `annotation annotation_${compound_id}`
+    const el = document.getElementsByClassName(class_name)[0]
     if (!(el && el.scrollIntoView)) return false
     el.scrollIntoView()
 }

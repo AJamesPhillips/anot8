@@ -1,4 +1,5 @@
 import { Annotation } from "../interfaces"
+import { get_safe_user_name } from "../user/utils"
 import { get_compound_id } from "./utils"
 
 
@@ -15,7 +16,7 @@ export function deflate_temporary_annotations (annotations: Annotation[])
 
 function deflate_temporary_annotation (annotation: Annotation)
 {
-    const { colour, comment, height, id, labels, left, page_number, text, top, width, } = annotation
+    const { colour, comment, height, id, labels, left, page_number, text, top, width, user_name, } = annotation
 
     const compressed_colour = colour.replace(/ /g, "").trim()
     const compressed_height = height.replace("px", "").trim()
@@ -34,7 +35,7 @@ function deflate_temporary_annotation (annotation: Annotation)
         compressed_width,
         compressed_height,
         // compressed_colour,
-        // user_name, // we are ignoring the user name
+        user_name,
         // compound_id, // we are ignoring the compound id including the user name
     ]
 
@@ -70,7 +71,10 @@ export function inflate_temporary_annotations (temp_annotations: string | undefi
                 width,
                 height,
                 // colour,
+                user_name,
             ] = deflated_annotation
+
+            const safe_user_name = get_safe_user_name(user_name)
 
             return {
                 id,
@@ -84,10 +88,10 @@ export function inflate_temporary_annotations (temp_annotations: string | undefi
                 width: width + "px",
                 height: height + "px",
 
-                user_name: "",
-                safe_user_name: "",
+                user_name,
+                safe_user_name: get_safe_user_name(user_name),
                 // assume it is from the anonymous / root user
-                compound_id: get_compound_id({ id, safe_user_name: "" }),
+                compound_id: get_compound_id({ id, safe_user_name }),
 
                 dirty: true,
                 temporary: true,

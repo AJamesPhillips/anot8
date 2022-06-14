@@ -1145,7 +1145,7 @@
         return JSON.stringify(annotations.map(deflate_temporary_annotation));
     }
     function deflate_temporary_annotation(annotation) {
-        var colour = annotation.colour, comment = annotation.comment, height = annotation.height, id = annotation.id, labels = annotation.labels, left = annotation.left, page_number = annotation.page_number, text = annotation.text, top = annotation.top, width = annotation.width;
+        var colour = annotation.colour, comment = annotation.comment, height = annotation.height, id = annotation.id, labels = annotation.labels, left = annotation.left, page_number = annotation.page_number, text = annotation.text, top = annotation.top, width = annotation.width, user_name = annotation.user_name;
         colour.replace(/ /g, "").trim();
         var compressed_height = height.replace("px", "").trim();
         var compressed_left = left.replace("px", "").trim();
@@ -1161,6 +1161,7 @@
             compressed_top,
             compressed_width,
             compressed_height,
+            user_name,
         ];
     }
     function inflate_temporary_annotations(temp_annotations) {
@@ -1169,7 +1170,8 @@
         try {
             var annotations = JSON.parse(temp_annotations);
             return annotations.map(function (deflated_annotation) {
-                var id = deflated_annotation[0], page_number = deflated_annotation[1], comment = deflated_annotation[2], text = deflated_annotation[3], labels = deflated_annotation[4], left = deflated_annotation[5], top = deflated_annotation[6], width = deflated_annotation[7], height = deflated_annotation[8];
+                var id = deflated_annotation[0], page_number = deflated_annotation[1], comment = deflated_annotation[2], text = deflated_annotation[3], labels = deflated_annotation[4], left = deflated_annotation[5], top = deflated_annotation[6], width = deflated_annotation[7], height = deflated_annotation[8], user_name = deflated_annotation[9];
+                var safe_user_name = get_safe_user_name(user_name);
                 return {
                     id: id,
                     page_number: page_number,
@@ -1181,9 +1183,9 @@
                     top: top + "px",
                     width: width + "px",
                     height: height + "px",
-                    user_name: "",
-                    safe_user_name: "",
-                    compound_id: get_compound_id({ id: id, safe_user_name: "" }),
+                    user_name: user_name,
+                    safe_user_name: get_safe_user_name(user_name),
+                    compound_id: get_compound_id({ id: id, safe_user_name: safe_user_name }),
                     dirty: true,
                     temporary: true,
                 };
@@ -2066,7 +2068,8 @@
             rect.bottom <= (window.innerHeight || document.documentElement.clientHeight));
     }
     function scroll_to_annotation(compound_id) {
-        var el = document.getElementsByClassName("annotation annotation_" + compound_id)[0];
+        var class_name = "annotation annotation_" + compound_id;
+        var el = document.getElementsByClassName(class_name)[0];
         if (!(el && el.scrollIntoView))
             return false;
         el.scrollIntoView();
