@@ -34,21 +34,27 @@ See the [change log](./CHANGE_LOG.md) for breaking changes.
 
 `new vault` can be any name.
 
+These vault config files are just pointers to other directories of PDFs so you
+will want to edit the `root_path` attribute to point to the parent directory for
+your PDFs to annotate.  This path can be relative or absolute.  If you edit this
+file or any other .json file with a rich text editor you might run into problems
+and errors so we would recommend you try to edit them using a plain text editor.
 
-### Specifying sources (directories) of PDFs
+Once the annotate server has started it will create a new
+`anot8_vault_config.json` file at this new root_path directory.
 
-Edit the `root_path` attribute to point to the parent directory for your PDFs to annotate.  This can be relative or absolute.
+You will then want to edit the `directories` attribute of the
+**new anot8_vault_config.json** to contain the directories of the files you want
+to annotate.  These directory paths are relative to `root_path`.
 
-Once the annotate server has started it will create a new anot8_vault_config.json file at this new root_path directory.  You can then:
-
-* edit the `directories` attribute to contain the directories of the files you want to annotate.  These are relative to `root_path`.
-
-Specifying directories allows you to limit by whitelisting what files are available for the annotations server to serve.
+Specifying directories allows you to limit by whitelisting what files are
+available for the annotations server to serve.
 
 
 ### Specifying labels
 
-Edit the `labels` attribute to be a list of strings.   e.g.
+Edit the `labels` attribute of the **anot8_vault_config.json** file to be a list
+of strings, e.g:
 
     "labels": ["label one", "another label"]
 
