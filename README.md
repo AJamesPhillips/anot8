@@ -64,6 +64,9 @@ of strings, e.g:
     . venv/bin/activate
     export FLASK_APP=src/server/annotator.py && flask run --port=5003
 
+Optionally add `--host=0.0.0.0` to allow access from other computers on your
+local network.
+
 
 ## Local server features
 

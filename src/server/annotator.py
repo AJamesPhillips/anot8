@@ -1,8 +1,8 @@
 from functools import wraps
 import json
 import os
-import re
 import sys
+import logging
 
 from flask import Flask, make_response, request, abort, jsonify, Response, redirect
 import jinja2
@@ -40,6 +40,22 @@ app.url_map.strict_slashes = False  # Allow
 upsert_anot8_config_and_perma_id_mappings()
 upgrade_all_annotations(get_vault_configs_by_id().values())
 
+
+# Suppress Flask startup messages
+log = logging.getLogger("werkzeug")
+log.setLevel(logging.ERROR)
+
+# If flask bound to 0.0.0.0 via command line argument like --host=0.0.0.0 then
+# print the IP address to access from other computers
+port = [v for v in sys.argv if v.startswith("--port=")]
+port = port[0].split("=")[1] if port else "5000"  # flask's default port is 5000
+if "--host=0.0.0.0" in sys.argv:
+    # Run this shell command
+    shell_command = "ipconfig getifaddr en0"
+    local_ip = os.popen(shell_command).read().strip()
+    print(f"Access the server from other computers on your local network at http://{local_ip}:{port}")
+else:
+    print(f"Access the server at http://localhost:{port}")
 
 
 @app.after_request
