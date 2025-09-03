@@ -31,7 +31,7 @@ def upsert_anot8_vault_config (vault_config_pointer):
             # work locally and the same for all users of the vault
             "authorised_vault_id": "",
             "publish_root_path": "",
-            "directories": [],
+            "directories": ["pdfs/"],
             "labels": [],
             "DO_NOT_EDIT_auto_generated_fields": {
                 "schema_version": 2,
@@ -41,6 +41,9 @@ def upsert_anot8_vault_config (vault_config_pointer):
         }
 
         write_anot8_vault_config(vault_config)
+
+        # Make the corresponding default directory called "pdfs" at that path
+        Path(root_path + "pdfs/").mkdir(parents=True, exist_ok=True)
 
     with open(anot8_vault_config_file_path, "r", encoding="utf8") as f:
         anot8_vault_config = json.load(f)
