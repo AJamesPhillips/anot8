@@ -34,7 +34,7 @@ def upsert_anot8_vault_config (vault_config_pointer):
             "directories": [],
             "labels": [],
             "DO_NOT_EDIT_auto_generated_fields": {
-                "schema_version": 1,
+                "schema_version": 2,
                 "id_to_relative_file_name": {},
                 "next_id": 1,
             },
