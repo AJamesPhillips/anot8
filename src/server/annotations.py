@@ -146,7 +146,7 @@ def upgrade_meta_data (meta_data, current_schema_version):
 
 
 def upgrade_all_annotations (vault_configs):
-    print("+Ensure all annotations are upgraded")
+    # print("+Ensure all annotations are upgraded")
 
     for vault_config in vault_configs:
         file_paths = get_annotation_relative_file_paths_in_vault(vault_config)
@@ -156,7 +156,8 @@ def upgrade_all_annotations (vault_configs):
         for annotations_relative_file_path in file_paths["user_specific_annotation_relative_file_paths"]:
             upsert_meta_data_annotations_file(vault_config, annotations_relative_file_path)
 
-    print("-Ensure all annotations are upgraded")
+    print("Upgraded all annotations")
+    # print("-Ensure all annotations are upgraded")
 
 
 

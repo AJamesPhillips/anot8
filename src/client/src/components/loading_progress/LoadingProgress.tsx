@@ -56,7 +56,7 @@ function _LoadingProgress (props: Props)
         if (max_pages === undefined || page_number === undefined) return <div>Downloaded PDF.  Rendering...</div>
 
         const progress = ((page_number / max_pages) * 100).toFixed(0)
-        return <div>Progress: {progress}%</div>
+        return <div>Rendering page {page_number} / {max_pages} ({progress}%)</div>
     }
 
 

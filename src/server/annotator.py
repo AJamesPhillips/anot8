@@ -138,7 +138,12 @@ def vault_config_from_id (func):
 def vault_files (vault_id, vault_config):
     root_path = vault_config["root_path"]
     all_directories = vault_config["all_directories"]
-    pdf_file_path_html_links = "" if all_directories else "No directories in vault {}".format(vault_config["local_vault_id"])
+    pdf_file_path_html_links = ""
+    if not all_directories:
+        pdf_file_path_html_links = (
+            f"No directories in vault {vault_config['local_vault_id']}.  " + ""
+            f"Go to {root_path} and add directories with some PDF files, add these directories to the vault config at {root_path}anot8_vault_config.json, then refresh this page."
+        )
 
     for directory in all_directories:
         pdf_file_path_html_links += "<div>Directory: <span style=\"font-weight: bold;\">" + directory + "</span><br/>\n"
@@ -146,10 +151,9 @@ def vault_files (vault_id, vault_config):
         file_names = os.listdir(root_path + directory)
         file_names.sort()
 
-        for file_name in file_names:
-            if not file_name.endswith(".pdf"):
-                continue
+        pdf_file_names = [f for f in file_names if f.endswith(".pdf")]
 
+        for file_name in pdf_file_names:
             data_file_relative_file_path = directory + file_name
 
             url = get_local_url(vault_config, data_file_relative_file_path)
@@ -158,6 +162,9 @@ def vault_files (vault_id, vault_config):
             pdf_file_path_html_links += perma_link_html(vault_config, data_file_relative_file_path)
 
             pdf_file_path_html_links += "<br/>\n"
+
+        if not pdf_file_names:
+            pdf_file_path_html_links += f"(add a PDF file to directory {root_path + directory} to get started)<br/>\n"
 
         pdf_file_path_html_links += "</div>\n"
 

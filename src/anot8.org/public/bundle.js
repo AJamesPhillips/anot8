@@ -1710,9 +1710,13 @@
                 return a$1("div", null, "Downloaded PDF.  Rendering...");
             var progress = ((page_number / max_pages) * 100).toFixed(0);
             return a$1("div", null,
-                "Progress: ",
+                "Rendering page ",
+                page_number,
+                " / ",
+                max_pages,
+                " (",
                 progress,
-                "%");
+                "%)");
         }
         var stage = props.stage, error_during_loading__type = props.error_during_loading__type, naming_authority = props.naming_authority, vault_id = props.vault_id, file_id = props.file_id;
         if (error_during_loading__type === "422") {
