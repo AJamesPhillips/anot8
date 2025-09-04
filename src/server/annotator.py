@@ -453,3 +453,12 @@ def pdf_worker_min_js ():
         js = f.read()
 
     return js
+
+
+
+@app.route("/anot8_logo.svg")
+def anot8_logo ():
+    with open(dir_path + "/../anot8.org/public/anot8_logo.svg", "r", encoding="utf8") as f:
+        html = f.read()
+
+    return html
